@@ -579,8 +579,12 @@ class Database:
         """Delete token and related data"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
+            # PostgreSQL requires manual deletion of related records if foreign keys are not ON DELETE CASCADE
+            # In our schema, token_stats, projects, tasks, and request_logs may reference tokens(id)
             await conn.execute("DELETE FROM token_stats WHERE token_id = $1", token_id)
             await conn.execute("DELETE FROM projects WHERE token_id = $1", token_id)
+            await conn.execute("DELETE FROM tasks WHERE token_id = $1", token_id)
+            await conn.execute("DELETE FROM request_logs WHERE token_id = $1", token_id)
             await conn.execute("DELETE FROM tokens WHERE id = $1", token_id)
 
     async def add_project(self, project: Project) -> int:

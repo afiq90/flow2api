@@ -1,0 +1,24 @@
+curl -X POST "https://kontenai-flow.replit.app/v1/chat/completions" \
+  -H "Authorization: Bearer han1234" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gemini-2.5-flash-image-landscape",
+    "messages": [
+      {
+        "role": "user",
+        "content": "a gen z bigfoot dancing for tiktok video in a wash room"
+      }
+    ],
+    "stream": true
+  }'
+data: {"id": "chatcmpl-1768859776", "object": "chat.completion.chunk", "created": 1768859776, "model": "flow2api", "choices": [{"index": 0, "delta": {"role": "assistant", "reasoning_content": "✨ 图片生成任务已启动\n"}, "finish_reason": null}]}
+
+data: {"id": "chatcmpl-1768859776", "object": "chat.completion.chunk", "created": 1768859776, "model": "flow2api", "choices": [{"index": 0, "delta": {"reasoning_content": "初始化生成环境...\n"}, "finish_reason": null}]}
+
+data: {"id": "chatcmpl-1768859776", "object": "chat.completion.chunk", "created": 1768859776, "model": "flow2api", "choices": [{"index": 0, "delta": {"reasoning_content": "正在生成图片...\n"}, "finish_reason": null}]}
+
+data: {"id": "chatcmpl-1768859804", "object": "chat.completion.chunk", "created": 1768859804, "model": "flow2api", "choices": [{"index": 0, "delta": {"reasoning_content": "缓存已关闭,正在返回源链接...\n"}, "finish_reason": null}]}
+
+data: {"id": "chatcmpl-1768859804", "object": "chat.completion.chunk", "created": 1768859804, "model": "flow2api", "choices": [{"index": 0, "delta": {"content": "![Generated Image](https://storage.googleapis.com/ai-sandbox-videofx/image/14c9da5b-1239-414d-a148-d8a2bbdf06f8?GoogleAccessId=labs-ai-sandbox-videoserver-prod@system.gserviceaccount.com&Expires=1768881403&Signature=kTHGeQtjW4Fb1INNt3mbV9wrlMJHRbj1YN6CDhIF6YvPXAIzQrIb2ol7Cfy1Gd%2BFoyKWCQISwRCN5TxoWPVSYOGBN3k6bABKQPu0YzvQ4%2BhHulG%2B436NGaPOaFSvS%2FLQNLZ3Nvdy5tyDLHeNTcnXiedbrJIQM3xGyhHRFhPdecWAxOUP0eBkoLPPdOPuoXwxOmWHMMXnwjWl2cTc2MAIxCsasLUlhgXNlGMqP%2FetmdKvI8O%2BG5hQBglF3LYFZaYWi7%2BQSDQRtT74%2F7888eGXxJIx8w8JoJUo902odtwwLiZa5Xr7GTViEYZJKXtL0Mp2WjR%2B1n9p3wpPpKdEsgYoNw%3D%3D)"}, "finish_reason": "stop"}]}
+
+data: [DONE]

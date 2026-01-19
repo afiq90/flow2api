@@ -2,9 +2,18 @@
 import asyncpg
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List
 from .models import Token, TokenStats, Task, RequestLog, AdminConfig, ProxyConfig, GenerationConfig, CacheConfig, Project, CaptchaConfig, PluginConfig
+
+
+def to_naive_utc(dt: Optional[datetime]) -> Optional[datetime]:
+    """Convert a datetime to naive UTC (strip timezone info after converting to UTC)"""
+    if dt is None:
+        return None
+    if dt.tzinfo is not None:
+        dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
+    return dt
 
 
 class Database:
@@ -490,7 +499,7 @@ class Database:
                                    image_enabled, video_enabled, image_concurrency, video_concurrency)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
                 RETURNING id
-            """, token.st, token.at, token.at_expires, token.email, token.name, token.remark,
+            """, token.st, token.at, to_naive_utc(token.at_expires), token.email, token.name, token.remark,
                   token.is_active, token.credits, token.user_paygate_tier,
                   token.current_project_id, token.current_project_name,
                   token.image_enabled, token.video_enabled,
@@ -551,8 +560,12 @@ class Database:
             params = []
             param_idx = 1
 
+            datetime_fields = {'at_expires', 'last_used_at', 'banned_at', 'created_at'}
+
             for key, value in kwargs.items():
                 if value is not None:
+                    if key in datetime_fields and isinstance(value, datetime):
+                        value = to_naive_utc(value)
                     updates.append(f"{key} = ${param_idx}")
                     params.append(value)
                     param_idx += 1

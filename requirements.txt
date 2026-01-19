@@ -21,3 +21,4 @@ python-dateutil
 python-multipart
 tomli
 uvicorn[standard]
+asyncpg

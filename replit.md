@@ -56,12 +56,21 @@ python main.py
 - FastAPI + Uvicorn
 - asyncpg (PostgreSQL async driver with connection pooling)
 - curl-cffi (HTTP client)
-- playwright (browser automation for captcha)
-- nodriver (alternative browser automation)
+- aiohttp (async HTTP client)
+
+## Captcha Methods
+The application supports multiple captcha solving methods:
+- **ezcaptcha** - Third-party captcha solving service (recommended for production)
+- **yescaptcha** - Third-party captcha solving service
+- **capmonster** - Third-party captcha solving service
+- **capsolver** - Third-party captcha solving service
+- **browser/personal** - Browser-based methods (require additional dependencies not installed by default)
 
 ## Recent Changes
 - Migrated from SQLite (aiosqlite) to PostgreSQL (asyncpg)
 - Uses connection pooling for better performance
 - Database URL configured via DATABASE_URL environment variable
 - Configured to run on port 5000 for Replit compatibility
-- Changed default captcha method to yescaptcha (browser mode requires additional system dependencies)
+- Removed playwright and nodriver dependencies for lighter deployment
+- Browser-based captcha methods now optional (graceful degradation if not installed)
+- Recommended captcha method: ezcaptcha (or other third-party services)

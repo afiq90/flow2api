@@ -873,85 +873,99 @@ class GenerationHandler:
                 # 检查状态
                 if status == "MEDIA_GENERATION_STATUS_SUCCESSFUL":
                     # 成功
-                    metadata = operation["operation"].get("metadata", {})
-                    video_info = metadata.get("video", {})
-                    video_url = video_info.get("fifeUrl")
+                    try:
+                        metadata = operation["operation"].get("metadata", {})
+                        video_info = metadata.get("video", {})
+                        video_url = video_info.get("fifeUrl")
 
-                    if not video_url:
-                        yield self._create_error_response("视频URL为空")
-                        return
+                        if not video_url:
+                            yield self._create_error_response("视频URL为空")
+                            return
 
-                    # 缓存视频 (如果启用)
-                    local_url = video_url
-                    if config.cache_enabled:
+                        # 缓存视频 (如果启用)
+                        local_url = video_url
+                        if config.cache_enabled:
+                            try:
+                                if stream:
+                                    yield self._create_stream_chunk(
+                                        "正在缓存视频文件...\n")
+                                cached_filename = await self.file_cache.download_and_cache(
+                                    video_url, "video")
+                                local_url = f"{self._get_base_url()}/tmp/{cached_filename}"
+                                if stream:
+                                    yield self._create_stream_chunk(
+                                        "✅ 视频缓存成功,准备返回缓存地址...\n")
+                            except Exception as e:
+                                debug_logger.log_error(
+                                    f"Failed to cache video: {str(e)}")
+                                local_url = video_url
+                                if stream:
+                                    yield self._create_stream_chunk(
+                                        f"⚠️ 缓存失败: {str(e)}\n正在返回源链接...\n")
+                        else:
+                            if stream:
+                                yield self._create_stream_chunk(
+                                    "缓存已关闭,正在返回源链接...\n")
+
+                        # 更新数据库 (非致命错误，不使用 continue)
                         try:
-                            if stream:
-                                yield self._create_stream_chunk(
-                                    "正在缓存视频文件...\n")
-                            cached_filename = await self.file_cache.download_and_cache(
-                                video_url, "video")
-                            local_url = f"{self._get_base_url()}/tmp/{cached_filename}"
-                            if stream:
-                                yield self._create_stream_chunk(
-                                    "✅ 视频缓存成功,准备返回缓存地址...\n")
-                        except Exception as e:
-                            debug_logger.log_error(
-                                f"Failed to cache video: {str(e)}")
-                            # 缓存失败不影响结果返回,使用原始URL
-                            local_url = video_url
-                            if stream:
-                                yield self._create_stream_chunk(
-                                    f"⚠️ 缓存失败: {str(e)}\n正在返回源链接...\n")
-                    else:
+                            task_id = operation["operation"]["name"]
+                            await self.db.update_task(task_id,
+                                                      status="completed",
+                                                      progress=100,
+                                                      result_urls=[local_url],
+                                                      completed_at=time.time())
+                        except Exception as db_e:
+                            debug_logger.log_error(f"Failed to update task status: {str(db_e)}")
+
+                        # 存储URL用于日志记录
+                        self._last_generated_url = local_url
+
+                        # 返回结果
                         if stream:
                             yield self._create_stream_chunk(
-                                "缓存已关闭,正在返回源链接...\n")
-
-                    # 更新数据库
-                    task_id = operation["operation"]["name"]
-                    await self.db.update_task(task_id,
-                                              status="completed",
-                                              progress=100,
-                                              result_urls=[local_url],
-                                              completed_at=time.time())
-
-                    # 存储URL用于日志记录
-                    self._last_generated_url = local_url
-
-                    # 返回结果
-                    if stream:
-                        yield self._create_stream_chunk(
-                            f"<video src='{local_url}' controls style='max-width:100%'></video>",
-                            finish_reason="stop")
-                        yield "data: [DONE]\n\n"
-                    else:
-                        yield self._create_completion_response(
-                            local_url,  # 直接传URL,让方法内部格式化
-                            media_type="video")
-                    return  # 确保退出循环
+                                f"<video src='{local_url}' controls style='max-width:100%'></video>",
+                                finish_reason="stop")
+                            yield "data: [DONE]\n\n"
+                        else:
+                            yield self._create_completion_response(
+                                local_url,
+                                media_type="video")
+                        return # 明确退出 generator
+                    except Exception as e:
+                        debug_logger.log_error(f"Error in success handling: {str(e)}")
+                        yield self._create_error_response(f"处理视频结果时出错: {str(e)}")
+                        return # 强制退出，不再轮询
 
                 elif status == "MEDIA_GENERATION_STATUS_FAILED":
                     # 生成失败 - 提取错误信息
-                    error_info = operation.get("operation",
-                                               {}).get("error", {})
-                    error_code = error_info.get("code", "unknown")
-                    error_message = error_info.get("message", "未知错误")
+                    try:
+                        error_info = operation.get("operation",
+                                                   {}).get("error", {})
+                        error_code = error_info.get("code", "unknown")
+                        error_message = error_info.get("message", "未知错误")
 
-                    # 更新数据库任务状态
-                    task_id = operation["operation"]["name"]
-                    await self.db.update_task(
-                        task_id,
-                        status="failed",
-                        error_message=f"{error_message} (code: {error_code})",
-                        completed_at=time.time())
+                        # 更新数据库任务状态 (非致命)
+                        try:
+                            task_id = operation["operation"]["name"]
+                            await self.db.update_task(
+                                task_id,
+                                status="failed",
+                                error_message=f"{error_message} (code: {error_code})",
+                                completed_at=time.time())
+                        except Exception as db_e:
+                            debug_logger.log_error(f"Failed to update failed task status: {str(db_e)}")
 
-                    # 返回友好的错误消息，提示用户重试
-                    friendly_error = f"视频生成失败: {error_message}，请重试"
-                    if stream:
-                        yield self._create_stream_chunk(
-                            f"❌ {friendly_error}\n")
-                    yield self._create_error_response(friendly_error)
-                    return
+                        friendly_error = f"视频生成失败: {error_message}，请重试"
+                        if stream:
+                            yield self._create_stream_chunk(
+                                f"❌ {friendly_error}\n")
+                        yield self._create_error_response(friendly_error)
+                        return # 明确退出 generator
+                    except Exception as e:
+                        debug_logger.log_error(f"Error in failure handling: {str(e)}")
+                        yield self._create_error_response(f"视频生成失败: {status}")
+                        return # 强制退出，不再轮询
 
                 elif status.startswith("MEDIA_GENERATION_STATUS_ERROR"):
                     # 其他错误状态

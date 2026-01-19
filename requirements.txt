@@ -9,3 +9,15 @@ python-multipart==0.0.20
 python-dateutil==2.8.2
 playwright==1.53.0
 nodriver>=0.48.0
+aiohttp
+aiosqlite
+bcrypt
+curl-cffi
+fastapi
+nodriver
+playwright
+pydantic
+python-dateutil
+python-multipart
+tomli
+uvicorn[standard]

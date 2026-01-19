@@ -13,7 +13,7 @@ Flow2API is an OpenAI-compatible API for Google VideoFX (Veo). It provides a Fas
 │   │   └── admin.py       # Admin endpoints
 │   ├── core/
 │   │   ├── config.py      # Configuration management (loads from setting.toml)
-│   │   ├── database.py    # SQLite database operations
+│   │   ├── database.py    # PostgreSQL database operations (asyncpg)
 │   │   ├── models.py      # Pydantic models
 │   │   └── logger.py      # Logging utilities
 │   └── services/
@@ -34,6 +34,11 @@ Flow2API is an OpenAI-compatible API for Google VideoFX (Veo). It provides a Fas
 └── tmp/                   # Temporary files for caching
 ```
 
+## Database
+- Uses PostgreSQL via asyncpg with connection pooling
+- Database URL is configured via DATABASE_URL environment variable
+- Tables are automatically created on first startup
+
 ## Configuration
 Configuration is stored in `config/setting.toml`. Key settings:
 - Server runs on port 5000 (configured for Replit)
@@ -49,12 +54,14 @@ python main.py
 ## Dependencies
 - Python 3.11
 - FastAPI + Uvicorn
-- aiosqlite (SQLite async database)
+- asyncpg (PostgreSQL async driver with connection pooling)
 - curl-cffi (HTTP client)
 - playwright (browser automation for captcha)
 - nodriver (alternative browser automation)
 
 ## Recent Changes
+- Migrated from SQLite (aiosqlite) to PostgreSQL (asyncpg)
+- Uses connection pooling for better performance
+- Database URL configured via DATABASE_URL environment variable
 - Configured to run on port 5000 for Replit compatibility
 - Changed default captcha method to yescaptcha (browser mode requires additional system dependencies)
-- Added Python gitignore entries for Replit environment

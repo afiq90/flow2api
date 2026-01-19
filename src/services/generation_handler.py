@@ -51,11 +51,11 @@ MODEL_CONFIG = {
     # 不支持上传图片，只使用文本提示词生成
 
     # veo_3_1_t2v_fast_portrait (竖屏)
-    # 上游模型名: veo_3_1_t2v_fast_portrait
+    # 上游模型名: veo_3_1_t2v_fast
     "veo_3_1_t2v_fast_portrait": {
         "type": "video",
         "video_type": "t2v",
-        "model_key": "veo_3_1_t2v_fast_portrait",
+        "model_key": "veo_3_1_t2v_fast",
         "aspect_ratio": "VIDEO_ASPECT_RATIO_PORTRAIT",
         "supports_images": False
     },
@@ -105,7 +105,7 @@ MODEL_CONFIG = {
     "veo_3_1_t2v_fast_portrait_ultra": {
         "type": "video",
         "video_type": "t2v",
-        "model_key": "veo_3_1_t2v_fast_portrait_ultra",
+        "model_key": "veo_3_1_t2v_fast_ultra",
         "aspect_ratio": "VIDEO_ASPECT_RATIO_PORTRAIT",
         "supports_images": False
     },
@@ -114,7 +114,7 @@ MODEL_CONFIG = {
     "veo_3_1_t2v_fast_portrait_ultra_relaxed": {
         "type": "video",
         "video_type": "t2v",
-        "model_key": "veo_3_1_t2v_fast_portrait_ultra_relaxed",
+        "model_key": "veo_3_1_t2v_fast_ultra_relaxed",
         "aspect_ratio": "VIDEO_ASPECT_RATIO_PORTRAIT",
         "supports_images": False
     },
@@ -123,7 +123,7 @@ MODEL_CONFIG = {
     "veo_3_1_t2v_portrait": {
         "type": "video",
         "video_type": "t2v",
-        "model_key": "veo_3_1_t2v_portrait",
+        "model_key": "veo_3_1_t2v",
         "aspect_ratio": "VIDEO_ASPECT_RATIO_PORTRAIT",
         "supports_images": False
     },
@@ -135,7 +135,7 @@ MODEL_CONFIG = {
     "veo_3_1_i2v_s_fast_fl_portrait": {
         "type": "video",
         "video_type": "i2v",
-        "model_key": "veo_3_1_i2v_s_fast_portrait_fl_ultra_relaxed",
+        "model_key": "veo_3_1_i2v_s_fast_fl_ultra_relaxed",
         "aspect_ratio": "VIDEO_ASPECT_RATIO_PORTRAIT",
         "supports_images": True,
         "min_images": 1,
@@ -258,7 +258,7 @@ MODEL_CONFIG = {
     "veo_3_0_r2v_fast_portrait": {
         "type": "video",
         "video_type": "r2v",
-        "model_key": "veo_3_0_r2v_fast_portrait_ultra_relaxed",
+        "model_key": "veo_3_0_r2v_fast_ultra_relaxed",
         "aspect_ratio": "VIDEO_ASPECT_RATIO_PORTRAIT",
         "supports_images": True,
         "min_images": 0,
@@ -650,6 +650,10 @@ class GenerationHandler:
                         model_key = model_key + "_ultra"
                     elif "_fast_" in model_key:
                         model_key = model_key.replace("_fast_", "_fast_ultra_")
+                    elif model_key == "veo_3_1_t2v":
+                        model_key = "veo_3_1_t2v_ultra"
+                    elif model_key == "veo_3_1_i2v_s":
+                        model_key = "veo_3_1_i2v_s_ultra"
 
                     if stream:
                         yield self._create_stream_chunk(

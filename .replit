@@ -4,7 +4,7 @@ expertMode = true
 
 [nix]
 channel = "stable-25_05"
-packages = ["alsa-lib", "at-spi2-atk", "at-spi2-core", "cairo", "cargo", "cups", "dbus", "gitFull", "glib", "gtk3", "libiconv", "libxcrypt", "libxkbcommon", "mesa", "nspr", "nss", "pango", "playwright-driver", "postgresql", "rustc", "xorg.libXcomposite", "xorg.libXdamage", "xorg.libXfixes", "xorg.libxcb"]
+packages = ["postgresql"]
 
 [workflows]
 runButton = "Project"

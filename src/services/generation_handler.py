@@ -928,7 +928,7 @@ class GenerationHandler:
                         yield self._create_completion_response(
                             local_url,  # 直接传URL,让方法内部格式化
                             media_type="video")
-                    return
+                    return  # 确保退出循环
 
                 elif status == "MEDIA_GENERATION_STATUS_FAILED":
                     # 生成失败 - 提取错误信息

@@ -1,7 +1,7 @@
 """Data models for Flow2API"""
 from pydantic import BaseModel
 from typing import Optional, List, Union, Any
-from datetime import datetime
+from datetime import datetime, date
 
 
 class Token(BaseModel):
@@ -67,7 +67,7 @@ class TokenStats(BaseModel):
     today_image_count: int = 0
     today_video_count: int = 0
     today_error_count: int = 0
-    today_date: Optional[str] = None
+    today_date: Optional[Union[str, date]] = None
     # 连续错误计数 (用于自动禁用判断)
     consecutive_error_count: int = 0
 

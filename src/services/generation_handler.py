@@ -110,11 +110,19 @@ MODEL_CONFIG = {
         "supports_images": False
     },
 
+    # Added by Afiq; not working need to open issue or debug
     # veo_3_1_t2v_fast_portrait_ultra_relaxed (竖屏)
     "veo_3_1_t2v_fast_portrait_ultra_relaxed": {
         "type": "video",
         "video_type": "t2v",
         "model_key": "veo_3_1_t2v_fast_portrait_ultra_relaxed",
+        "aspect_ratio": "VIDEO_ASPECT_RATIO_PORTRAIT",
+        "supports_images": False
+    },
+    "veo_3_1_t2v_fast_landscape_ultra_relaxed": {
+        "type": "video",
+        "video_type": "t2v",
+        "model_key": "veo_3_1_t2v_fast_landscape_ultra_relaxed",
         "aspect_ratio": "VIDEO_ASPECT_RATIO_PORTRAIT",
         "supports_images": False
     },
@@ -438,13 +446,12 @@ class GenerationHandler:
 
             # 重新获取token (AT可能已刷新)
             token = await self.token_manager.get_token(token.id)
-            
+
             # 记录最终使用的模型和参数
             debug_logger.log_info(
                 f"[GENERATION] 最终请求参数 - Token: {token.email}, "
                 f"模型Key: {model_config.get('model_key')}, "
-                f"Aspect Ratio: {model_config.get('aspect_ratio')}"
-            )
+                f"Aspect Ratio: {model_config.get('aspect_ratio')}")
 
             # 4. 确保Project存在
             debug_logger.log_info(f"[GENERATION] 检查/创建Project...")
@@ -645,17 +652,57 @@ class GenerationHandler:
             user_tier = token.user_paygate_tier or "PAYGATE_TIER_ONE"
 
             # TIER_TWO 账号需要使用 ultra 版本的模型
+            # if user_tier == "PAYGATE_TIER_TWO":
+            #     # 如果模型 key 不包含 ultra，自动添加
+            #     if "ultra" not in model_key:
+            #         # veo_3_1_i2v_s_fast_fl -> veo_3_1_i2v_s_fast_ultra_fl
+            #         # veo_3_1_t2v_fast -> veo_3_1_t2v_fast_ultra
+            #         # veo_3_0_r2v_fast -> veo_3_0_r2v_fast_ultra
+            #         if "_fl" in model_key:
+            #             model_key = model_key.replace("_fl", "_ultra_fl")
+            #         elif model_key.endswith("_fast"):
+            #             model_key = model_key + "_ultra"
+            #         elif "_fast_" in model_key:
+            #             model_key = model_key.replace("_fast_", "_fast_ultra_")
+
+            #         if stream:
+            #             yield self._create_stream_chunk(
+            #                 f"TIER_TWO 账号自动切换到 ultra 模型: {model_key}\n")
+            #         debug_logger.log_info(
+            #             f"[VIDEO] TIER_TWO 账号，模型自动调整: {model_config['model_key']} -> {model_key}"
+            #         )
+
+            # TIER_TWO 账号需要使用 ultra 版本的模型
             if user_tier == "PAYGATE_TIER_TWO":
                 # 如果模型 key 不包含 ultra，自动添加
                 if "ultra" not in model_key:
-                    # veo_3_1_i2v_s_fast_fl -> veo_3_1_i2v_s_fast_ultra_fl
-                    # veo_3_1_t2v_fast -> veo_3_1_t2v_fast_ultra
-                    # veo_3_0_r2v_fast -> veo_3_0_r2v_fast_ultra
-                    if "_fl" in model_key:
+                    # 处理 portrait/landscape 后缀
+                    if "_portrait" in model_key:
+                        # veo_3_1_t2v_fast_portrait -> veo_3_1_t2v_fast_portrait_ultra
+                        # veo_3_1_i2v_s_fast_portrait_fl -> veo_3_1_i2v_s_fast_portrait_ultra_fl
+                        if "_fl" in model_key:
+                            model_key = model_key.replace("_fl", "_ultra_fl")
+                        else:
+                            model_key = model_key.replace(
+                                "_portrait", "_portrait_ultra")
+                    elif "_landscape" in model_key:
+                        # veo_3_1_t2v_fast_landscape -> veo_3_1_t2v_fast_landscape_ultra
+                        if "_fl" in model_key:
+                            model_key = model_key.replace("_fl", "_ultra_fl")
+                        else:
+                            model_key = model_key.replace(
+                                "_landscape", "_landscape_ultra")
+                    # 处理 _fl 后缀（没有 portrait/landscape 的情况）
+                    elif "_fl" in model_key:
+                        # veo_3_1_i2v_s_fast_fl -> veo_3_1_i2v_s_fast_ultra_fl
                         model_key = model_key.replace("_fl", "_ultra_fl")
+                    # 处理以 _fast 结尾的模型
                     elif model_key.endswith("_fast"):
+                        # veo_3_1_t2v_fast -> veo_3_1_t2v_fast_ultra
                         model_key = model_key + "_ultra"
+                    # 处理中间有 _fast_ 的模型
                     elif "_fast_" in model_key:
+                        # veo_3_1_t2v_fast_something -> veo_3_1_t2v_fast_ultra_something
                         model_key = model_key.replace("_fast_", "_fast_ultra_")
 
                     if stream:
@@ -923,7 +970,8 @@ class GenerationHandler:
                                                       result_urls=[local_url],
                                                       completed_at=time.time())
                         except Exception as db_e:
-                            debug_logger.log_error(f"Failed to update task status: {str(db_e)}")
+                            debug_logger.log_error(
+                                f"Failed to update task status: {str(db_e)}")
 
                         # 存储URL用于日志记录
                         self._last_generated_url = local_url
@@ -936,13 +984,14 @@ class GenerationHandler:
                             yield "data: [DONE]\n\n"
                         else:
                             yield self._create_completion_response(
-                                local_url,
-                                media_type="video")
-                        return # 明确退出 generator
+                                local_url, media_type="video")
+                        return  # 明确退出 generator
                     except Exception as e:
-                        debug_logger.log_error(f"Error in success handling: {str(e)}")
-                        yield self._create_error_response(f"处理视频结果时出错: {str(e)}")
-                        return # 强制退出，不再轮询
+                        debug_logger.log_error(
+                            f"Error in success handling: {str(e)}")
+                        yield self._create_error_response(
+                            f"处理视频结果时出错: {str(e)}")
+                        return  # 强制退出，不再轮询
 
                 elif status == "MEDIA_GENERATION_STATUS_FAILED":
                     # 生成失败 - 提取错误信息
@@ -958,21 +1007,25 @@ class GenerationHandler:
                             await self.db.update_task(
                                 task_id,
                                 status="failed",
-                                error_message=f"{error_message} (code: {error_code})",
+                                error_message=
+                                f"{error_message} (code: {error_code})",
                                 completed_at=time.time())
                         except Exception as db_e:
-                            debug_logger.log_error(f"Failed to update failed task status: {str(db_e)}")
+                            debug_logger.log_error(
+                                f"Failed to update failed task status: {str(db_e)}"
+                            )
 
                         friendly_error = f"视频生成失败: {error_message}，请重试"
                         if stream:
                             yield self._create_stream_chunk(
                                 f"❌ {friendly_error}\n")
                         yield self._create_error_response(friendly_error)
-                        return # 明确退出 generator
+                        return  # 明确退出 generator
                     except Exception as e:
-                        debug_logger.log_error(f"Error in failure handling: {str(e)}")
+                        debug_logger.log_error(
+                            f"Error in failure handling: {str(e)}")
                         yield self._create_error_response(f"视频生成失败: {status}")
-                        return # 强制退出，不再轮询
+                        return  # 强制退出，不再轮询
 
                 elif status.startswith("MEDIA_GENERATION_STATUS_ERROR"):
                     # 其他错误状态

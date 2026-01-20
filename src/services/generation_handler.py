@@ -438,6 +438,13 @@ class GenerationHandler:
 
             # 重新获取token (AT可能已刷新)
             token = await self.token_manager.get_token(token.id)
+            
+            # 记录最终使用的模型和参数
+            debug_logger.log_info(
+                f"[GENERATION] 最终请求参数 - Token: {token.email}, "
+                f"模型Key: {model_config.get('model_key')}, "
+                f"Aspect Ratio: {model_config.get('aspect_ratio')}"
+            )
 
             # 4. 确保Project存在
             debug_logger.log_info(f"[GENERATION] 检查/创建Project...")

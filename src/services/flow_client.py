@@ -175,17 +175,22 @@ class FlowClient:
                     )
 
                 duration_ms = (time.time() - start_time) * 1000
+                response_text = response.text
 
                 # Log response
                 if config.debug_enabled:
                     debug_logger.log_response(
                         status_code=response.status_code,
                         headers=dict(response.headers),
-                        body=response.text,
+                        body=response_text,
                         duration_ms=duration_ms
                     )
 
-                response.raise_for_status()
+                if response.status_code >= 400:
+                    error_detail = f"Status {response.status_code}: {response_text}"
+                    debug_logger.log_error(f"Flow API error detail: {error_detail}")
+                    raise Exception(f"Flow API request failed: {error_detail}")
+
                 return response.json()
 
         except Exception as e:
@@ -199,7 +204,7 @@ class FlowClient:
                     response_text=getattr(e, 'response_text', None)
                 )
 
-            raise Exception(f"Flow API request failed: {error_msg}")
+            raise Exception(error_msg if "Flow API request failed" in error_msg else f"Flow API request failed: {error_msg}")
 
     # ========== 认证相关 (使用ST) ==========
 

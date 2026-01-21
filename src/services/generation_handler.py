@@ -110,7 +110,6 @@ MODEL_CONFIG = {
         "supports_images": False
     },
 
-    # Added by Afiq; not working need to open issue or debug
     # veo_3_1_t2v_fast_portrait_ultra_relaxed (竖屏)
     "veo_3_1_t2v_fast_portrait_ultra_relaxed": {
         "type": "video",
@@ -119,11 +118,13 @@ MODEL_CONFIG = {
         "aspect_ratio": "VIDEO_ASPECT_RATIO_PORTRAIT",
         "supports_images": False
     },
+
+    # Added by Afiq; not working need to open issue or debug
     "veo_3_1_t2v_fast_landscape_ultra_relaxed": {
         "type": "video",
         "video_type": "t2v",
-        "model_key": "veo_3_1_t2v_fast_landscape_ultra_relaxed",
-        "aspect_ratio": "VIDEO_ASPECT_RATIO_PORTRAIT",
+        "model_key": "veo_3_1_t2v_fast_ultra_relaxed",  #veo_3_1_t2v_fast
+        "aspect_ratio": "VIDEO_ASPECT_RATIO_LANDSCAPE",
         "supports_images": False
     },
 

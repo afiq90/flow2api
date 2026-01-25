@@ -31,7 +31,9 @@ class Database:
     async def get_pool(self) -> asyncpg.Pool:
         """Get or create connection pool"""
         if self.pool is None:
-            self.pool = await asyncpg.create_pool(self.database_url, min_size=2, max_size=10)
+            self.pool = await asyncpg.create_pool(self.database_url,
+                                                  min_size=2,
+                                                  max_size=10)
         return self.pool
 
     async def close(self):
@@ -44,20 +46,18 @@ class Database:
         """Check if a table exists in the database"""
         result = await conn.fetchval(
             "SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = $1)",
-            table_name
-        )
+            table_name)
         return result
 
-    async def _column_exists(self, conn, table_name: str, column_name: str) -> bool:
+    async def _column_exists(self, conn, table_name: str,
+                             column_name: str) -> bool:
         """Check if a column exists in a table"""
         try:
             result = await conn.fetchval(
                 """SELECT EXISTS(
                     SELECT 1 FROM information_schema.columns 
                     WHERE table_name = $1 AND column_name = $2
-                )""",
-                table_name, column_name
-            )
+                )""", table_name, column_name)
             return result
         except:
             return False
@@ -77,9 +77,11 @@ class Database:
                 admin_password = global_config.get("admin_password", "admin")
                 api_key = global_config.get("api_key", "han1234")
                 admin_config = config_dict.get("admin", {})
-                error_ban_threshold = admin_config.get("error_ban_threshold", 3)
+                error_ban_threshold = admin_config.get("error_ban_threshold",
+                                                       3)
 
-            await conn.execute("""
+            await conn.execute(
+                """
                 INSERT INTO admin_config (id, username, password, api_key, error_ban_threshold)
                 VALUES (1, $1, $2, $3, $4)
             """, admin_username, admin_password, api_key, error_ban_threshold)
@@ -95,7 +97,8 @@ class Database:
                 proxy_url = proxy_config.get("proxy_url", "")
                 proxy_url = proxy_url if proxy_url else None
 
-            await conn.execute("""
+            await conn.execute(
+                """
                 INSERT INTO proxy_config (id, enabled, proxy_url)
                 VALUES (1, $1, $2)
             """, proxy_enabled, proxy_url)
@@ -110,7 +113,8 @@ class Database:
                 image_timeout = generation_config.get("image_timeout", 300)
                 video_timeout = generation_config.get("video_timeout", 1500)
 
-            await conn.execute("""
+            await conn.execute(
+                """
                 INSERT INTO generation_config (id, image_timeout, video_timeout)
                 VALUES (1, $1, $2)
             """, image_timeout, video_timeout)
@@ -128,7 +132,8 @@ class Database:
                 cache_base_url = cache_config.get("base_url", "")
                 cache_base_url = cache_base_url if cache_base_url else None
 
-            await conn.execute("""
+            await conn.execute(
+                """
                 INSERT INTO cache_config (id, cache_enabled, cache_timeout, cache_base_url)
                 VALUES (1, $1, $2, $3)
             """, cache_enabled, cache_timeout, cache_base_url)
@@ -147,7 +152,8 @@ class Database:
                 log_responses = debug_config.get("log_responses", True)
                 mask_token = debug_config.get("mask_token", True)
 
-            await conn.execute("""
+            await conn.execute(
+                """
                 INSERT INTO debug_config (id, enabled, log_requests, log_responses, mask_token)
                 VALUES (1, $1, $2, $3, $4)
             """, debug_enabled, log_requests, log_responses, mask_token)
@@ -160,11 +166,15 @@ class Database:
 
             if config_dict:
                 captcha_config = config_dict.get("captcha", {})
-                captcha_method = captcha_config.get("captcha_method", "browser")
-                yescaptcha_api_key = captcha_config.get("yescaptcha_api_key", "")
-                yescaptcha_base_url = captcha_config.get("yescaptcha_base_url", "https://api.yescaptcha.com")
+                captcha_method = captcha_config.get("captcha_method",
+                                                    "browser")
+                yescaptcha_api_key = captcha_config.get(
+                    "yescaptcha_api_key", "")
+                yescaptcha_base_url = captcha_config.get(
+                    "yescaptcha_base_url", "https://api.yescaptcha.com")
 
-            await conn.execute("""
+            await conn.execute(
+                """
                 INSERT INTO captcha_config (id, captcha_method, yescaptcha_api_key, yescaptcha_base_url)
                 VALUES (1, $1, $2, $3)
             """, captcha_method, yescaptcha_api_key, yescaptcha_base_url)
@@ -210,7 +220,7 @@ class Database:
                         capsolver_api_key TEXT DEFAULT '',
                         capsolver_base_url TEXT DEFAULT 'https://api.capsolver.com',
                         website_key TEXT DEFAULT '6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV',
-                        page_action TEXT DEFAULT 'FLOW_GENERATION',
+                        page_action TEXT DEFAULT 'VIDEO_GENERATION',
                         browser_proxy_enabled BOOLEAN DEFAULT FALSE,
                         browser_proxy_url TEXT,
                         created_at TIMESTAMP DEFAULT NOW(),
@@ -249,38 +259,59 @@ class Database:
                 for col_name, col_type in columns_to_add:
                     if not await self._column_exists(conn, "tokens", col_name):
                         try:
-                            await conn.execute(f"ALTER TABLE tokens ADD COLUMN {col_name} {col_type}")
-                            print(f"  ✓ Added column '{col_name}' to tokens table")
+                            await conn.execute(
+                                f"ALTER TABLE tokens ADD COLUMN {col_name} {col_type}"
+                            )
+                            print(
+                                f"  ✓ Added column '{col_name}' to tokens table"
+                            )
                         except Exception as e:
-                            print(f"  ✗ Failed to add column '{col_name}': {e}")
+                            print(
+                                f"  ✗ Failed to add column '{col_name}': {e}")
 
             if await self._table_exists(conn, "admin_config"):
-                if not await self._column_exists(conn, "admin_config", "error_ban_threshold"):
+                if not await self._column_exists(conn, "admin_config",
+                                                 "error_ban_threshold"):
                     try:
-                        await conn.execute("ALTER TABLE admin_config ADD COLUMN error_ban_threshold INTEGER DEFAULT 3")
-                        print("  ✓ Added column 'error_ban_threshold' to admin_config table")
+                        await conn.execute(
+                            "ALTER TABLE admin_config ADD COLUMN error_ban_threshold INTEGER DEFAULT 3"
+                        )
+                        print(
+                            "  ✓ Added column 'error_ban_threshold' to admin_config table"
+                        )
                     except Exception as e:
-                        print(f"  ✗ Failed to add column 'error_ban_threshold': {e}")
+                        print(
+                            f"  ✗ Failed to add column 'error_ban_threshold': {e}"
+                        )
 
             if await self._table_exists(conn, "captcha_config"):
                 captcha_columns_to_add = [
                     ("browser_proxy_enabled", "BOOLEAN DEFAULT FALSE"),
                     ("browser_proxy_url", "TEXT"),
                     ("capmonster_api_key", "TEXT DEFAULT ''"),
-                    ("capmonster_base_url", "TEXT DEFAULT 'https://api.capmonster.cloud'"),
+                    ("capmonster_base_url",
+                     "TEXT DEFAULT 'https://api.capmonster.cloud'"),
                     ("ezcaptcha_api_key", "TEXT DEFAULT ''"),
-                    ("ezcaptcha_base_url", "TEXT DEFAULT 'https://api.ez-captcha.com'"),
+                    ("ezcaptcha_base_url",
+                     "TEXT DEFAULT 'https://api.ez-captcha.com'"),
                     ("capsolver_api_key", "TEXT DEFAULT ''"),
-                    ("capsolver_base_url", "TEXT DEFAULT 'https://api.capsolver.com'"),
+                    ("capsolver_base_url",
+                     "TEXT DEFAULT 'https://api.capsolver.com'"),
                 ]
 
                 for col_name, col_type in captcha_columns_to_add:
-                    if not await self._column_exists(conn, "captcha_config", col_name):
+                    if not await self._column_exists(conn, "captcha_config",
+                                                     col_name):
                         try:
-                            await conn.execute(f"ALTER TABLE captcha_config ADD COLUMN {col_name} {col_type}")
-                            print(f"  ✓ Added column '{col_name}' to captcha_config table")
+                            await conn.execute(
+                                f"ALTER TABLE captcha_config ADD COLUMN {col_name} {col_type}"
+                            )
+                            print(
+                                f"  ✓ Added column '{col_name}' to captcha_config table"
+                            )
                         except Exception as e:
-                            print(f"  ✗ Failed to add column '{col_name}': {e}")
+                            print(
+                                f"  ✗ Failed to add column '{col_name}': {e}")
 
             if await self._table_exists(conn, "token_stats"):
                 stats_columns_to_add = [
@@ -292,20 +323,33 @@ class Database:
                 ]
 
                 for col_name, col_type in stats_columns_to_add:
-                    if not await self._column_exists(conn, "token_stats", col_name):
+                    if not await self._column_exists(conn, "token_stats",
+                                                     col_name):
                         try:
-                            await conn.execute(f"ALTER TABLE token_stats ADD COLUMN {col_name} {col_type}")
-                            print(f"  ✓ Added column '{col_name}' to token_stats table")
+                            await conn.execute(
+                                f"ALTER TABLE token_stats ADD COLUMN {col_name} {col_type}"
+                            )
+                            print(
+                                f"  ✓ Added column '{col_name}' to token_stats table"
+                            )
                         except Exception as e:
-                            print(f"  ✗ Failed to add column '{col_name}': {e}")
+                            print(
+                                f"  ✗ Failed to add column '{col_name}': {e}")
 
             if await self._table_exists(conn, "plugin_config"):
-                if not await self._column_exists(conn, "plugin_config", "auto_enable_on_update"):
+                if not await self._column_exists(conn, "plugin_config",
+                                                 "auto_enable_on_update"):
                     try:
-                        await conn.execute("ALTER TABLE plugin_config ADD COLUMN auto_enable_on_update BOOLEAN DEFAULT TRUE")
-                        print("  ✓ Added column 'auto_enable_on_update' to plugin_config table")
+                        await conn.execute(
+                            "ALTER TABLE plugin_config ADD COLUMN auto_enable_on_update BOOLEAN DEFAULT TRUE"
+                        )
+                        print(
+                            "  ✓ Added column 'auto_enable_on_update' to plugin_config table"
+                        )
                     except Exception as e:
-                        print(f"  ✗ Failed to add column 'auto_enable_on_update': {e}")
+                        print(
+                            f"  ✗ Failed to add column 'auto_enable_on_update': {e}"
+                        )
 
             await self._ensure_config_rows(conn, config_dict=config_dict)
             print("Database migration check completed.")
@@ -465,7 +509,7 @@ class Database:
                     capsolver_api_key TEXT DEFAULT '',
                     capsolver_base_url TEXT DEFAULT 'https://api.capsolver.com',
                     website_key TEXT DEFAULT '6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV',
-                    page_action TEXT DEFAULT 'FLOW_GENERATION',
+                    page_action TEXT DEFAULT 'VIDEO_GENERATION',
                     browser_proxy_enabled BOOLEAN DEFAULT FALSE,
                     browser_proxy_url TEXT,
                     created_at TIMESTAMP DEFAULT NOW(),
@@ -483,9 +527,13 @@ class Database:
                 )
             """)
 
-            await conn.execute("CREATE INDEX IF NOT EXISTS idx_task_id ON tasks(task_id)")
-            await conn.execute("CREATE INDEX IF NOT EXISTS idx_token_st ON tokens(st)")
-            await conn.execute("CREATE INDEX IF NOT EXISTS idx_project_id ON projects(project_id)")
+            await conn.execute(
+                "CREATE INDEX IF NOT EXISTS idx_task_id ON tasks(task_id)")
+            await conn.execute(
+                "CREATE INDEX IF NOT EXISTS idx_token_st ON tokens(st)")
+            await conn.execute(
+                "CREATE INDEX IF NOT EXISTS idx_project_id ON projects(project_id)"
+            )
 
         self._initialized = True
 
@@ -493,19 +541,22 @@ class Database:
         """Add a new token"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            token_id = await conn.fetchval("""
+            token_id = await conn.fetchval(
+                """
                 INSERT INTO tokens (st, at, at_expires, email, name, remark, is_active,
                                    credits, user_paygate_tier, current_project_id, current_project_name,
                                    image_enabled, video_enabled, image_concurrency, video_concurrency)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
                 RETURNING id
-            """, token.st, token.at, to_naive_utc(token.at_expires), token.email, token.name, token.remark,
-                  token.is_active, token.credits, token.user_paygate_tier,
-                  token.current_project_id, token.current_project_name,
-                  token.image_enabled, token.video_enabled,
-                  token.image_concurrency, token.video_concurrency)
+            """, token.st, token.at, to_naive_utc(token.at_expires),
+                token.email, token.name, token.remark, token.is_active,
+                token.credits, token.user_paygate_tier,
+                token.current_project_id, token.current_project_name,
+                token.image_enabled, token.video_enabled,
+                token.image_concurrency, token.video_concurrency)
 
-            await conn.execute("""
+            await conn.execute(
+                """
                 INSERT INTO token_stats (token_id) VALUES ($1)
             """, token_id)
 
@@ -515,7 +566,8 @@ class Database:
         """Get token by ID"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM tokens WHERE id = $1", token_id)
+            row = await conn.fetchrow("SELECT * FROM tokens WHERE id = $1",
+                                      token_id)
             if row:
                 return Token(**dict(row))
             return None
@@ -533,7 +585,8 @@ class Database:
         """Get token by email"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM tokens WHERE email = $1", email)
+            row = await conn.fetchrow("SELECT * FROM tokens WHERE email = $1",
+                                      email)
             if row:
                 return Token(**dict(row))
             return None
@@ -542,14 +595,17 @@ class Database:
         """Get all tokens"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            rows = await conn.fetch("SELECT * FROM tokens ORDER BY created_at DESC")
+            rows = await conn.fetch(
+                "SELECT * FROM tokens ORDER BY created_at DESC")
             return [Token(**dict(row)) for row in rows]
 
     async def get_active_tokens(self) -> List[Token]:
         """Get all active tokens"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            rows = await conn.fetch("SELECT * FROM tokens WHERE is_active = TRUE ORDER BY last_used_at ASC NULLS FIRST")
+            rows = await conn.fetch(
+                "SELECT * FROM tokens WHERE is_active = TRUE ORDER BY last_used_at ASC NULLS FIRST"
+            )
             return [Token(**dict(row)) for row in rows]
 
     async def update_token(self, token_id: int, **kwargs):
@@ -560,7 +616,9 @@ class Database:
             params = []
             param_idx = 1
 
-            datetime_fields = {'at_expires', 'last_used_at', 'banned_at', 'created_at'}
+            datetime_fields = {
+                'at_expires', 'last_used_at', 'banned_at', 'created_at'
+            }
 
             for key, value in kwargs.items():
                 if value is not None:
@@ -581,29 +639,35 @@ class Database:
         async with pool.acquire() as conn:
             # PostgreSQL requires manual deletion of related records if foreign keys are not ON DELETE CASCADE
             # In our schema, token_stats, projects, tasks, and request_logs may reference tokens(id)
-            await conn.execute("DELETE FROM token_stats WHERE token_id = $1", token_id)
-            await conn.execute("DELETE FROM projects WHERE token_id = $1", token_id)
-            await conn.execute("DELETE FROM tasks WHERE token_id = $1", token_id)
-            await conn.execute("DELETE FROM request_logs WHERE token_id = $1", token_id)
+            await conn.execute("DELETE FROM token_stats WHERE token_id = $1",
+                               token_id)
+            await conn.execute("DELETE FROM projects WHERE token_id = $1",
+                               token_id)
+            await conn.execute("DELETE FROM tasks WHERE token_id = $1",
+                               token_id)
+            await conn.execute("DELETE FROM request_logs WHERE token_id = $1",
+                               token_id)
             await conn.execute("DELETE FROM tokens WHERE id = $1", token_id)
 
     async def add_project(self, project: Project) -> int:
         """Add a new project"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            project_id = await conn.fetchval("""
+            project_id = await conn.fetchval(
+                """
                 INSERT INTO projects (project_id, token_id, project_name, tool_name, is_active)
                 VALUES ($1, $2, $3, $4, $5)
                 RETURNING id
             """, project.project_id, project.token_id, project.project_name,
-                  project.tool_name, project.is_active)
+                project.tool_name, project.is_active)
             return project_id
 
     async def get_project_by_id(self, project_id: str) -> Optional[Project]:
         """Get project by UUID"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM projects WHERE project_id = $1", project_id)
+            row = await conn.fetchrow(
+                "SELECT * FROM projects WHERE project_id = $1", project_id)
             if row:
                 return Project(**dict(row))
             return None
@@ -614,37 +678,40 @@ class Database:
         async with pool.acquire() as conn:
             rows = await conn.fetch(
                 "SELECT * FROM projects WHERE token_id = $1 ORDER BY created_at DESC",
-                token_id
-            )
+                token_id)
             return [Project(**dict(row)) for row in rows]
 
     async def delete_project(self, project_id: str):
         """Delete project"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            await conn.execute("DELETE FROM projects WHERE project_id = $1", project_id)
+            await conn.execute("DELETE FROM projects WHERE project_id = $1",
+                               project_id)
 
     async def create_task(self, task: Task) -> int:
         """Create a new task"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            task_id = await conn.fetchval("""
+            task_id = await conn.fetchval(
+                """
                 INSERT INTO tasks (task_id, token_id, model, prompt, status, progress, scene_id)
                 VALUES ($1, $2, $3, $4, $5, $6, $7)
                 RETURNING id
             """, task.task_id, task.token_id, task.model, task.prompt,
-                  task.status, task.progress, task.scene_id)
+                task.status, task.progress, task.scene_id)
             return task_id
 
     async def get_task(self, task_id: str) -> Optional[Task]:
         """Get task by ID"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM tasks WHERE task_id = $1", task_id)
+            row = await conn.fetchrow("SELECT * FROM tasks WHERE task_id = $1",
+                                      task_id)
             if row:
                 task_dict = dict(row)
                 if task_dict.get("result_urls"):
-                    task_dict["result_urls"] = json.loads(task_dict["result_urls"])
+                    task_dict["result_urls"] = json.loads(
+                        task_dict["result_urls"])
                 return Task(**task_dict)
             return None
 
@@ -682,7 +749,8 @@ class Database:
         """Get token statistics"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM token_stats WHERE token_id = $1", token_id)
+            row = await conn.fetchrow(
+                "SELECT * FROM token_stats WHERE token_id = $1", token_id)
             if row:
                 return TokenStats(**dict(row))
             return None
@@ -693,10 +761,13 @@ class Database:
         pool = await self.get_pool()
         async with pool.acquire() as conn:
             today = date.today()
-            row = await conn.fetchrow("SELECT today_date FROM token_stats WHERE token_id = $1", token_id)
+            row = await conn.fetchrow(
+                "SELECT today_date FROM token_stats WHERE token_id = $1",
+                token_id)
 
             if row and row['today_date'] != today:
-                await conn.execute("""
+                await conn.execute(
+                    """
                     UPDATE token_stats
                     SET image_count = image_count + 1,
                         today_image_count = 1,
@@ -704,7 +775,8 @@ class Database:
                     WHERE token_id = $2
                 """, today, token_id)
             else:
-                await conn.execute("""
+                await conn.execute(
+                    """
                     UPDATE token_stats
                     SET image_count = image_count + 1,
                         today_image_count = today_image_count + 1,
@@ -718,10 +790,13 @@ class Database:
         pool = await self.get_pool()
         async with pool.acquire() as conn:
             today = date.today()
-            row = await conn.fetchrow("SELECT today_date FROM token_stats WHERE token_id = $1", token_id)
+            row = await conn.fetchrow(
+                "SELECT today_date FROM token_stats WHERE token_id = $1",
+                token_id)
 
             if row and row['today_date'] != today:
-                await conn.execute("""
+                await conn.execute(
+                    """
                     UPDATE token_stats
                     SET video_count = video_count + 1,
                         today_video_count = 1,
@@ -729,7 +804,8 @@ class Database:
                     WHERE token_id = $2
                 """, today, token_id)
             else:
-                await conn.execute("""
+                await conn.execute(
+                    """
                     UPDATE token_stats
                     SET video_count = video_count + 1,
                         today_video_count = today_video_count + 1,
@@ -743,10 +819,13 @@ class Database:
         pool = await self.get_pool()
         async with pool.acquire() as conn:
             today = date.today()
-            row = await conn.fetchrow("SELECT today_date FROM token_stats WHERE token_id = $1", token_id)
+            row = await conn.fetchrow(
+                "SELECT today_date FROM token_stats WHERE token_id = $1",
+                token_id)
 
             if row and row['today_date'] != today:
-                await conn.execute("""
+                await conn.execute(
+                    """
                     UPDATE token_stats
                     SET error_count = error_count + 1,
                         consecutive_error_count = consecutive_error_count + 1,
@@ -756,7 +835,8 @@ class Database:
                     WHERE token_id = $2
                 """, today, token_id)
             else:
-                await conn.execute("""
+                await conn.execute(
+                    """
                     UPDATE token_stats
                     SET error_count = error_count + 1,
                         consecutive_error_count = consecutive_error_count + 1,
@@ -770,7 +850,8 @@ class Database:
         """Reset consecutive error count"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            await conn.execute("""
+            await conn.execute(
+                """
                 UPDATE token_stats SET consecutive_error_count = 0 WHERE token_id = $1
             """, token_id)
 
@@ -778,7 +859,8 @@ class Database:
         """Get admin configuration"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM admin_config WHERE id = 1")
+            row = await conn.fetchrow("SELECT * FROM admin_config WHERE id = 1"
+                                      )
             if row:
                 return AdminConfig(**dict(row))
             return None
@@ -806,16 +888,20 @@ class Database:
         """Get proxy configuration"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM proxy_config WHERE id = 1")
+            row = await conn.fetchrow("SELECT * FROM proxy_config WHERE id = 1"
+                                      )
             if row:
                 return ProxyConfig(**dict(row))
             return None
 
-    async def update_proxy_config(self, enabled: bool, proxy_url: Optional[str] = None):
+    async def update_proxy_config(self,
+                                  enabled: bool,
+                                  proxy_url: Optional[str] = None):
         """Update proxy configuration"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            await conn.execute("""
+            await conn.execute(
+                """
                 UPDATE proxy_config
                 SET enabled = $1, proxy_url = $2, updated_at = NOW()
                 WHERE id = 1
@@ -825,16 +911,19 @@ class Database:
         """Get generation configuration"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM generation_config WHERE id = 1")
+            row = await conn.fetchrow(
+                "SELECT * FROM generation_config WHERE id = 1")
             if row:
                 return GenerationConfig(**dict(row))
             return None
 
-    async def update_generation_config(self, image_timeout: int, video_timeout: int):
+    async def update_generation_config(self, image_timeout: int,
+                                       video_timeout: int):
         """Update generation configuration"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            await conn.execute("""
+            await conn.execute(
+                """
                 UPDATE generation_config
                 SET image_timeout = $1, video_timeout = $2, updated_at = NOW()
                 WHERE id = 1
@@ -844,18 +933,20 @@ class Database:
         """Add request log"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            await conn.execute("""
+            await conn.execute(
+                """
                 INSERT INTO request_logs (token_id, operation, request_body, response_body, status_code, duration)
                 VALUES ($1, $2, $3, $4, $5, $6)
-            """, log.token_id, log.operation, log.request_body, log.response_body,
-                  log.status_code, log.duration)
+            """, log.token_id, log.operation, log.request_body,
+                log.response_body, log.status_code, log.duration)
 
     async def get_logs(self, limit: int = 100, token_id: Optional[int] = None):
         """Get request logs with token email"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
             if token_id:
-                rows = await conn.fetch("""
+                rows = await conn.fetch(
+                    """
                     SELECT
                         rl.id,
                         rl.token_id,
@@ -874,7 +965,8 @@ class Database:
                     LIMIT $2
                 """, token_id, limit)
             else:
-                rows = await conn.fetch("""
+                rows = await conn.fetch(
+                    """
                     SELECT
                         rl.id,
                         rl.token_id,
@@ -900,7 +992,9 @@ class Database:
         async with pool.acquire() as conn:
             await conn.execute("DELETE FROM request_logs")
 
-    async def init_config_from_toml(self, config_dict: dict, is_first_startup: bool = True):
+    async def init_config_from_toml(self,
+                                    config_dict: dict,
+                                    is_first_startup: bool = True):
         """Initialize database configuration from setting.toml"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
@@ -944,27 +1038,36 @@ class Database:
         """Get cache configuration"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM cache_config WHERE id = 1")
+            row = await conn.fetchrow("SELECT * FROM cache_config WHERE id = 1"
+                                      )
             if row:
                 return CacheConfig(**dict(row))
             return CacheConfig(cache_enabled=False, cache_timeout=7200)
 
-    async def update_cache_config(self, enabled: bool = None, timeout: int = None, base_url: Optional[str] = None):
+    async def update_cache_config(self,
+                                  enabled: bool = None,
+                                  timeout: int = None,
+                                  base_url: Optional[str] = None):
         """Update cache configuration"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM cache_config WHERE id = 1")
+            row = await conn.fetchrow("SELECT * FROM cache_config WHERE id = 1"
+                                      )
 
             if row:
                 current = dict(row)
-                new_enabled = enabled if enabled is not None else current.get("cache_enabled", False)
-                new_timeout = timeout if timeout is not None else current.get("cache_timeout", 7200)
-                new_base_url = base_url if base_url is not None else current.get("cache_base_url")
+                new_enabled = enabled if enabled is not None else current.get(
+                    "cache_enabled", False)
+                new_timeout = timeout if timeout is not None else current.get(
+                    "cache_timeout", 7200)
+                new_base_url = base_url if base_url is not None else current.get(
+                    "cache_base_url")
 
                 if base_url == "":
                     new_base_url = None
 
-                await conn.execute("""
+                await conn.execute(
+                    """
                     UPDATE cache_config
                     SET cache_enabled = $1, cache_timeout = $2, cache_base_url = $3, updated_at = NOW()
                     WHERE id = 1
@@ -974,7 +1077,8 @@ class Database:
                 new_timeout = timeout if timeout is not None else 7200
                 new_base_url = base_url if base_url is not None else None
 
-                await conn.execute("""
+                await conn.execute(
+                    """
                     INSERT INTO cache_config (id, cache_enabled, cache_timeout, cache_base_url)
                     VALUES (1, $1, $2, $3)
                 """, new_enabled, new_timeout, new_base_url)
@@ -984,89 +1088,112 @@ class Database:
         from .models import DebugConfig
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM debug_config WHERE id = 1")
+            row = await conn.fetchrow("SELECT * FROM debug_config WHERE id = 1"
+                                      )
             if row:
                 return DebugConfig(**dict(row))
-            return DebugConfig(enabled=False, log_requests=True, log_responses=True, mask_token=True)
+            return DebugConfig(enabled=False,
+                               log_requests=True,
+                               log_responses=True,
+                               mask_token=True)
 
-    async def update_debug_config(
-        self,
-        enabled: bool = None,
-        log_requests: bool = None,
-        log_responses: bool = None,
-        mask_token: bool = None
-    ):
+    async def update_debug_config(self,
+                                  enabled: bool = None,
+                                  log_requests: bool = None,
+                                  log_responses: bool = None,
+                                  mask_token: bool = None):
         """Update debug configuration"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM debug_config WHERE id = 1")
+            row = await conn.fetchrow("SELECT * FROM debug_config WHERE id = 1"
+                                      )
 
             if row:
                 current = dict(row)
-                new_enabled = enabled if enabled is not None else current.get("enabled", False)
-                new_log_requests = log_requests if log_requests is not None else current.get("log_requests", True)
-                new_log_responses = log_responses if log_responses is not None else current.get("log_responses", True)
-                new_mask_token = mask_token if mask_token is not None else current.get("mask_token", True)
+                new_enabled = enabled if enabled is not None else current.get(
+                    "enabled", False)
+                new_log_requests = log_requests if log_requests is not None else current.get(
+                    "log_requests", True)
+                new_log_responses = log_responses if log_responses is not None else current.get(
+                    "log_responses", True)
+                new_mask_token = mask_token if mask_token is not None else current.get(
+                    "mask_token", True)
 
-                await conn.execute("""
+                await conn.execute(
+                    """
                     UPDATE debug_config
                     SET enabled = $1, log_requests = $2, log_responses = $3, mask_token = $4, updated_at = NOW()
                     WHERE id = 1
-                """, new_enabled, new_log_requests, new_log_responses, new_mask_token)
+                """, new_enabled, new_log_requests, new_log_responses,
+                    new_mask_token)
             else:
                 new_enabled = enabled if enabled is not None else False
                 new_log_requests = log_requests if log_requests is not None else True
                 new_log_responses = log_responses if log_responses is not None else True
                 new_mask_token = mask_token if mask_token is not None else True
 
-                await conn.execute("""
+                await conn.execute(
+                    """
                     INSERT INTO debug_config (id, enabled, log_requests, log_responses, mask_token)
                     VALUES (1, $1, $2, $3, $4)
-                """, new_enabled, new_log_requests, new_log_responses, new_mask_token)
+                """, new_enabled, new_log_requests, new_log_responses,
+                    new_mask_token)
 
     async def get_captcha_config(self) -> CaptchaConfig:
         """Get captcha configuration"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM captcha_config WHERE id = 1")
+            row = await conn.fetchrow(
+                "SELECT * FROM captcha_config WHERE id = 1")
             if row:
                 return CaptchaConfig(**dict(row))
             return CaptchaConfig()
 
-    async def update_captcha_config(
-        self,
-        captcha_method: str = None,
-        yescaptcha_api_key: str = None,
-        yescaptcha_base_url: str = None,
-        capmonster_api_key: str = None,
-        capmonster_base_url: str = None,
-        ezcaptcha_api_key: str = None,
-        ezcaptcha_base_url: str = None,
-        capsolver_api_key: str = None,
-        capsolver_base_url: str = None,
-        browser_proxy_enabled: bool = None,
-        browser_proxy_url: str = None
-    ):
+    async def update_captcha_config(self,
+                                    captcha_method: str = None,
+                                    yescaptcha_api_key: str = None,
+                                    yescaptcha_base_url: str = None,
+                                    capmonster_api_key: str = None,
+                                    capmonster_base_url: str = None,
+                                    ezcaptcha_api_key: str = None,
+                                    ezcaptcha_base_url: str = None,
+                                    capsolver_api_key: str = None,
+                                    capsolver_base_url: str = None,
+                                    browser_proxy_enabled: bool = None,
+                                    browser_proxy_url: str = None):
         """Update captcha configuration"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM captcha_config WHERE id = 1")
+            row = await conn.fetchrow(
+                "SELECT * FROM captcha_config WHERE id = 1")
 
             if row:
                 current = dict(row)
-                new_method = captcha_method if captcha_method is not None else current.get("captcha_method", "yescaptcha")
-                new_yes_key = yescaptcha_api_key if yescaptcha_api_key is not None else current.get("yescaptcha_api_key", "")
-                new_yes_url = yescaptcha_base_url if yescaptcha_base_url is not None else current.get("yescaptcha_base_url", "https://api.yescaptcha.com")
-                new_cap_key = capmonster_api_key if capmonster_api_key is not None else current.get("capmonster_api_key", "")
-                new_cap_url = capmonster_base_url if capmonster_base_url is not None else current.get("capmonster_base_url", "https://api.capmonster.cloud")
-                new_ez_key = ezcaptcha_api_key if ezcaptcha_api_key is not None else current.get("ezcaptcha_api_key", "")
-                new_ez_url = ezcaptcha_base_url if ezcaptcha_base_url is not None else current.get("ezcaptcha_base_url", "https://api.ez-captcha.com")
-                new_cs_key = capsolver_api_key if capsolver_api_key is not None else current.get("capsolver_api_key", "")
-                new_cs_url = capsolver_base_url if capsolver_base_url is not None else current.get("capsolver_base_url", "https://api.capsolver.com")
-                new_proxy_enabled = browser_proxy_enabled if browser_proxy_enabled is not None else current.get("browser_proxy_enabled", False)
-                new_proxy_url = browser_proxy_url if browser_proxy_url is not None else current.get("browser_proxy_url")
+                new_method = captcha_method if captcha_method is not None else current.get(
+                    "captcha_method", "yescaptcha")
+                new_yes_key = yescaptcha_api_key if yescaptcha_api_key is not None else current.get(
+                    "yescaptcha_api_key", "")
+                new_yes_url = yescaptcha_base_url if yescaptcha_base_url is not None else current.get(
+                    "yescaptcha_base_url", "https://api.yescaptcha.com")
+                new_cap_key = capmonster_api_key if capmonster_api_key is not None else current.get(
+                    "capmonster_api_key", "")
+                new_cap_url = capmonster_base_url if capmonster_base_url is not None else current.get(
+                    "capmonster_base_url", "https://api.capmonster.cloud")
+                new_ez_key = ezcaptcha_api_key if ezcaptcha_api_key is not None else current.get(
+                    "ezcaptcha_api_key", "")
+                new_ez_url = ezcaptcha_base_url if ezcaptcha_base_url is not None else current.get(
+                    "ezcaptcha_base_url", "https://api.ez-captcha.com")
+                new_cs_key = capsolver_api_key if capsolver_api_key is not None else current.get(
+                    "capsolver_api_key", "")
+                new_cs_url = capsolver_base_url if capsolver_base_url is not None else current.get(
+                    "capsolver_base_url", "https://api.capsolver.com")
+                new_proxy_enabled = browser_proxy_enabled if browser_proxy_enabled is not None else current.get(
+                    "browser_proxy_enabled", False)
+                new_proxy_url = browser_proxy_url if browser_proxy_url is not None else current.get(
+                    "browser_proxy_url")
 
-                await conn.execute("""
+                await conn.execute(
+                    """
                     UPDATE captcha_config
                     SET captcha_method = $1, yescaptcha_api_key = $2, yescaptcha_base_url = $3,
                         capmonster_api_key = $4, capmonster_base_url = $5,
@@ -1074,8 +1201,9 @@ class Database:
                         capsolver_api_key = $8, capsolver_base_url = $9,
                         browser_proxy_enabled = $10, browser_proxy_url = $11, updated_at = NOW()
                     WHERE id = 1
-                """, new_method, new_yes_key, new_yes_url, new_cap_key, new_cap_url,
-                      new_ez_key, new_ez_url, new_cs_key, new_cs_url, new_proxy_enabled, new_proxy_url)
+                """, new_method, new_yes_key, new_yes_url, new_cap_key,
+                    new_cap_url, new_ez_key, new_ez_url, new_cs_key,
+                    new_cs_url, new_proxy_enabled, new_proxy_url)
             else:
                 new_method = captcha_method if captcha_method is not None else "yescaptcha"
                 new_yes_key = yescaptcha_api_key if yescaptcha_api_key is not None else ""
@@ -1089,37 +1217,45 @@ class Database:
                 new_proxy_enabled = browser_proxy_enabled if browser_proxy_enabled is not None else False
                 new_proxy_url = browser_proxy_url
 
-                await conn.execute("""
+                await conn.execute(
+                    """
                     INSERT INTO captcha_config (id, captcha_method, yescaptcha_api_key, yescaptcha_base_url,
                         capmonster_api_key, capmonster_base_url, ezcaptcha_api_key, ezcaptcha_base_url,
                         capsolver_api_key, capsolver_base_url, browser_proxy_enabled, browser_proxy_url)
                     VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-                """, new_method, new_yes_key, new_yes_url, new_cap_key, new_cap_url,
-                      new_ez_key, new_ez_url, new_cs_key, new_cs_url, new_proxy_enabled, new_proxy_url)
+                """, new_method, new_yes_key, new_yes_url, new_cap_key,
+                    new_cap_url, new_ez_key, new_ez_url, new_cs_key,
+                    new_cs_url, new_proxy_enabled, new_proxy_url)
 
     async def get_plugin_config(self) -> PluginConfig:
         """Get plugin configuration"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM plugin_config WHERE id = 1")
+            row = await conn.fetchrow(
+                "SELECT * FROM plugin_config WHERE id = 1")
             if row:
                 return PluginConfig(**dict(row))
             return PluginConfig()
 
-    async def update_plugin_config(self, connection_token: str, auto_enable_on_update: bool = True):
+    async def update_plugin_config(self,
+                                   connection_token: str,
+                                   auto_enable_on_update: bool = True):
         """Update plugin configuration"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
-            row = await conn.fetchrow("SELECT * FROM plugin_config WHERE id = 1")
+            row = await conn.fetchrow(
+                "SELECT * FROM plugin_config WHERE id = 1")
 
             if row:
-                await conn.execute("""
+                await conn.execute(
+                    """
                     UPDATE plugin_config
                     SET connection_token = $1, auto_enable_on_update = $2, updated_at = NOW()
                     WHERE id = 1
                 """, connection_token, auto_enable_on_update)
             else:
-                await conn.execute("""
+                await conn.execute(
+                    """
                     INSERT INTO plugin_config (id, connection_token, auto_enable_on_update)
                     VALUES (1, $1, $2)
                 """, connection_token, auto_enable_on_update)

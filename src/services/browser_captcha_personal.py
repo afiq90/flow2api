@@ -92,7 +92,7 @@ class BrowserCaptchaService:
             self.browser = await uc.start(
                 headless=self.headless,
                 user_data_dir=self.user_data_dir,
-                sandbox=False,  # nodriver 需要此参数来禁用 sandbox
+                no_sandbox=True,
                 browser_args=[
                     '--no-sandbox',
                     '--disable-dev-shm-usage',

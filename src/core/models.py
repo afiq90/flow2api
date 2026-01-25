@@ -157,7 +157,7 @@ class CaptchaConfig(BaseModel):
     capsolver_api_key: str = ""
     capsolver_base_url: str = "https://api.capsolver.com"
     website_key: str = "6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV"
-    page_action: str = "VIDEO_GENERATION"
+    page_action: str = "FLOW_GENERATION"
     browser_proxy_enabled: bool = False  # 浏览器打码是否启用代理
     browser_proxy_url: Optional[str] = None  # 浏览器打码代理URL
     created_at: Optional[datetime] = None
@@ -188,6 +188,5 @@ class ChatCompletionRequest(BaseModel):
     temperature: Optional[float] = None
     max_tokens: Optional[int] = None
     # Flow2API specific parameters
-    image: Optional[
-        str] = None  # Base64 encoded image (deprecated, use messages)
+    image: Optional[str] = None  # Base64 encoded image (deprecated, use messages)
     video: Optional[str] = None  # Base64 encoded video (deprecated)

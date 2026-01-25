@@ -16,7 +16,7 @@ class FlowClient:
         self.proxy_manager = proxy_manager
         self.db = db  # Database instance for captcha config
         self.labs_base_url = config.flow_labs_base_url  # https://labs.google/fx/api
-        self.api_base_url = config.flow_api_base_url  # https://aisandbox-pa.googleapis.com/v1
+        self.api_base_url = config.flow_api_base_url    # https://aisandbox-pa.googleapis.com/v1
         self.timeout = config.flow_timeout
         # 缓存每个账号的 User-Agent
         self._user_agent_cache = {}
@@ -33,16 +33,16 @@ class FlowClient:
         # 如果没有提供账号ID，生成随机UA
         if not account_id:
             account_id = f"random_{random.randint(1, 999999)}"
-
+        
         # 如果已缓存，直接返回
         if account_id in self._user_agent_cache:
             return self._user_agent_cache[account_id]
-
+        
         # 使用账号ID作为随机种子，确保同一账号生成相同的UA
         import hashlib
         seed = int(hashlib.md5(account_id.encode()).hexdigest()[:8], 16)
         rng = random.Random(seed)
-
+        
         # Chrome 版本池
         chrome_versions = ["130.0.0.0", "131.0.0.0", "132.0.0.0", "129.0.0.0"]
         # Firefox 版本池
@@ -56,41 +56,29 @@ class FlowClient:
         os_configs = [
             # Windows
             {
-                "platform":
-                "Windows NT 10.0; Win64; x64",
+                "platform": "Windows NT 10.0; Win64; x64",
                 "browsers": [
-                    lambda r:
-                    f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{r.choice(chrome_versions)} Safari/537.36",
-                    lambda r:
-                    f"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:{r.choice(firefox_versions).split('.')[0]}.0) Gecko/20100101 Firefox/{r.choice(firefox_versions)}",
-                    lambda r:
-                    f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{r.choice(chrome_versions)} Safari/537.36 Edg/{r.choice(edge_versions)}",
+                    lambda r: f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{r.choice(chrome_versions)} Safari/537.36",
+                    lambda r: f"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:{r.choice(firefox_versions).split('.')[0]}.0) Gecko/20100101 Firefox/{r.choice(firefox_versions)}",
+                    lambda r: f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{r.choice(chrome_versions)} Safari/537.36 Edg/{r.choice(edge_versions)}",
                 ]
             },
             # macOS
             {
-                "platform":
-                "Macintosh; Intel Mac OS X 10_15_7",
+                "platform": "Macintosh; Intel Mac OS X 10_15_7",
                 "browsers": [
-                    lambda r:
-                    f"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{r.choice(chrome_versions)} Safari/537.36",
-                    lambda r:
-                    f"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/{r.choice(safari_versions)} Safari/605.1.15",
-                    lambda r:
-                    f"Mozilla/5.0 (Macintosh; Intel Mac OS X 14.{r.randint(0, 7)}; rv:{r.choice(firefox_versions).split('.')[0]}.0) Gecko/20100101 Firefox/{r.choice(firefox_versions)}",
+                    lambda r: f"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{r.choice(chrome_versions)} Safari/537.36",
+                    lambda r: f"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/{r.choice(safari_versions)} Safari/605.1.15",
+                    lambda r: f"Mozilla/5.0 (Macintosh; Intel Mac OS X 14.{r.randint(0, 7)}; rv:{r.choice(firefox_versions).split('.')[0]}.0) Gecko/20100101 Firefox/{r.choice(firefox_versions)}",
                 ]
             },
             # Linux
             {
-                "platform":
-                "X11; Linux x86_64",
+                "platform": "X11; Linux x86_64",
                 "browsers": [
-                    lambda r:
-                    f"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{r.choice(chrome_versions)} Safari/537.36",
-                    lambda r:
-                    f"Mozilla/5.0 (X11; Linux x86_64; rv:{r.choice(firefox_versions).split('.')[0]}.0) Gecko/20100101 Firefox/{r.choice(firefox_versions)}",
-                    lambda r:
-                    f"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:{r.choice(firefox_versions).split('.')[0]}.0) Gecko/20100101 Firefox/{r.choice(firefox_versions)}",
+                    lambda r: f"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{r.choice(chrome_versions)} Safari/537.36",
+                    lambda r: f"Mozilla/5.0 (X11; Linux x86_64; rv:{r.choice(firefox_versions).split('.')[0]}.0) Gecko/20100101 Firefox/{r.choice(firefox_versions)}",
+                    lambda r: f"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:{r.choice(firefox_versions).split('.')[0]}.0) Gecko/20100101 Firefox/{r.choice(firefox_versions)}",
                 ]
             }
         ]
@@ -99,21 +87,23 @@ class FlowClient:
         os_config = rng.choice(os_configs)
         browser_generator = rng.choice(os_config["browsers"])
         user_agent = browser_generator(rng)
-
+        
         # 缓存结果
         self._user_agent_cache[account_id] = user_agent
-
+        
         return user_agent
 
-    async def _make_request(self,
-                            method: str,
-                            url: str,
-                            headers: Optional[Dict] = None,
-                            json_data: Optional[Dict] = None,
-                            use_st: bool = False,
-                            st_token: Optional[str] = None,
-                            use_at: bool = False,
-                            at_token: Optional[str] = None) -> Dict[str, Any]:
+    async def _make_request(
+        self,
+        method: str,
+        url: str,
+        headers: Optional[Dict] = None,
+        json_data: Optional[Dict] = None,
+        use_st: bool = False,
+        st_token: Optional[str] = None,
+        use_at: bool = False,
+        at_token: Optional[str] = None
+    ) -> Dict[str, Any]:
         """统一HTTP请求处理
 
         Args:
@@ -154,44 +144,51 @@ class FlowClient:
 
         # Log request
         if config.debug_enabled:
-            debug_logger.log_request(method=method,
-                                     url=url,
-                                     headers=headers,
-                                     body=json_data,
-                                     proxy=proxy_url)
+            debug_logger.log_request(
+                method=method,
+                url=url,
+                headers=headers,
+                body=json_data,
+                proxy=proxy_url
+            )
 
         start_time = time.time()
 
         try:
             async with AsyncSession() as session:
                 if method.upper() == "GET":
-                    response = await session.get(url,
-                                                 headers=headers,
-                                                 proxy=proxy_url,
-                                                 timeout=self.timeout,
-                                                 impersonate="chrome110")
+                    response = await session.get(
+                        url,
+                        headers=headers,
+                        proxy=proxy_url,
+                        timeout=self.timeout,
+                        impersonate="chrome110"
+                    )
                 else:  # POST
-                    response = await session.post(url,
-                                                  headers=headers,
-                                                  json=json_data,
-                                                  proxy=proxy_url,
-                                                  timeout=self.timeout,
-                                                  impersonate="chrome110")
+                    response = await session.post(
+                        url,
+                        headers=headers,
+                        json=json_data,
+                        proxy=proxy_url,
+                        timeout=self.timeout,
+                        impersonate="chrome110"
+                    )
 
                 duration_ms = (time.time() - start_time) * 1000
                 response_text = response.text
 
                 # Log response
                 if config.debug_enabled:
-                    debug_logger.log_response(status_code=response.status_code,
-                                              headers=dict(response.headers),
-                                              body=response_text,
-                                              duration_ms=duration_ms)
+                    debug_logger.log_response(
+                        status_code=response.status_code,
+                        headers=dict(response.headers),
+                        body=response_text,
+                        duration_ms=duration_ms
+                    )
 
                 if response.status_code >= 400:
                     error_detail = f"Status {response.status_code}: {response_text}"
-                    debug_logger.log_error(
-                        f"Flow API error detail: {error_detail}")
+                    debug_logger.log_error(f"Flow API error detail: {error_detail}")
                     raise Exception(f"Flow API request failed: {error_detail}")
 
                 return response.json()
@@ -204,10 +201,10 @@ class FlowClient:
                 debug_logger.log_error(
                     error_message=error_msg,
                     status_code=getattr(e, 'status_code', None),
-                    response_text=getattr(e, 'response_text', None))
+                    response_text=getattr(e, 'response_text', None)
+                )
 
-            raise Exception(error_msg if "Flow API request failed" in error_msg
-                            else f"Flow API request failed: {error_msg}")
+            raise Exception(error_msg if "Flow API request failed" in error_msg else f"Flow API request failed: {error_msg}")
 
     # ========== 认证相关 (使用ST) ==========
 
@@ -225,10 +222,12 @@ class FlowClient:
             }
         """
         url = f"{self.labs_base_url}/auth/session"
-        result = await self._make_request(method="GET",
-                                          url=url,
-                                          use_st=True,
-                                          st_token=st)
+        result = await self._make_request(
+            method="GET",
+            url=url,
+            use_st=True,
+            st_token=st
+        )
         return result
 
     # ========== 项目管理 (使用ST) ==========
@@ -244,13 +243,20 @@ class FlowClient:
             project_id (UUID)
         """
         url = f"{self.labs_base_url}/trpc/project.createProject"
-        json_data = {"json": {"projectTitle": title, "toolName": "PINHOLE"}}
+        json_data = {
+            "json": {
+                "projectTitle": title,
+                "toolName": "PINHOLE"
+            }
+        }
 
-        result = await self._make_request(method="POST",
-                                          url=url,
-                                          json_data=json_data,
-                                          use_st=True,
-                                          st_token=st)
+        result = await self._make_request(
+            method="POST",
+            url=url,
+            json_data=json_data,
+            use_st=True,
+            st_token=st
+        )
 
         # 解析返回的project_id
         project_id = result["result"]["data"]["json"]["result"]["projectId"]
@@ -264,13 +270,19 @@ class FlowClient:
             project_id: 项目ID
         """
         url = f"{self.labs_base_url}/trpc/project.deleteProject"
-        json_data = {"json": {"projectToDeleteId": project_id}}
+        json_data = {
+            "json": {
+                "projectToDeleteId": project_id
+            }
+        }
 
-        await self._make_request(method="POST",
-                                 url=url,
-                                 json_data=json_data,
-                                 use_st=True,
-                                 st_token=st)
+        await self._make_request(
+            method="POST",
+            url=url,
+            json_data=json_data,
+            use_st=True,
+            st_token=st
+        )
 
     # ========== 余额查询 (使用AT) ==========
 
@@ -287,19 +299,22 @@ class FlowClient:
             }
         """
         url = f"{self.api_base_url}/credits"
-        result = await self._make_request(method="GET",
-                                          url=url,
-                                          use_at=True,
-                                          at_token=at)
+        result = await self._make_request(
+            method="GET",
+            url=url,
+            use_at=True,
+            at_token=at
+        )
         return result
 
     # ========== 图片上传 (使用AT) ==========
 
     async def upload_image(
-            self,
-            at: str,
-            image_bytes: bytes,
-            aspect_ratio: str = "IMAGE_ASPECT_RATIO_LANDSCAPE") -> str:
+        self,
+        at: str,
+        image_bytes: bytes,
+        aspect_ratio: str = "IMAGE_ASPECT_RATIO_LANDSCAPE"
+    ) -> str:
         """上传图片,返回mediaGenerationId
 
         Args:
@@ -333,11 +348,13 @@ class FlowClient:
             }
         }
 
-        result = await self._make_request(method="POST",
-                                          url=url,
-                                          json_data=json_data,
-                                          use_at=True,
-                                          at_token=at)
+        result = await self._make_request(
+            method="POST",
+            url=url,
+            json_data=json_data,
+            use_at=True,
+            at_token=at
+        )
 
         # 返回mediaGenerationId
         media_id = result["mediaGenerationId"]["mediaGenerationId"]
@@ -346,13 +363,14 @@ class FlowClient:
     # ========== 图片生成 (使用AT) - 同步返回 ==========
 
     async def generate_image(
-            self,
-            at: str,
-            project_id: str,
-            prompt: str,
-            model_name: str,
-            aspect_ratio: str,
-            image_inputs: Optional[List[Dict]] = None) -> dict:
+        self,
+        at: str,
+        project_id: str,
+        prompt: str,
+        model_name: str,
+        aspect_ratio: str,
+        image_inputs: Optional[List[Dict]] = None
+    ) -> dict:
         """生成图片(同步返回)
 
         Args:
@@ -404,24 +422,27 @@ class FlowClient:
             "requests": [request_data]
         }
 
-        result = await self._make_request(method="POST",
-                                          url=url,
-                                          json_data=json_data,
-                                          use_at=True,
-                                          at_token=at)
+        result = await self._make_request(
+            method="POST",
+            url=url,
+            json_data=json_data,
+            use_at=True,
+            at_token=at
+        )
 
         return result
 
     # ========== 视频生成 (使用AT) - 异步返回 ==========
 
     async def generate_video_text(
-            self,
-            at: str,
-            project_id: str,
-            prompt: str,
-            model_key: str,
-            aspect_ratio: str,
-            user_paygate_tier: str = "PAYGATE_TIER_ONE") -> dict:
+        self,
+        at: str,
+        project_id: str,
+        prompt: str,
+        model_key: str,
+        aspect_ratio: str,
+        user_paygate_tier: str = "PAYGATE_TIER_ONE"
+    ) -> dict:
         """文生视频,返回task_id
 
         Args:
@@ -470,23 +491,26 @@ class FlowClient:
             }]
         }
 
-        result = await self._make_request(method="POST",
-                                          url=url,
-                                          json_data=json_data,
-                                          use_at=True,
-                                          at_token=at)
+        result = await self._make_request(
+            method="POST",
+            url=url,
+            json_data=json_data,
+            use_at=True,
+            at_token=at
+        )
 
         return result
 
     async def generate_video_reference_images(
-            self,
-            at: str,
-            project_id: str,
-            prompt: str,
-            model_key: str,
-            aspect_ratio: str,
-            reference_images: List[Dict],
-            user_paygate_tier: str = "PAYGATE_TIER_ONE") -> dict:
+        self,
+        at: str,
+        project_id: str,
+        prompt: str,
+        model_key: str,
+        aspect_ratio: str,
+        reference_images: List[Dict],
+        user_paygate_tier: str = "PAYGATE_TIER_ONE"
+    ) -> dict:
         """图生视频,返回task_id
 
         Args:
@@ -530,24 +554,27 @@ class FlowClient:
             }]
         }
 
-        result = await self._make_request(method="POST",
-                                          url=url,
-                                          json_data=json_data,
-                                          use_at=True,
-                                          at_token=at)
+        result = await self._make_request(
+            method="POST",
+            url=url,
+            json_data=json_data,
+            use_at=True,
+            at_token=at
+        )
 
         return result
 
     async def generate_video_start_end(
-            self,
-            at: str,
-            project_id: str,
-            prompt: str,
-            model_key: str,
-            aspect_ratio: str,
-            start_media_id: str,
-            end_media_id: str,
-            user_paygate_tier: str = "PAYGATE_TIER_ONE") -> dict:
+        self,
+        at: str,
+        project_id: str,
+        prompt: str,
+        model_key: str,
+        aspect_ratio: str,
+        start_media_id: str,
+        end_media_id: str,
+        user_paygate_tier: str = "PAYGATE_TIER_ONE"
+    ) -> dict:
         """收尾帧生成视频,返回task_id
 
         Args:
@@ -597,23 +624,26 @@ class FlowClient:
             }]
         }
 
-        result = await self._make_request(method="POST",
-                                          url=url,
-                                          json_data=json_data,
-                                          use_at=True,
-                                          at_token=at)
+        result = await self._make_request(
+            method="POST",
+            url=url,
+            json_data=json_data,
+            use_at=True,
+            at_token=at
+        )
 
         return result
 
     async def generate_video_start_image(
-            self,
-            at: str,
-            project_id: str,
-            prompt: str,
-            model_key: str,
-            aspect_ratio: str,
-            start_media_id: str,
-            user_paygate_tier: str = "PAYGATE_TIER_ONE") -> dict:
+        self,
+        at: str,
+        project_id: str,
+        prompt: str,
+        model_key: str,
+        aspect_ratio: str,
+        start_media_id: str,
+        user_paygate_tier: str = "PAYGATE_TIER_ONE"
+    ) -> dict:
         """仅首帧生成视频,返回task_id
 
         Args:
@@ -660,18 +690,19 @@ class FlowClient:
             }]
         }
 
-        result = await self._make_request(method="POST",
-                                          url=url,
-                                          json_data=json_data,
-                                          use_at=True,
-                                          at_token=at)
+        result = await self._make_request(
+            method="POST",
+            url=url,
+            json_data=json_data,
+            use_at=True,
+            at_token=at
+        )
 
         return result
 
     # ========== 任务轮询 (使用AT) ==========
 
-    async def check_video_status(self, at: str,
-                                 operations: List[Dict]) -> dict:
+    async def check_video_status(self, at: str, operations: List[Dict]) -> dict:
         """查询视频生成状态
 
         Args:
@@ -691,13 +722,17 @@ class FlowClient:
         """
         url = f"{self.api_base_url}/video:batchCheckAsyncVideoGenerationStatus"
 
-        json_data = {"operations": operations}
+        json_data = {
+            "operations": operations
+        }
 
-        result = await self._make_request(method="POST",
-                                          url=url,
-                                          json_data=json_data,
-                                          use_at=True,
-                                          at_token=at)
+        result = await self._make_request(
+            method="POST",
+            url=url,
+            json_data=json_data,
+            use_at=True,
+            at_token=at
+        )
 
         return result
 
@@ -711,13 +746,19 @@ class FlowClient:
             media_names: 媒体ID列表
         """
         url = f"{self.labs_base_url}/trpc/media.deleteMedia"
-        json_data = {"json": {"names": media_names}}
+        json_data = {
+            "json": {
+                "names": media_names
+            }
+        }
 
-        await self._make_request(method="POST",
-                                 url=url,
-                                 json_data=json_data,
-                                 use_st=True,
-                                 st_token=st)
+        await self._make_request(
+            method="POST",
+            url=url,
+            json_data=json_data,
+            use_st=True,
+            st_token=st
+        )
 
     # ========== 辅助方法 ==========
 
@@ -752,18 +793,13 @@ class FlowClient:
                 debug_logger.log_error(f"[reCAPTCHA Browser] error: {str(e)}")
                 return None
         # API打码服务
-        elif captcha_method in [
-                "yescaptcha", "capmonster", "ezcaptcha", "capsolver"
-        ]:
-            return await self._get_api_captcha_token(captcha_method,
-                                                     project_id)
+        elif captcha_method in ["yescaptcha", "capmonster", "ezcaptcha", "capsolver"]:
+            return await self._get_api_captcha_token(captcha_method, project_id)
         else:
-            debug_logger.log_error(
-                f"[reCAPTCHA] Unknown captcha method: {captcha_method}")
+            debug_logger.log_error(f"[reCAPTCHA] Unknown captcha method: {captcha_method}")
             return None
 
-    async def _get_api_captcha_token(self, method: str,
-                                     project_id: str) -> Optional[str]:
+    async def _get_api_captcha_token(self, method: str, project_id: str) -> Optional[str]:
         """通用API打码服务"""
         # 获取配置
         if method == "yescaptcha":
@@ -787,13 +823,12 @@ class FlowClient:
             return None
 
         if not client_key:
-            debug_logger.log_info(
-                f"[reCAPTCHA] {method} API key not configured, skipping")
+            debug_logger.log_info(f"[reCAPTCHA] {method} API key not configured, skipping")
             return None
 
         website_key = "6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV"
         website_url = f"https://labs.google/fx/tools/flow/project/{project_id}"
-        page_action = "VIDEO_GENERATION"
+        page_action = "FLOW_GENERATION"
 
         try:
             async with AsyncSession() as session:
@@ -808,47 +843,39 @@ class FlowClient:
                     }
                 }
 
-                result = await session.post(create_url,
-                                            json=create_data,
-                                            impersonate="chrome110")
+                result = await session.post(create_url, json=create_data, impersonate="chrome110")
                 result_json = result.json()
                 task_id = result_json.get('taskId')
 
-                debug_logger.log_info(
-                    f"[reCAPTCHA {method}] created task_id: {task_id}")
+                debug_logger.log_info(f"[reCAPTCHA {method}] created task_id: {task_id}")
 
                 if not task_id:
-                    error_desc = result_json.get('errorDescription',
-                                                 'Unknown error')
-                    debug_logger.log_error(
-                        f"[reCAPTCHA {method}] Failed to create task: {error_desc}"
-                    )
+                    error_desc = result_json.get('errorDescription', 'Unknown error')
+                    debug_logger.log_error(f"[reCAPTCHA {method}] Failed to create task: {error_desc}")
                     return None
 
                 get_url = f"{base_url}/getTaskResult"
                 for i in range(40):
-                    get_data = {"clientKey": client_key, "taskId": task_id}
-                    result = await session.post(get_url,
-                                                json=get_data,
-                                                impersonate="chrome110")
+                    get_data = {
+                        "clientKey": client_key,
+                        "taskId": task_id
+                    }
+                    result = await session.post(get_url, json=get_data, impersonate="chrome110")
                     result_json = result.json()
 
-                    debug_logger.log_info(
-                        f"[reCAPTCHA {method}] polling #{i+1}: {result_json}")
+                    debug_logger.log_info(f"[reCAPTCHA {method}] polling #{i+1}: {result_json}")
 
                     status = result_json.get('status')
                     if status == 'ready':
                         solution = result_json.get('solution', {})
                         response = solution.get('gRecaptchaResponse')
                         if response:
-                            debug_logger.log_info(
-                                f"[reCAPTCHA {method}] Token获取成功")
+                            debug_logger.log_info(f"[reCAPTCHA {method}] Token获取成功")
                             return response
 
                     time.sleep(3)
 
-                debug_logger.log_error(
-                    f"[reCAPTCHA {method}] Timeout waiting for token")
+                debug_logger.log_error(f"[reCAPTCHA {method}] Timeout waiting for token")
                 return None
 
         except Exception as e:

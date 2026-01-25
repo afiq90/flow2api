@@ -1,4 +1,5 @@
 """FastAPI application initialization"""
+import os
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -80,8 +81,14 @@ async def lifespan(app: FastAPI):
     config.set_capsolver_base_url(captcha_config.capsolver_base_url)
 
     # Initialize browser captcha service if needed
+    # Browser captcha is disabled in production (Replit deployment) due to Chromium resource requirements
     browser_service = None
-    if captcha_config.captcha_method == "personal":
+    is_production = os.environ.get("REPLIT_DEPLOYMENT") == "1"
+    
+    if is_production and captcha_config.captcha_method in ("personal", "browser"):
+        print("⚠ Browser captcha disabled in production environment")
+        print("  Please use ezcaptcha, yescaptcha, capmonster, or capsolver for production")
+    elif captcha_config.captcha_method == "personal":
         try:
             from .services.browser_captcha_personal import BrowserCaptchaService
             browser_service = await BrowserCaptchaService.get_instance(db)

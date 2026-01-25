@@ -4,7 +4,7 @@ expertMode = true
 
 [nix]
 channel = "stable-25_05"
-packages = ["postgresql", "chromium", "nspr", "nss", "dbus", "at-spi2-atk", "at-spi2-core", "xorg.libXcomposite", "xorg.libXdamage", "xorg.libXfixes", "mesa", "xorg.libxcb", "libxkbcommon", "alsa-lib", "xorg.libX11", "xorg.libXrandr", "cups", "pango", "cairo", "glib", "gtk3", "libdrm"]
+packages = ["postgresql"]
 
 [workflows]
 runButton = "Project"
@@ -35,5 +35,5 @@ localPort = 5000
 externalPort = 80
 
 [deployment]
-deploymentTarget = "gce"
+deploymentTarget = "cloudrun"
 run = ["python", "main.py"]

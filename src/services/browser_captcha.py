@@ -120,8 +120,6 @@ class BrowserCaptchaService:
             launch_options = {
                 'headless':
                 self.headless,
-                'executable_path':
-                '/nix/store/qa9cnw4v5xkxyip6mb9kxqfq1z4x2dx1-chromium-138.0.7204.100/bin/chromium',
                 'args': [
                     '--disable-blink-features=AutomationControlled',
                     '--disable-dev-shm-usage', '--no-sandbox',

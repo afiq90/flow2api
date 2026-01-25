@@ -1,8 +1,0 @@
-Debug Note: 
-
-Captcha
-
-If you consistently receive reCAPTCHA errors, there are two things to consider:
-
-1) Take note of which captcha is currently being used, as the issue may be related to the captcha API or the browser.
-2) Google may have changed the captcha pageAction. To resolve this, the value needs to be updated—for example, changing it from FLOW_GENERATION to VIDEO_GENERATION.

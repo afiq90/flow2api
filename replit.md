@@ -66,14 +66,7 @@ The application supports multiple captcha solving methods:
 - **capsolver** - Third-party captcha solving service
 - **browser/personal** - Browser-based methods (require additional dependencies not installed by default)
 
-## Production Deployment Notes
-- **Browser captcha (personal/browser methods) is automatically disabled in production**
-- The app detects `REPLIT_DEPLOYMENT=1` environment variable (set by Replit in deployments)
-- This prevents timeout issues caused by Chromium/Playwright initialization
-- For production, use third-party captcha services: ezcaptcha, yescaptcha, capmonster, or capsolver
-
 ## Recent Changes
-- Added production detection to disable browser captcha in deployed environments (Jan 2026)
 - Migrated from SQLite (aiosqlite) to PostgreSQL (asyncpg)
 - Uses connection pooling for better performance
 - Database URL configured via DATABASE_URL environment variable

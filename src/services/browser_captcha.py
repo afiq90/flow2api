@@ -112,16 +112,17 @@ class BrowserCaptchaService:
                 if captcha_config.browser_proxy_enabled and captcha_config.browser_proxy_url:
                     proxy_url = captcha_config.browser_proxy_url
 
-            debug_logger.log_info(f"[BrowserCaptcha] 正在启动浏览器... (proxy={proxy_url or 'None'})")
+            debug_logger.log_info(
+                f"[BrowserCaptcha] 正在启动浏览器... (proxy={proxy_url or 'None'})")
             self.playwright = await async_playwright().start()
 
             # 配置浏览器启动参数
             launch_options = {
-                'headless': self.headless,
+                'headless':
+                self.headless,
                 'args': [
                     '--disable-blink-features=AutomationControlled',
-                    '--disable-dev-shm-usage',
-                    '--no-sandbox',
+                    '--disable-dev-shm-usage', '--no-sandbox',
                     '--disable-setuid-sandbox'
                 ]
             }
@@ -132,13 +133,19 @@ class BrowserCaptchaService:
                 if proxy_config:
                     launch_options['proxy'] = proxy_config
                     auth_info = "auth=yes" if 'username' in proxy_config else "auth=no"
-                    debug_logger.log_info(f"[BrowserCaptcha] 代理配置: {proxy_config['server']} ({auth_info})")
+                    debug_logger.log_info(
+                        f"[BrowserCaptcha] 代理配置: {proxy_config['server']} ({auth_info})"
+                    )
                 else:
-                    debug_logger.log_warning(f"[BrowserCaptcha] 代理URL格式错误: {proxy_url}")
+                    debug_logger.log_warning(
+                        f"[BrowserCaptcha] 代理URL格式错误: {proxy_url}")
 
-            self.browser = await self.playwright.chromium.launch(**launch_options)
+            self.browser = await self.playwright.chromium.launch(
+                **launch_options)
             self._initialized = True
-            debug_logger.log_info(f"[BrowserCaptcha] ✅ 浏览器已启动 (headless={self.headless}, proxy={proxy_url or 'None'})")
+            debug_logger.log_info(
+                f"[BrowserCaptcha] ✅ 浏览器已启动 (headless={self.headless}, proxy={proxy_url or 'None'})"
+            )
         except Exception as e:
             debug_logger.log_error(f"[BrowserCaptcha] ❌ 浏览器启动失败: {str(e)}")
             raise
@@ -161,11 +168,14 @@ class BrowserCaptchaService:
         try:
             # 创建新的上下文
             context = await self.browser.new_context(
-                viewport={'width': 1920, 'height': 1080},
-                user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                viewport={
+                    'width': 1920,
+                    'height': 1080
+                },
+                user_agent=
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 locale='en-US',
-                timezone_id='America/New_York'
-            )
+                timezone_id='America/New_York')
             page = await context.new_page()
 
             website_url = f"https://labs.google/fx/tools/flow/project/{project_id}"
@@ -174,9 +184,12 @@ class BrowserCaptchaService:
 
             # 访问页面
             try:
-                await page.goto(website_url, wait_until="domcontentloaded", timeout=30000)
+                await page.goto(website_url,
+                                wait_until="domcontentloaded",
+                                timeout=30000)
             except Exception as e:
-                debug_logger.log_warning(f"[BrowserCaptcha] 页面加载超时或失败: {str(e)}")
+                debug_logger.log_warning(
+                    f"[BrowserCaptcha] 页面加载超时或失败: {str(e)}")
 
             # 检查并注入 reCAPTCHA v3 脚本
             debug_logger.log_info("[BrowserCaptcha] 检查并加载 reCAPTCHA v3 脚本...")
@@ -216,18 +229,21 @@ class BrowserCaptchaService:
                     }
                 """)
                 if grecaptcha_ready:
-                    debug_logger.log_info(f"[BrowserCaptcha] reCAPTCHA 已准备好（等待了 {i*0.5} 秒）")
+                    debug_logger.log_info(
+                        f"[BrowserCaptcha] reCAPTCHA 已准备好（等待了 {i*0.5} 秒）")
                     break
                 await asyncio.sleep(0.5)
             else:
-                debug_logger.log_warning("[BrowserCaptcha] reCAPTCHA 初始化超时，继续尝试执行...")
+                debug_logger.log_warning(
+                    "[BrowserCaptcha] reCAPTCHA 初始化超时，继续尝试执行...")
 
             # 额外等待确保完全初始化
             await page.wait_for_timeout(1000)
 
             # 执行reCAPTCHA并获取token
             debug_logger.log_info("[BrowserCaptcha] 执行reCAPTCHA验证...")
-            token = await page.evaluate("""
+            token = await page.evaluate(
+                """
                 async (websiteKey) => {
                     try {
                         if (!window.grecaptcha) {
@@ -259,7 +275,7 @@ class BrowserCaptchaService:
 
                         // 执行reCAPTCHA v3
                         const token = await window.grecaptcha.execute(websiteKey, {
-                            action: 'FLOW_GENERATION'
+                            action: 'VIDEO_GENERATION'
                         });
 
                         return token;
@@ -273,7 +289,8 @@ class BrowserCaptchaService:
             duration_ms = (time.time() - start_time) * 1000
 
             if token:
-                debug_logger.log_info(f"[BrowserCaptcha] ✅ Token获取成功（耗时 {duration_ms:.0f}ms）")
+                debug_logger.log_info(
+                    f"[BrowserCaptcha] ✅ Token获取成功（耗时 {duration_ms:.0f}ms）")
                 return token
             else:
                 debug_logger.log_error("[BrowserCaptcha] Token获取失败（返回null）")
@@ -299,7 +316,8 @@ class BrowserCaptchaService:
                 except Exception as e:
                     # 忽略连接关闭错误（正常关闭场景）
                     if "Connection closed" not in str(e):
-                        debug_logger.log_warning(f"[BrowserCaptcha] 关闭浏览器时出现异常: {str(e)}")
+                        debug_logger.log_warning(
+                            f"[BrowserCaptcha] 关闭浏览器时出现异常: {str(e)}")
                 finally:
                     self.browser = None
 

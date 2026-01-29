@@ -268,6 +268,26 @@ MODEL_CONFIG = {
         "max_images": 2
     },
 
+    # veo_3_1_i2v_s_fast_fl (original naming convention from previous version)
+    "veo_3_1_i2v_s_fast_fl_portrait": {
+        "type": "video",
+        "video_type": "i2v",
+        "model_key": "veo_3_1_i2v_s_fast_portrait_fl_ultra_relaxed",
+        "aspect_ratio": "VIDEO_ASPECT_RATIO_PORTRAIT",
+        "supports_images": True,
+        "min_images": 1,
+        "max_images": 2
+    },
+    "veo_3_1_i2v_s_fast_fl_landscape": {
+        "type": "video",
+        "video_type": "i2v",
+        "model_key": "veo_3_1_i2v_s_fast_fl_ultra_relaxed",
+        "aspect_ratio": "VIDEO_ASPECT_RATIO_LANDSCAPE",
+        "supports_images": True,
+        "min_images": 1,
+        "max_images": 2
+    },
+
     # veo_2_1_fast_d_15_i2v (需要新增横竖屏)
     "veo_2_1_fast_d_15_i2v_portrait": {
         "type": "video",

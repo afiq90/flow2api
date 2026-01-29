@@ -1366,37 +1366,31 @@ class GenerationHandler:
                         if stream:
                             yield self._create_stream_chunk("缓存已关闭,正在返回源链接...\n")
 
-                        # 更新数据库 (非致命错误，不使用 continue)
-                        try:
-                            task_id = operation["operation"]["name"]
-                            await self.db.update_task(task_id,
-                                                      status="completed",
-                                                      progress=100,
-                                                      result_urls=[local_url],
-                                                      completed_at=time.time())
-                        except Exception as db_e:
-                            debug_logger.log_error(
-                                f"Failed to update task status: {str(db_e)}")
-
-                        # 存储URL用于日志记录
-                        self._last_generated_url = local_url
-
-                        # 返回结果
-                        if stream:
-                            yield self._create_stream_chunk(
-                                f"<video src='{local_url}' controls style='max-width:100%'></video>",
-                                finish_reason="stop")
-                            yield "data: [DONE]\n\n"
-                        else:
-                            yield self._create_completion_response(
-                                local_url, media_type="video")
-                        return  # 明确退出 generator
-                    except Exception as e:
+                    # 更新数据库 (非致命错误，不使用 continue)
+                    try:
+                        task_id = operation["operation"]["name"]
+                        await self.db.update_task(task_id,
+                                                  status="completed",
+                                                  progress=100,
+                                                  result_urls=[local_url],
+                                                  completed_at=time.time())
+                    except Exception as db_e:
                         debug_logger.log_error(
-                            f"Error in success handling: {str(e)}")
-                        yield self._create_error_response(
-                            f"处理视频结果时出错: {str(e)}")
-                        return  # 强制退出，不再轮询
+                            f"Failed to update task status: {str(db_e)}")
+
+                    # 存储URL用于日志记录
+                    self._last_generated_url = local_url
+
+                    # 返回结果
+                    if stream:
+                        yield self._create_stream_chunk(
+                            f"<video src='{local_url}' controls style='max-width:100%'></video>",
+                            finish_reason="stop")
+                        yield "data: [DONE]\n\n"
+                    else:
+                        yield self._create_completion_response(
+                            local_url, media_type="video")
+                    return  # 明确退出 generator
 
                 elif status == "MEDIA_GENERATION_STATUS_FAILED":
                     # 生成失败 - 提取错误信息

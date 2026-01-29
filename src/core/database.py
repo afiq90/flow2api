@@ -179,11 +179,13 @@ class Database:
                 VALUES (1, $1, $2, $3)
             """, captcha_method, yescaptcha_api_key, yescaptcha_base_url)
 
-        count = await conn.fetchval("SELECT COUNT(*) FROM plugin_config")
-        if count == 0:
+        # Ensure plugin_config has a row
+        cursor = await conn.fetchval("SELECT COUNT(*) FROM plugin_config")
+        count = await cursor.fetchone()
+        if count[0] == 0:
             await conn.execute("""
-                INSERT INTO plugin_config (id, connection_token)
-                VALUES (1, '')
+                INSERT INTO plugin_config (id, connection_token, auto_enable_on_update)
+                VALUES (1, '', 1)
             """)
 
     async def check_and_migrate_db(self, config_dict: dict = None):
@@ -220,8 +222,8 @@ class Database:
                         capsolver_api_key TEXT DEFAULT '',
                         capsolver_base_url TEXT DEFAULT 'https://api.capsolver.com',
                         website_key TEXT DEFAULT '6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV',
-                        page_action TEXT DEFAULT 'VIDEO_GENERATION',
-                        browser_proxy_enabled BOOLEAN DEFAULT FALSE,
+                        page_action TEXT DEFAULT 'IMAGE_GENERATION',
+                        browser_proxy_enabled BOOLEAN DEFAULT 0,
                         browser_proxy_url TEXT,
                         created_at TIMESTAMP DEFAULT NOW(),
                         updated_at TIMESTAMP DEFAULT NOW()
@@ -295,8 +297,8 @@ class Database:
                     ("ezcaptcha_base_url",
                      "TEXT DEFAULT 'https://api.ez-captcha.com'"),
                     ("capsolver_api_key", "TEXT DEFAULT ''"),
-                    ("capsolver_base_url",
-                     "TEXT DEFAULT 'https://api.capsolver.com'"),
+                    ("capsolver_base_url", "TEXT DEFAULT 'https://api.capsolver.com'"),
+                    ("browser_count", "INTEGER DEFAULT 1"),
                 ]
 
                 for col_name, col_type in captcha_columns_to_add:
@@ -509,9 +511,11 @@ class Database:
                     capsolver_api_key TEXT DEFAULT '',
                     capsolver_base_url TEXT DEFAULT 'https://api.capsolver.com',
                     website_key TEXT DEFAULT '6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV',
-                    page_action TEXT DEFAULT 'VIDEO_GENERATION',
-                    browser_proxy_enabled BOOLEAN DEFAULT FALSE,
+                    page_action TEXT DEFAULT 'IMAGE_GENERATION',
+
+                    browser_proxy_enabled BOOLEAN DEFAULT 0,
                     browser_proxy_url TEXT,
+                    browser_count INTEGER DEFAULT 1,
                     created_at TIMESTAMP DEFAULT NOW(),
                     updated_at TIMESTAMP DEFAULT NOW()
                 )
@@ -1033,6 +1037,12 @@ class Database:
             config.set_captcha_method(captcha_config.captcha_method)
             config.set_yescaptcha_api_key(captcha_config.yescaptcha_api_key)
             config.set_yescaptcha_base_url(captcha_config.yescaptcha_base_url)
+            config.set_capmonster_api_key(captcha_config.capmonster_api_key)
+            config.set_capmonster_base_url(captcha_config.capmonster_base_url)
+            config.set_ezcaptcha_api_key(captcha_config.ezcaptcha_api_key)
+            config.set_ezcaptcha_base_url(captcha_config.ezcaptcha_base_url)
+            config.set_capsolver_api_key(captcha_config.capsolver_api_key)
+            config.set_capsolver_base_url(captcha_config.capsolver_base_url)
 
     async def get_cache_config(self) -> CacheConfig:
         """Get cache configuration"""
@@ -1149,18 +1159,21 @@ class Database:
                 return CaptchaConfig(**dict(row))
             return CaptchaConfig()
 
-    async def update_captcha_config(self,
-                                    captcha_method: str = None,
-                                    yescaptcha_api_key: str = None,
-                                    yescaptcha_base_url: str = None,
-                                    capmonster_api_key: str = None,
-                                    capmonster_base_url: str = None,
-                                    ezcaptcha_api_key: str = None,
-                                    ezcaptcha_base_url: str = None,
-                                    capsolver_api_key: str = None,
-                                    capsolver_base_url: str = None,
-                                    browser_proxy_enabled: bool = None,
-                                    browser_proxy_url: str = None):
+    async def update_captcha_config(
+        self,
+        captcha_method: str = None,
+        yescaptcha_api_key: str = None,
+        yescaptcha_base_url: str = None,
+        capmonster_api_key: str = None,
+        capmonster_base_url: str = None,
+        ezcaptcha_api_key: str = None,
+        ezcaptcha_base_url: str = None,
+        capsolver_api_key: str = None,
+        capsolver_base_url: str = None,
+        browser_proxy_enabled: bool = None,
+        browser_proxy_url: str = None,
+        browser_count: int = None
+    ):
         """Update captcha configuration"""
         pool = await self.get_pool()
         async with pool.acquire() as conn:
@@ -1169,6 +1182,18 @@ class Database:
 
             if row:
                 current = dict(row)
+                new_method = captcha_method if captcha_method is not None else current.get("captcha_method", "yescaptcha")
+                new_yes_key = yescaptcha_api_key if yescaptcha_api_key is not None else current.get("yescaptcha_api_key", "")
+                new_yes_url = yescaptcha_base_url if yescaptcha_base_url is not None else current.get("yescaptcha_base_url", "https://api.yescaptcha.com")
+                new_cap_key = capmonster_api_key if capmonster_api_key is not None else current.get("capmonster_api_key", "")
+                new_cap_url = capmonster_base_url if capmonster_base_url is not None else current.get("capmonster_base_url", "https://api.capmonster.cloud")
+                new_ez_key = ezcaptcha_api_key if ezcaptcha_api_key is not None else current.get("ezcaptcha_api_key", "")
+                new_ez_url = ezcaptcha_base_url if ezcaptcha_base_url is not None else current.get("ezcaptcha_base_url", "https://api.ez-captcha.com")
+                new_cs_key = capsolver_api_key if capsolver_api_key is not None else current.get("capsolver_api_key", "")
+                new_cs_url = capsolver_base_url if capsolver_base_url is not None else current.get("capsolver_base_url", "https://api.capsolver.com")
+                new_proxy_enabled = browser_proxy_enabled if browser_proxy_enabled is not None else current.get("browser_proxy_enabled", False)
+                new_proxy_url = browser_proxy_url if browser_proxy_url is not None else current.get("browser_proxy_url")
+                new_browser_count = browser_count if browser_count is not None else current.get("browser_count", 1)
                 new_method = captcha_method if captcha_method is not None else current.get(
                     "captcha_method", "yescaptcha")
                 new_yes_key = yescaptcha_api_key if yescaptcha_api_key is not None else current.get(
@@ -1191,6 +1216,8 @@ class Database:
                     "browser_proxy_enabled", False)
                 new_proxy_url = browser_proxy_url if browser_proxy_url is not None else current.get(
                     "browser_proxy_url")
+                new_browser_count = browser_count if browser_count is not None else current.get(
+                    "browser_count", 1)
 
                 await conn.execute(
                     """
@@ -1201,9 +1228,8 @@ class Database:
                         capsolver_api_key = $8, capsolver_base_url = $9,
                         browser_proxy_enabled = $10, browser_proxy_url = $11, updated_at = NOW()
                     WHERE id = 1
-                """, new_method, new_yes_key, new_yes_url, new_cap_key,
-                    new_cap_url, new_ez_key, new_ez_url, new_cs_key,
-                    new_cs_url, new_proxy_enabled, new_proxy_url)
+                """, (new_method, new_yes_key, new_yes_url, new_cap_key, new_cap_url,
+                      new_ez_key, new_ez_url, new_cs_key, new_cs_url, new_proxy_enabled, new_proxy_url, new_browser_count))
             else:
                 new_method = captcha_method if captcha_method is not None else "yescaptcha"
                 new_yes_key = yescaptcha_api_key if yescaptcha_api_key is not None else ""
@@ -1216,6 +1242,7 @@ class Database:
                 new_cs_url = capsolver_base_url if capsolver_base_url is not None else "https://api.capsolver.com"
                 new_proxy_enabled = browser_proxy_enabled if browser_proxy_enabled is not None else False
                 new_proxy_url = browser_proxy_url
+                new_browser_count = browser_count if browser_count is not None else 1
 
                 await conn.execute(
                     """
@@ -1225,7 +1252,7 @@ class Database:
                     VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
                 """, new_method, new_yes_key, new_yes_url, new_cap_key,
                     new_cap_url, new_ez_key, new_ez_url, new_cs_key,
-                    new_cs_url, new_proxy_enabled, new_proxy_url)
+                    new_cs_url, new_proxy_enabled, new_proxy_url, new_browser_count)
 
     async def get_plugin_config(self) -> PluginConfig:
         """Get plugin configuration"""

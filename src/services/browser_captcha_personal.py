@@ -269,11 +269,12 @@ class BrowserCaptchaService:
         debug_logger.log_warning("[BrowserCaptcha] reCAPTCHA 加载超时")
         return False
 
-    async def _execute_recaptcha_on_tab(self, tab) -> Optional[str]:
+    async def _execute_recaptcha_on_tab(self, tab, action: str = "IMAGE_GENERATION") -> Optional[str]:
         """在指定标签页执行 reCAPTCHA 获取 token
         
         Args:
             tab: nodriver 标签页对象
+            action: reCAPTCHA action类型 (IMAGE_GENERATION 或 VIDEO_GENERATION)
             
         Returns:
             reCAPTCHA token 或 None
@@ -290,7 +291,7 @@ class BrowserCaptchaService:
                 
                 try {{
                     grecaptcha.enterprise.ready(function() {{
-                        grecaptcha.enterprise.execute('{self.website_key}', {{action: 'VIDEO_GENERATION'}})
+                        grecaptcha.enterprise.execute('{self.website_key}', {{action: '{action}'}})
                             .then(function(token) {{
                                 window.{token_var} = token;
                             }})
@@ -331,13 +332,16 @@ class BrowserCaptchaService:
 
     # ========== 主要 API ==========
 
-    async def get_token(self, project_id: str) -> Optional[str]:
+    async def get_token(self, project_id: str, action: str = "IMAGE_GENERATION") -> Optional[str]:
         """获取 reCAPTCHA token
         
         自动常驻模式：如果该 project_id 没有常驻标签页，则自动创建并常驻
         
         Args:
             project_id: Flow项目ID
+            action: reCAPTCHA action类型
+                - IMAGE_GENERATION: 图片生成和2K/4K图片放大 (默认)
+                - VIDEO_GENERATION: 视频生成和视频放大
 
         Returns:
             reCAPTCHA token字符串，如果获取失败返回None
@@ -356,10 +360,8 @@ class BrowserCaptchaService:
                 )
                 resident_info = await self._create_resident_tab(project_id)
                 if resident_info is None:
-                    debug_logger.log_warning(
-                        f"[BrowserCaptcha] 无法为 project_id={project_id} 创建常驻标签页，fallback 到传统模式"
-                    )
-                    return await self._get_token_legacy(project_id)
+                    debug_logger.log_warning(f"[BrowserCaptcha] 无法为 project_id={project_id} 创建常驻标签页，fallback 到传统模式")
+                    return await self._get_token_legacy(project_id, action)
                 self._resident_tabs[project_id] = resident_info
                 debug_logger.log_info(
                     f"[BrowserCaptcha] ✅ 已为 project_id={project_id} 创建常驻标签页 (当前共 {len(self._resident_tabs)} 个)"
@@ -368,11 +370,9 @@ class BrowserCaptchaService:
         # 使用常驻标签页生成 token
         if resident_info and resident_info.recaptcha_ready and resident_info.tab:
             start_time = time.time()
-            debug_logger.log_info(
-                f"[BrowserCaptcha] 从常驻标签页即时生成 token (project: {project_id})..."
-            )
+            debug_logger.log_info(f"[BrowserCaptcha] 从常驻标签页即时生成 token (project: {project_id}, action: {action})...")
             try:
-                token = await self._execute_recaptcha_on_tab(resident_info.tab)
+                token = await self._execute_recaptcha_on_tab(resident_info.tab, action)
                 duration_ms = (time.time() - start_time) * 1000
                 if token:
                     debug_logger.log_info(
@@ -395,8 +395,7 @@ class BrowserCaptchaService:
                     self._resident_tabs[project_id] = resident_info
                     # 重建后立即尝试生成
                     try:
-                        token = await self._execute_recaptcha_on_tab(
-                            resident_info.tab)
+                        token = await self._execute_recaptcha_on_tab(resident_info.tab, action)
                         if token:
                             debug_logger.log_info(
                                 f"[BrowserCaptcha] ✅ 重建后 Token生成成功")
@@ -405,10 +404,8 @@ class BrowserCaptchaService:
                         pass
 
         # 最终 Fallback: 使用传统模式
-        debug_logger.log_warning(
-            f"[BrowserCaptcha] 所有常驻方式失败，fallback 到传统模式 (project: {project_id})"
-        )
-        return await self._get_token_legacy(project_id)
+        debug_logger.log_warning(f"[BrowserCaptcha] 所有常驻方式失败，fallback 到传统模式 (project: {project_id})")
+        return await self._get_token_legacy(project_id, action)
 
     async def _create_resident_tab(
             self, project_id: str) -> Optional[ResidentTabInfo]:
@@ -494,11 +491,12 @@ class BrowserCaptchaService:
             except Exception as e:
                 debug_logger.log_warning(f"[BrowserCaptcha] 关闭标签页时异常: {e}")
 
-    async def _get_token_legacy(self, project_id: str) -> Optional[str]:
+    async def _get_token_legacy(self, project_id: str, action: str = "IMAGE_GENERATION") -> Optional[str]:
         """传统模式获取 reCAPTCHA token（每次创建新标签页）
 
         Args:
             project_id: Flow项目ID
+            action: reCAPTCHA action类型 (IMAGE_GENERATION 或 VIDEO_GENERATION)
 
         Returns:
             reCAPTCHA token字符串，如果获取失败返回None
@@ -538,9 +536,8 @@ class BrowserCaptchaService:
                 return None
 
             # 执行 reCAPTCHA
-            debug_logger.log_info(
-                "[BrowserCaptcha] [Legacy] 执行 reCAPTCHA 验证...")
-            token = await self._execute_recaptcha_on_tab(tab)
+            debug_logger.log_info(f"[BrowserCaptcha] [Legacy] 执行 reCAPTCHA 验证 (action: {action})...")
+            token = await self._execute_recaptcha_on_tab(tab, action)
 
             duration_ms = (time.time() - start_time) * 1000
 

@@ -1225,10 +1225,10 @@ class Database:
                         capmonster_api_key = $4, capmonster_base_url = $5,
                         ezcaptcha_api_key = $6, ezcaptcha_base_url = $7,
                         capsolver_api_key = $8, capsolver_base_url = $9,
-                        browser_proxy_enabled = $10, browser_proxy_url = $11, updated_at = NOW()
+                        browser_proxy_enabled = $10, browser_proxy_url = $11, browser_count = $12, updated_at = NOW()
                     WHERE id = 1
-                """, (new_method, new_yes_key, new_yes_url, new_cap_key, new_cap_url,
-                      new_ez_key, new_ez_url, new_cs_key, new_cs_url, new_proxy_enabled, new_proxy_url, new_browser_count))
+                """, new_method, new_yes_key, new_yes_url, new_cap_key, new_cap_url,
+                      new_ez_key, new_ez_url, new_cs_key, new_cs_url, new_proxy_enabled, new_proxy_url, new_browser_count)
             else:
                 new_method = captcha_method if captcha_method is not None else "yescaptcha"
                 new_yes_key = yescaptcha_api_key if yescaptcha_api_key is not None else ""
@@ -1247,8 +1247,8 @@ class Database:
                     """
                     INSERT INTO captcha_config (id, captcha_method, yescaptcha_api_key, yescaptcha_base_url,
                         capmonster_api_key, capmonster_base_url, ezcaptcha_api_key, ezcaptcha_base_url,
-                        capsolver_api_key, capsolver_base_url, browser_proxy_enabled, browser_proxy_url)
-                    VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+                        capsolver_api_key, capsolver_base_url, browser_proxy_enabled, browser_proxy_url, browser_count)
+                    VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
                 """, new_method, new_yes_key, new_yes_url, new_cap_key,
                     new_cap_url, new_ez_key, new_ez_url, new_cs_key,
                     new_cs_url, new_proxy_enabled, new_proxy_url, new_browser_count)

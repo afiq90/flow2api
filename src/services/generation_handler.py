@@ -1306,9 +1306,9 @@ class GenerationHandler:
                     video_media_id = video_info.get("mediaGenerationId")
                     aspect_ratio = video_info.get("aspectRatio", "VIDEO_ASPECT_RATIO_LANDSCAPE")
 
-                        if not video_url:
-                            yield self._create_error_response("视频URL为空")
-                            return
+                    if not video_url:
+                        yield self._create_error_response("视频URL为空")
+                        return
 
                     # ========== 视频放大处理 ==========
                     if upsample_config and video_media_id:

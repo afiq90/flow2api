@@ -24,7 +24,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python main.py"
+args = "uvicorn src.main:app --host 0.0.0.0 --port 5000 --limit-max-request-size 52428800"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
@@ -36,4 +36,4 @@ externalPort = 80
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["python", "main.py"]
+run = ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "5000", "--limit-max-request-size", "52428800"]

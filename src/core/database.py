@@ -180,12 +180,11 @@ class Database:
             """, captcha_method, yescaptcha_api_key, yescaptcha_base_url)
 
         # Ensure plugin_config has a row
-        cursor = await conn.fetchval("SELECT COUNT(*) FROM plugin_config")
-        count = await cursor.fetchone()
-        if count[0] == 0:
+        count = await conn.fetchval("SELECT COUNT(*) FROM plugin_config")
+        if count == 0:
             await conn.execute("""
                 INSERT INTO plugin_config (id, connection_token, auto_enable_on_update)
-                VALUES (1, '', 1)
+                VALUES (1, '', TRUE)
             """)
 
     async def check_and_migrate_db(self, config_dict: dict = None):

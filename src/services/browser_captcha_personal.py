@@ -16,10 +16,10 @@ from ..core.logger import debug_logger
 # ==================== Docker 环境检测 ====================
 def _is_running_in_docker() -> bool:
     """检测是否在 Docker 容器中运行"""
-    # 方法1: 检查 /.dockerenv 文件
+    if os.environ.get('REPL_ID') or os.environ.get('REPL_SLUG') or os.environ.get('REPLIT_ENVIRONMENT'):
+        return False
     if os.path.exists('/.dockerenv'):
         return True
-    # 方法2: 检查 cgroup
     try:
         with open('/proc/1/cgroup', 'r') as f:
             content = f.read()
@@ -27,7 +27,6 @@ def _is_running_in_docker() -> bool:
                 return True
     except:
         pass
-    # 方法3: 检查环境变量
     if os.environ.get('DOCKER_CONTAINER') or os.environ.get('KUBERNETES_SERVICE_HOST'):
         return True
     return False
@@ -138,7 +137,7 @@ class BrowserCaptchaService:
 
     def __init__(self, db=None):
         """初始化服务"""
-        self.headless = False  # nodriver 有头模式
+        self.headless = True if os.environ.get('REPL_ID') else False
         self.browser = None
         self._initialized = False
         self.website_key = "6LdsFiUsAAAAAIjVDZcuLhaHiDn5nnHVXVRQGeMV"
@@ -202,20 +201,35 @@ class BrowserCaptchaService:
             # 确保 user_data_dir 存在
             os.makedirs(self.user_data_dir, exist_ok=True)
 
-            # 启动 nodriver 浏览器
-            self.browser = await uc.start(
+            import shutil
+            chrome_path = (
+                shutil.which('chromium')
+                or shutil.which('chromium-browser')
+                or shutil.which('google-chrome')
+                or shutil.which('google-chrome-stable')
+            )
+
+            browser_args = [
+                '--no-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-setuid-sandbox',
+                '--disable-gpu',
+                '--window-size=1280,720',
+                '--profile-directory=Default',
+            ]
+            if self.headless:
+                browser_args.append('--headless=new')
+
+            start_kwargs = dict(
                 headless=self.headless,
                 user_data_dir=self.user_data_dir,
-                sandbox=False,  # nodriver 需要此参数来禁用 sandbox
-                browser_args=[
-                    '--no-sandbox',
-                    '--disable-dev-shm-usage',
-                    '--disable-setuid-sandbox',
-                    '--disable-gpu',
-                    '--window-size=1280,720',
-                    '--profile-directory=Default',  # 跳过 Profile 选择器页面
-                ]
+                sandbox=False,
+                browser_args=browser_args,
             )
+            if chrome_path:
+                start_kwargs['browser_executable_path'] = chrome_path
+
+            self.browser = await uc.start(**start_kwargs)
 
             self._initialized = True
             debug_logger.log_info(f"[BrowserCaptcha] ✅ nodriver 浏览器已启动 (Profile: {self.user_data_dir})")

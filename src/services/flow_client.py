@@ -1163,6 +1163,7 @@ class FlowClient:
             对于非 browser 打码方式，browser_id 为 None
         """
         captcha_method = config.captcha_method
+        print(f"🔑 [CAPTCHA] Active captcha_method: '{captcha_method}' | Action: {action} | Project: {project_id[:8]}...", flush=True)
 
         # 内置浏览器打码 (nodriver)
         if captcha_method == "personal":

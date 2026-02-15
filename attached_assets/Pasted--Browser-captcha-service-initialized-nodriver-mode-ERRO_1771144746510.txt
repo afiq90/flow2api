@@ -1,0 +1,40 @@
+✓ Browser captcha service initialized (nodriver mode)
+ERROR:    Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/starlette/routing.py", line 694, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+  File "/nix/store/6334pjf6w2q623rgvwi499qaiym1p6yv-python3-3.11.14/lib/python3.11/contextlib.py", line 210, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/fastapi/routing.py", line 209, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "/nix/store/6334pjf6w2q623rgvwi499qaiym1p6yv-python3-3.11.14/lib/python3.11/contextlib.py", line 210, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/fastapi/routing.py", line 209, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "/nix/store/6334pjf6w2q623rgvwi499qaiym1p6yv-python3-3.11.14/lib/python3.11/contextlib.py", line 210, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/src/main.py", line 99, in lifespan
+    await browser_service.start_resident_mode(resident_project_id)
+  File "/home/runner/workspace/src/services/browser_captcha_personal.py", line 249, in start_resident_mode
+    await self.initialize()
+  File "/home/runner/workspace/src/services/browser_captcha_personal.py", line 228, in initialize
+    self.browser = await uc.start(**start_kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/nodriver/core/util.py", line 102, in start
+    return await Browser.create(config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/nodriver/core/browser.py", line 95, in create
+    await instance.start()
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/nodriver/core/browser.py", line 439, in start
+    raise Exception(
+Exception: 
+                ---------------------
+                Failed to connect to browser
+                ---------------------
+                One of the causes could be when you are running as root.
+                In that case you need to pass no_sandbox=True 
+                
+
+ERROR:    Application startup failed. Exiting.

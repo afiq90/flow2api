@@ -23,10 +23,10 @@ from ..core.logger import debug_logger
 # ==================== Docker 环境检测 ====================
 def _is_running_in_docker() -> bool:
     """检测是否在 Docker 容器中运行"""
-    # 方法1: 检查 /.dockerenv 文件
+    if os.environ.get('REPL_ID') or os.environ.get('REPL_SLUG') or os.environ.get('REPLIT_ENVIRONMENT'):
+        return False
     if os.path.exists('/.dockerenv'):
         return True
-    # 方法2: 检查 cgroup
     try:
         with open('/proc/1/cgroup', 'r') as f:
             content = f.read()
@@ -34,7 +34,6 @@ def _is_running_in_docker() -> bool:
                 return True
     except:
         pass
-    # 方法3: 检查环境变量
     if os.environ.get('DOCKER_CONTAINER') or os.environ.get('KUBERNETES_SERVICE_HOST'):
         return True
     return False
@@ -120,10 +119,16 @@ def _ensure_playwright_installed() -> bool:
 
 def _ensure_browser_installed() -> bool:
     """确保 chromium 浏览器已安装"""
+    import shutil
+    system_chromium = shutil.which('chromium') or shutil.which('chromium-browser') or shutil.which('google-chrome')
+    if system_chromium:
+        debug_logger.log_info(f"[BrowserCaptcha] 系统 chromium 已可用: {system_chromium}")
+        print(f"[BrowserCaptcha] ✅ 系统 chromium 已可用: {system_chromium}")
+        return True
+
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
-            # 尝试获取浏览器路径，如果失败说明未安装
             browser_path = p.chromium.executable_path
             if browser_path and os.path.exists(browser_path):
                 debug_logger.log_info(f"[BrowserCaptcha] chromium 浏览器已安装: {browser_path}")
@@ -134,11 +139,9 @@ def _ensure_browser_installed() -> bool:
     debug_logger.log_info("[BrowserCaptcha] chromium 浏览器未安装，开始自动安装...")
     print("[BrowserCaptcha] chromium 浏览器未安装，开始自动安装...")
     
-    # 先尝试官方源
     if _run_playwright_install(use_mirror=False):
         return True
     
-    # 官方源失败，尝试国内镜像
     debug_logger.log_info("[BrowserCaptcha] 官方源安装失败，尝试国内镜像...")
     print("[BrowserCaptcha] 官方源安装失败，尝试国内镜像...")
     if _run_playwright_install(use_mirror=True):
@@ -377,8 +380,15 @@ class TokenBrowser:
         except: pass
         
         try:
-            browser = await playwright.chromium.launch(
-                headless=False,
+            _headless = True if os.environ.get('REPL_ID') else False
+            import shutil
+            _chrome_path = (
+                shutil.which('chromium')
+                or shutil.which('chromium-browser')
+                or shutil.which('google-chrome')
+            )
+            launch_kwargs = dict(
+                headless=_headless,
                 proxy=proxy_option,
                 args=[
                     '--disable-blink-features=AutomationControlled',
@@ -390,8 +400,11 @@ class TokenBrowser:
                     f'--window-size={width},{height}',
                     '--disable-infobars',
                     '--hide-scrollbars',
-                ]
+                ],
             )
+            if _chrome_path:
+                launch_kwargs['executable_path'] = _chrome_path
+            browser = await playwright.chromium.launch(**launch_kwargs)
             context = await browser.new_context(
                 user_agent=random_ua,
                 viewport=viewport,

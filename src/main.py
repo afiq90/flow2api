@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+import os
 from .core.config import config
 from .core.database import Database
 from .services.flow_client import FlowClient
@@ -33,6 +34,14 @@ async def lifespan(app: FastAPI):
 
     # Initialize database tables structure
     await db.init_db()
+
+    # Connect debug logger to database for persistent logging
+    from .core.logger import set_db_instance
+    set_db_instance(db)
+
+    # For PostgreSQL, first-startup detection happens during init_db
+    if hasattr(db, '_was_first_startup'):
+        is_first_startup = db._was_first_startup
 
     # Handle database initialization based on startup type
     if is_first_startup:
@@ -79,33 +88,41 @@ async def lifespan(app: FastAPI):
     config.set_capsolver_api_key(captcha_config.capsolver_api_key)
     config.set_capsolver_base_url(captcha_config.capsolver_base_url)
 
-    # Initialize browser captcha service if needed
+    # Initialize browser captcha service if needed (non-blocking to avoid deployment timeout)
     browser_service = None
-    if captcha_config.captcha_method == "personal":
-        from .services.browser_captcha_personal import BrowserCaptchaService
-        browser_service = await BrowserCaptchaService.get_instance(db)
-        print("✓ Browser captcha service initialized (nodriver mode)")
-        
-        # 启动常驻模式：从第一个可用token获取project_id
-        tokens = await token_manager.get_all_tokens()
-        resident_project_id = None
-        for t in tokens:
-            if t.current_project_id and t.is_active:
-                resident_project_id = t.current_project_id
-                break
-        
-        if resident_project_id:
-            # 直接启动常驻模式（会自动导航到项目页面，cookie已持久化）
-            await browser_service.start_resident_mode(resident_project_id)
-            print(f"✓ Browser captcha resident mode started (project: {resident_project_id[:8]}...)")
-        else:
-            # 没有可用的project_id时，打开登录窗口供用户手动操作
-            await browser_service.open_login_window()
-            print("⚠ No active token with project_id found, opened login window for manual setup")
-    elif captcha_config.captcha_method == "browser":
-        from .services.browser_captcha import BrowserCaptchaService
-        browser_service = await BrowserCaptchaService.get_instance(db)
-        print("✓ Browser captcha service initialized (headless mode)")
+    browser_init_task = None
+    import asyncio
+
+    if captcha_config.captcha_method in ("personal", "browser"):
+        async def _init_browser_captcha():
+            nonlocal browser_service
+            try:
+                if captcha_config.captcha_method == "personal":
+                    from .services.browser_captcha_personal import BrowserCaptchaService
+                    browser_service = await BrowserCaptchaService.get_instance(db)
+                    print("✓ Browser captcha service initialized (nodriver mode)")
+
+                    tokens_list = await token_manager.get_all_tokens()
+                    resident_project_id = None
+                    for t in tokens_list:
+                        if t.current_project_id and t.is_active:
+                            resident_project_id = t.current_project_id
+                            break
+
+                    if resident_project_id:
+                        await browser_service.start_resident_mode(resident_project_id)
+                        print(f"✓ Browser captcha resident mode started (project: {resident_project_id[:8]}...)")
+                    else:
+                        await browser_service.open_login_window()
+                        print("⚠ No active token with project_id found, opened login window for manual setup")
+                elif captcha_config.captcha_method == "browser":
+                    from .services.browser_captcha import BrowserCaptchaService
+                    browser_service = await BrowserCaptchaService.get_instance(db)
+                    print("✓ Browser captcha service initialized (headless mode)")
+            except Exception as e:
+                print(f"⚠ Browser captcha initialization error (will retry on demand): {e}")
+
+        browser_init_task = asyncio.create_task(_init_browser_captcha())
 
     # Initialize concurrency manager
     tokens = await token_manager.get_all_tokens()
@@ -116,7 +133,6 @@ async def lifespan(app: FastAPI):
     await generation_handler.file_cache.start_cleanup_task()
 
     # Start 429 auto-unban task
-    import asyncio
     async def auto_unban_task():
         """定时任务：每小时检查并解禁429被禁用的token"""
         while True:
@@ -131,6 +147,8 @@ async def lifespan(app: FastAPI):
     print(f"✓ Database initialized")
     print(f"✓ Total tokens: {len(tokens)}")
     print(f"✓ Cache: {'Enabled' if config.cache_enabled else 'Disabled'} (timeout: {config.cache_timeout}s)")
+    print(f"✓ Captcha Method: {config.captcha_method}")
+    print(f"✓ Debug Mode: {'Enabled' if config.debug_enabled else 'Disabled'}")
     print(f"✓ File cache cleanup task started")
     print(f"✓ 429 auto-unban task started (runs every hour)")
     print(f"✓ Server running on http://{config.server_host}:{config.server_port}")
@@ -148,16 +166,29 @@ async def lifespan(app: FastAPI):
         await auto_unban_task_handle
     except asyncio.CancelledError:
         pass
-    # Close browser if initialized
-    if browser_service:
-        await browser_service.close()
-        print("✓ Browser captcha service closed")
+    # Wait for browser init and close if initialized
+    if browser_init_task is not None:
+        if not browser_init_task.done():
+            browser_init_task.cancel()
+            try:
+                await browser_init_task
+            except asyncio.CancelledError:
+                pass
+        if browser_service:
+            await browser_service.close()
+            print("✓ Browser captcha service closed")
     print("✓ File cache cleanup task stopped")
     print("✓ 429 auto-unban task stopped")
 
 
-# Initialize components
-db = Database()
+# Initialize components - auto-detect PostgreSQL or SQLite
+if os.environ.get("DATABASE_URL"):
+    from .core.database_pg import PostgresDatabase
+    db = PostgresDatabase()
+    print("📦 Using PostgreSQL database")
+else:
+    db = Database()
+    print("📦 Using SQLite database")
 proxy_manager = ProxyManager(db)
 flow_client = FlowClient(proxy_manager, db)
 token_manager = TokenManager(db, flow_client)

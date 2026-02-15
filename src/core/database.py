@@ -231,6 +231,20 @@ class Database:
                     )
                 """)
 
+            # Check and create debug_logs table if missing
+            if not await self._table_exists(db, "debug_logs"):
+                print("  ✓ Creating missing table: debug_logs")
+                await db.execute("""
+                    CREATE TABLE debug_logs (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        level TEXT NOT NULL DEFAULT 'INFO',
+                        category TEXT,
+                        message TEXT NOT NULL,
+                        details TEXT,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )
+                """)
+
             # Check and create plugin_config table if missing
             if not await self._table_exists(db, "plugin_config"):
                 print("  ✓ Creating missing table: plugin_config")
@@ -436,6 +450,18 @@ class Database:
                     duration FLOAT NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (token_id) REFERENCES tokens(id)
+                )
+            """)
+
+            # Debug logs table
+            await db.execute("""
+                CREATE TABLE IF NOT EXISTS debug_logs (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    level TEXT NOT NULL DEFAULT 'INFO',
+                    category TEXT,
+                    message TEXT NOT NULL,
+                    details TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """)
 
@@ -1037,6 +1063,45 @@ class Database:
         """Clear all request logs"""
         async with aiosqlite.connect(self.db_path) as db:
             await db.execute("DELETE FROM request_logs")
+            await db.commit()
+
+    async def add_debug_log(self, level: str, category: str, message: str, details: str = None):
+        async with aiosqlite.connect(self.db_path) as db:
+            await db.execute("""
+                INSERT INTO debug_logs (level, category, message, details)
+                VALUES (?, ?, ?, ?)
+            """, (level, category, message, details))
+            await db.execute("""
+                DELETE FROM debug_logs WHERE id NOT IN (
+                    SELECT id FROM debug_logs ORDER BY created_at DESC LIMIT 500
+                )
+            """)
+            await db.commit()
+
+    async def get_debug_logs(self, limit: int = 100, level: str = None):
+        async with aiosqlite.connect(self.db_path) as db:
+            db.row_factory = aiosqlite.Row
+            if level:
+                cursor = await db.execute("""
+                    SELECT id, level, category, message, details, created_at
+                    FROM debug_logs
+                    WHERE level = ?
+                    ORDER BY created_at DESC
+                    LIMIT ?
+                """, (level, limit))
+            else:
+                cursor = await db.execute("""
+                    SELECT id, level, category, message, details, created_at
+                    FROM debug_logs
+                    ORDER BY created_at DESC
+                    LIMIT ?
+                """, (limit,))
+            rows = await cursor.fetchall()
+            return [dict(row) for row in rows]
+
+    async def clear_debug_logs(self):
+        async with aiosqlite.connect(self.db_path) as db:
+            await db.execute("DELETE FROM debug_logs")
             await db.commit()
 
     async def init_config_from_toml(self, config_dict: dict, is_first_startup: bool = True):

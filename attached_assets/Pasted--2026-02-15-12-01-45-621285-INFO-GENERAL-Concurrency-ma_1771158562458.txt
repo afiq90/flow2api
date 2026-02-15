@@ -1,0 +1,447 @@
+[2026-02-15 12:01:45.621285] [INFO] [GENERAL] Concurrency manager initialized with 1 tokens
+
+[2026-02-15 12:01:45.623350] [INFO] [GENERAL] [BrowserCaptcha] 浏览器数量配置: 1
+
+[2026-02-15 12:01:45.655042] [INFO] [GENERAL] [BrowserCaptcha] playwright 已安装
+
+[2026-02-15 12:01:45.659591] [INFO] [GENERAL] [BrowserCaptcha] 并发上限: 1
+
+[2026-02-15 12:01:45.659635] [INFO] [GENERAL] [BrowserCaptcha] 系统 chromium 已可用: /nix/store/qa9cnw4v5xkxyip6mb9kxqfq1z4x2dx1-chromium-138.0.7204.100/bin/chromium
+
+[2026-02-15 12:18:42.532166] [INFO] [GENERAL] Concurrency manager initialized with 1 tokens
+
+[2026-02-15 12:18:42.533375] [INFO] [GENERAL] [BrowserCaptcha] 浏览器数量配置: 1
+
+[2026-02-15 12:18:42.635632] [INFO] [GENERAL] [BrowserCaptcha] 系统 chromium 已可用: /nix/store/qa9cnw4v5xkxyip6mb9kxqfq1z4x2dx1-chromium-138.0.7204.100/bin/chromium
+
+[2026-02-15 12:18:42.635881] [INFO] [GENERAL] [BrowserCaptcha] 并发上限: 1
+
+[2026-02-15 12:18:42.648767] [INFO] [GENERAL] [BrowserCaptcha] playwright 已安装
+
+[2026-02-15 12:27:36.312150] [INFO] [GENERAL] [GENERATION] 开始生成 - 模型: veo_3_1_t2v_fast_landscape, 类型: video, Prompt: a woman eating watermelon on clouds, the cloud is ...
+
+[2026-02-15 12:27:36.321135] [INFO] [GENERAL] [GENERATION] Project ID: f4a6a317-410a-482f-93db-9650b3bdf57f
+
+[2026-02-15 12:27:36.322008] [INFO] [GENERAL] [GENERATION] 正在选择可用Token...
+
+[2026-02-15 12:27:36.322020] [INFO] [GENERAL] [LOAD_BALANCER] 开始选择Token (图片生成=False, 视频生成=True, 模型=veo_3_1_t2v_fast_landscape)
+
+[2026-02-15 12:27:36.322720] [INFO] [GENERAL] [LOAD_BALANCER] 获取到 1 个活跃Token
+
+[2026-02-15 12:27:36.322910] [INFO] [GENERAL] [LOAD_BALANCER] ✅ 已选择Token 1 (ttsfashion4@gmail.com) - 余额: 24900
+
+[2026-02-15 12:27:36.325310] [INFO] [GENERAL] [GENERATION] 已选择Token: 1 (ttsfashion4@gmail.com)
+
+[2026-02-15 12:27:36.325311] [INFO] [GENERAL] [GENERATION] 检查Token AT有效性...
+
+[2026-02-15 12:27:36.328438] [INFO] [GENERAL] [GENERATION] 检查/创建Project...
+
+[2026-02-15 12:27:36.331492] [INFO] [GENERAL] [GENERATION] 开始视频生成流程...
+
+[2026-02-15 12:27:36.363243] [INFO] [GENERAL] [VIDEO] TIER_TWO 账号，模型自动调整: veo_3_1_t2v_fast -> veo_3_1_t2v_fast_ultra
+
+[2026-02-15 12:27:36.379951] [INFO] [GENERAL] [BrowserCaptcha] 创建浏览器实例 0
+
+[2026-02-15 12:27:39.511258] [INFO] [GENERAL] [BrowserCaptcha] Token-0 获取成功 (3194ms)
+
+[2026-02-15 12:27:39.698680] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Body: {"clientContext": {"recaptchaContext": {"token": "0cAFcWeA4e7BgJvSVFbjZs6YllJPNpmc0xef7LoHO-lr1EsGMicULRcbsEonMXNtT4z-rJ3eu_d1x9ZTpuhGHTRm2fWC5hsqTHx6eRrwJT2xIwArY6mZI7WiFJmtWxdefbVqhG7ia3WjTwV4m01wvAYaki6Rdl_4yaPpoAha10Tyz4Z7JSZF8RSpGsQc5l0LXa2S8LLyqV3jFGtfR9oZX_2mG6g-NH8IBwIyfA5FTdzYtJhH8fln6ZtICoWDKMYiPihyhN_MaN8V10Elw_YW10H50NBVBm7UOi6vSLmHcIaFdK0s4UQzwC8kBM_BvVbAMNEnO7YOMA0CDY295WCpwMNevoTHbKnC5LJpvktAFQCMi4jaYUtMBPyB4p_8V12hPCDpWw77m9yUHTCo51UUGchj8Zny8WLZiGxjgSG9Zeomnl8ffthRQAUqG4Nsu70tViVEk1CSgg8k1trpS55vppQcsMBaw7DROhc6TRB57vHtKyM_7Wq9fK_05TZ02PW0JoTXKEewrSrGaDPmq6mQvfE-h9Yf--D091ZGVGeM-IeT8-FgfFF-aBJNwNJqM-19cWQqtUIOdtiBuaWRpO0jVWZ0Gr6-35xNKx6sg2BRcHayxG6X0lOeU0xCkp2lt44P6bnw6kCeejaBKvu8QNWhUTo0JZjnUOdm8XGjJhGrWgdyOmy9UaBz1zwEDqTqzKKOX58fgd17nWL8LlvE4GShvdpC1Dck_3ciQdZW-kg5VTlpRVpuFyES3PMgQmC1jq3dDTOCVVsYlNxVQJNHdEa9nw1Iboiei_AVW76XZ_JIfLvrBppyYXDdEwu-mOzhxP1lflSLJim147sQgTGtB-lyuv5BcsH_PXd3ibM4RKcs40sSJuJzsqEoJkwiz4ByPYmxpKXpFlAUbsiwCew8Tv1Ep46aZzha4SaK9fJl16NZsZYmfbd_QOT18kARAb5ENQe0iLUEKj1uMsXN_af44tre0_vmPGbEu17ImgvNdm5NVkVXxsxxfUMVrdHqb7UF7bYw199XoOiRGDJYLM4Fw4F4eWKP1XdTYKowCS0CXwEHc_o_yN8q5aySB7L6C0QFm_LuETRnbO1IoXg5RpttQIK4hy0Q03pcKZKbGMN0wHeMmRjTRCaD-e5mrS5iZlVfHoBfSynQh8JCo6spMuEq07DQpKDR70skKjC8pXmtMFw3StYjGhcexbRK2Gq1Pnh47q_hhN2XHt4YapROfP7oHl05IAx5_TklH0zvl6Lk-PQJTZHvT-j1IQ8VP4WO4sIaM4NCpqhRFan2EyATCCSg9TO57RAoQvctg2GkdGJfCU0BpJ8pZU1cCBkFyOEYBBU8-FKpm621iamePMlbkmKRDBbwOxRmgb-PoJKX_rsLC5CMp3KwVKd7J6gkWxC3bfjKv3wsPQ52Avfk6exvSIlHEPRzG7HctSkzfTkvmllIG76et35t41IJE0nyNv5rkYPKTo1-pxFaiR4e91leXrUhQiBBAqyj9PZC0nqyUuEZyuUzPOavXZ5xyn79eW6UfB-3yTbOxhzRgHrqQP8rm5X36LmIu3CzCo7WgWh8gw8l5ECgYD_tgBiwQHMdOUIt9-u_o0DzrKd00n392WMjTEpfszK7KOcEKxjfMkypd7IcHiky2FQAGfcCxhP7px_56WC_qKePyQKyzEIg-sKexY0ywfhx-ztzGPmp9uTLcBLnec81TT7TnjgAOtFBkYpdxf5Sizxl80rPeVdu5J3watsMUiuplfFHBMteVnW2w039p7dk42jc82Z-kJwfjisowpUuSTjyAbClnVjqPSRQ5PZfyxkZw3mA218Ok-YBKgLObXHZf7VX43fAvoaHXzsADgmTQA9NCri9YwR51dnf30AUZLfrwEysvRT5BRDdkh1sxt4egoXP_2kcR84v0bm-2ZEIPrPsjfSXW4Ys768PuDeJ65FWcJz-uz-rFC
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:27:41.066337] [RESPONSE] [API] Response 403
+    Status: 403
+    Duration: 1367.91ms
+    Body: {
+      "error": {
+        "code": 403,
+        "message": "reCAPTCHA evaluation failed",
+        "status": "PERMISSION_DENIED",
+        "details": [
+          {
+            "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+            "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+          }
+        ]
+      }
+    }
+    
+
+[2026-02-15 12:27:41.066351] [ERROR] [API] [API FAILED] Request Body: {'clientContext': {'recaptchaContext': {'token': '0cAFcWeA4e7BgJvSVFbjZs6YllJPNpmc0xef7LoHO-lr1EsGMicULRcbsEonMXNtT4z-rJ3eu_d1x9ZTpuhGHTRm2fWC5hsqTHx6eRrwJT2xIwArY6mZI7WiFJmtWxdefbVqhG7ia3WjTwV4m01wvAYaki6Rdl_4yaPpoAha10Tyz4Z7JSZF8RSpGsQc5l0LXa2S8LLyqV3jFGtfR9oZX_2mG6g-NH8IBwIyfA5FTdzYtJhH8fln6ZtICoWDKMYiPihyhN_MaN8V10Elw_YW10H50NBVBm7UOi6vSLmHcIaFdK0s4UQzwC8kBM_BvVbAMNEnO7YOMA0CDY295WCpwMNevoTHbKnC5LJpvktAFQCMi4jaYUtMBPyB4p_8V12hPCDpWw77m9yUHTCo51UUGchj8Zny8WLZiGxjgSG
+    Message: [API FAILED] Request Body: {'clientContext': {'recaptchaContext': {'token': '0cAFcWeA4e7BgJvSVFbjZs6YllJPNpmc0xef7LoHO-lr1EsGMicULRcbsEonMXNtT4z-rJ3eu_d1x9ZTpuhGHTRm2fWC5hsqTHx6eRrwJT2xIwArY6mZI7WiFJmtWxdefbVqhG7ia3WjTwV4m01wvAYaki6Rdl_4yaPpoAha10Tyz4Z7JSZF8RSpGsQc5l0LXa2S8LLyqV3jFGtfR9oZX_2mG6g-NH8IBwIyfA5FTdzYtJhH8fln6ZtICoWDKMYiPihyhN_MaN8V10Elw_YW10H50NBVBm7UOi6vSLmHcIaFdK0s4UQzwC8kBM_BvVbAMNEnO7YOMA0CDY295WCpwMNevoTHbKnC5LJpvktAFQCMi4jaYUtMBPyB4p_8V12hPCDpWw77m9yUHTCo51UUGchj8Zny8WLZiGxjgSG9Zeomnl8ffthRQAUqG4Nsu70tViVEk1CSgg8k1trpS55vppQcsMBaw7DROhc6TRB57vHtKyM_7Wq9fK_05TZ02PW0JoTXKEewrSrGaDPmq6mQvfE-h9Yf--D091ZGVGeM-IeT8-FgfFF-aBJNwNJqM-19cWQqtUIOdtiBuaWRpO0jVWZ0Gr6-35xNKx6sg2BRcHayxG6X0lOeU0xCkp2lt44P6bnw6kCeejaBKvu8QNWhUTo0JZjnUOdm8XGjJhGrWgdyOmy9UaBz1zwEDqTqzKKOX58fgd17nWL8LlvE4GShvdpC1Dck_3ciQdZW-kg5VTlpRVpuFyES3PMgQmC1jq3dDTOCVVsYlNxVQJNHdEa9nw1Iboiei_AVW76XZ_JIfLvrBppyYXDdEwu-mOzhxP1lflSLJim147sQgTGtB-lyuv5BcsH_PXd3ibM4RKcs40sSJuJzsqEoJkwiz4ByPYmxpKXpFlAUbsiwCew8Tv1Ep46aZzha4SaK9fJl16NZsZYmfbd_QOT18kARAb5ENQe0iLUEKj1uMsXN_af44tre0_vmPGbEu17ImgvNdm5NVkVXxsxxfUMVrdHqb7UF7bYw199XoOiRGDJYLM4Fw4F4eWKP1XdTYKowCS0CXwEHc_o_yN8q5aySB7L6C0QFm_LuETRnbO1IoXg5RpttQIK4hy0Q03pcKZKbGMN0wHeMmRjTRCaD-e5mrS5iZlVfHoBfSynQh8JCo6spMuEq07DQpKDR70skKjC8pXmtMFw3StYjGhcexbRK2Gq1Pnh47q_hhN2XHt4YapROfP7oHl05IAx5_TklH0zvl6Lk-PQJTZHvT-j1IQ8VP4WO4sIaM4NCpqhRFan2EyATCCSg9TO57RAoQvctg2GkdGJfCU0BpJ8pZU1cCBkFyOEYBBU8-FKpm621iamePMlbkmKRDBbwOxRmgb-PoJKX_rsLC5CMp3KwVKd7J6gkWxC3bfjKv3wsPQ52Avfk6exvSIlHEPRzG7HctSkzfTkvmllIG76et35t41IJE0nyNv5rkYPKTo1-pxFaiR4e91leXrUhQiBBAqyj9PZC0nqyUuEZyuUzPOavXZ5xyn79eW6UfB-3yTbOxhzRgHrqQP8rm5X36LmIu3CzCo7WgWh8gw8l5ECgYD_tgBiwQHMdOUIt9-u_o0DzrKd00n392WMjTEpfszK7KOcEKxjfMkypd7IcHiky2FQAGfcCxhP7px_56WC_qKePyQKyzEIg-sKexY0ywfhx-ztzGPmp9uTLcBLnec81TT7TnjgAOtFBkYpdxf5Sizxl80rPeVdu5J3watsMUiuplfFHBMteVnW2w039p7dk42jc82Z-kJwfjisowpUuSTjyAbClnVjqPSRQ5PZfyxkZw3mA218Ok-YBKgLObXHZf7VX43fAvoaHXzsADgmTQA9NCri9YwR51dnf30AUZLfrwEysvRT5BRDdkh1sxt4egoXP_2kcR84v0bm-2ZEIPrPsjfSXW4Ys768PuDeJ65FWcJz-uz-rFCTMKOduvjWVzNFyc9P51vf9RuVYaJRXC4UDKBtxYlbdCDbkEp9SvCbM-E7xxV9fQVSi6YbxmFjo5ZsnXyLyF18mtQvWpGcZGu3iLPMExuS5qT0kldJsqPC2FclIzsbuyeSErnc11vJrDQR3wOmLJ-3zccgLZt5x9m6-UEPauZr75l0_tg8Ef4KUTf9TrM-P6Y0r3mBFG7mQ_InakmFwiq8Tv_7D2E4OKKkTrUmge9E0JK3AU-qa2wJ5iqZFLNyBfKSf3RhLvwya8Qo79FugYi8P3OKriSL8RnFGSIIdTUo19IDzLA', 'applicationType': 'RECAPTCHA_APPLICATION_TYPE_WEB'}, 'sessionId': ';1771158459694', 'projectId': 'f4a6a317-410a-482f-93db-9650b3bdf57f', 'tool': 'PINHOLE', 'userPaygateTier': 'PAYGATE_TIER_TWO'}, 'requests': [{'aspectRatio': 'VIDEO_ASPECT_RATIO_LANDSCAPE', 'seed': 8627, 'textInput': {'prompt': 'a woman eating watermelon on clouds, the cloud is moving fast going forward racing with airplane'}, 'videoModelKey': 'veo_3_1_t2v_fast_ultra', 'metadata': {'sceneId': '2024e319-748c-4bf9-85e1-137aa2284361'}}]}
+
+[2026-02-15 12:27:41.066763] [ERROR] [API] [API FAILED] Response: {
+  "error": {
+    "code": 403,
+    "message": "reCAPTCHA evaluation failed",
+    "status": "PERMISSION_DENIED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+      }
+    ]
+  }
+}
+
+    Message: [API FAILED] Response: {
+      "error": {
+        "code": 403,
+        "message": "reCAPTCHA evaluation failed",
+        "status": "PERMISSION_DENIED",
+        "details": [
+          {
+            "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+            "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+          }
+        ]
+      }
+    }
+    
+
+[2026-02-15 12:27:41.066947] [ERROR] [API] [API FAILED] URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Message: [API FAILED] URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+
+[2026-02-15 12:27:41.068078] [INFO] [GENERAL] [BrowserCaptcha] 浏览器 0 的 token 验证失败
+
+[2026-02-15 12:27:41.068283] [WARNING] [GENERAL] [VIDEO T2V] 生成遇到reCAPTCHA 验证失败，正在重新获取验证码重试 (2/3)...
+
+[2026-02-15 12:27:44.960842] [INFO] [GENERAL] [BrowserCaptcha] Token-0 获取成功 (2890ms)
+
+[2026-02-15 12:27:45.083364] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Body: {"clientContext": {"recaptchaContext": {"token": "0cAFcWeA4qLsfRt73ZwvBjMq4tQetFLt3h9CdeE5DaHpHVX7llk-gYPEINJ3IZjOrzPcv9doDR00WUH4Qnze8BdfuaNDfJYOC5u_O1GQ0RweuVYGAWU9x2NKCn9DnFuVLaCj7h1Qb9ZMI9JeomDtpsrcB35MxWhJrlDsIYhEjXHMQTfskt4kDg9eNKCTcIJLlRgHU_bS73M6GBw6wh3USbZm5NFpksNtXsYjuPMS-BgYpX2fiQpel90ml2y0gKDOx_9tZXAi6rcIaJFvbwKDfWnuC-qGM5HCW6H6AhfuWCby7X0hCRLDT72YDLolsG4GzOQQMC5jOZeNajqKCLSfrIcI7Rtlb6Y6EgF_tPoE1kRjEXRtVQCYToGrzk4KuUCmXXBU1kt2bTD9MsyNkMtzk2nD0R-9ZGkmEX2RLIXv40G7P_ViNo8Z0baOBLZihkhwHnVtj94nSVl5uWXDzC-1diHmXj5NuofVIfVoQHT3znTRjfb1Of55_eCdaO8d7E4W8E5D-dyXzJce0ouvDFj6aytsw3aUQ0hBlWhANfpGkh8sRTTtE-X3U2U0o6Hf6h8gG2llnMyz-1a22LDWMSnSJteRvMXWQaQxP-JDM2mHxDIyZEkDf57D-CplUKvxeJXIcL8vCixIRrHZnx5qL6ukOZmvOv_xHHUblBa9Q1Zwn3V1PKB6QJfHy_GFgYUHnlXO8lT6Fi3qmhbP8Uc38o-mZt1-89eeCWPPsgj6nEq3_zfVCHe6jAJwFKT7SNBnxXR2YCXfUKouw7-zo4eZm3FIW18RSzbkiQnCAEqMfyxBSMb3SEJm0SGWeYDCJww1Li2dQeR9542_nhBggo_t8o1abITL1E4dF16wwyigFREYGAeIb_e6JT-rF3G4skYwW7nadeDHp9dhbQR3B6yNK3Z1HrlbS1fVQxwGNfBs9bF176ouwe6PnXYleqHbMQX-4vvpc-52RoNtYfcKgiih6TfbTKOACL9O0C08UK7Lqd43iT8mwAKYlTXyN7ybKA7IaJCi8daMQNoPw7Un3XEpQ3qfNxU05aU8cxsXg5LNLmCGyDAA5l-BIcJHYSubsZtped4aUzghEYRt_dpAsJpG2E39iXdHvS8TUQJSyL-N1KTfmoEpLekTp_Pz9anFq2KJ8UKOmsMWKPB6zy-iNnlnC77G2f57DQtOP4kUYLCrlyT8-aKns35Q0Qf2KtPRNUA6iUxGI0gvvRtsIEhzhHPQk-A5pJyl0UdemAL0D5y7I3vtFvepkZuzX6du6oT0CwSUxiEnHdtbCqy8cYTjiAy716RiRU5EZvT_6GgCgcTZCXK63Z9KD9qWMzVziMDOHZJaMGIYYL6a5xnn8_OY-dMdL7KQJRHsjdaHH-BrEADCr_lwMYvh2ZtKEGLw9czkCmFprz7oLK4B1fAcGtAqpd51SK75i1Nep42Sn9ukn47nvr-JJhAes8WYd0HzLvUYWabP4xMUYzEN3M5d4dWvknoFtiY6rFtpWnKOGCTpSgPmn5JKLM-5aP9Ax9ghZlIV6Lj7eC3mM3OmDYH6e_B1NJljjdVBcQDvSpqpP44u10BiRkZquq6uW_nriyNu-HyIRYbOUl3sQQAyCtF-o9OijlQT0xYcT-GN9YF1UyF653BAKXBvJhoDskRWmlLzR9QsbOkriR87066mw1MvIn_dI9L4FgOWatubPvfTEbHG4p3_TVLHfgkSMfEnvwv6hJIwYkkAYeyfAaZQHdIpXGRBQ_MsPfW7d-LpOJDc3MUlnNIQNVK9GINhpOpwsgjCtJbRgv2pMTBQTIZDDN_atmlnRSlzBr_3mXi31OwGdbKup2FxLBaASRezcvtkF8FDsgxCzTqbAEjgy_sXnpMmtu3_UCQl6VwMyUsJqasF2QvnECyVe_oBrxSQhGbZ8ghhGVhD5Agdqq6K6jiRJu0fzkaFzZ4HRoZaU7QOMnt417
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:27:51.147607] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 6064.73ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75"
+          },
+          "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf",
+          "status": "MEDIA_GENERATION_STATUS_PENDING"
+        }
+      ],
+      "remainingCredits": 24820
+    }
+    
+
+[2026-02-15 12:27:54.156347] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Body: {"operations": [{"operation": {"name": "2818f1a882b49911284c6caa1871cd75"}, "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf", "status": "MEDIA_GENERATION_STATUS_PENDING"}]}
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:27:57.893819] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 3737.83ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75"
+          },
+          "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf",
+          "status": "MEDIA_GENERATION_STATUS_ACTIVE"
+        }
+      ]
+    }
+    
+
+[2026-02-15 12:28:00.897776] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Body: {"operations": [{"operation": {"name": "2818f1a882b49911284c6caa1871cd75"}, "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf", "status": "MEDIA_GENERATION_STATUS_PENDING"}]}
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:28:02.942196] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 2044.44ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75"
+          },
+          "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf",
+          "status": "MEDIA_GENERATION_STATUS_ACTIVE"
+        }
+      ]
+    }
+    
+
+[2026-02-15 12:28:05.945151] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Body: {"operations": [{"operation": {"name": "2818f1a882b49911284c6caa1871cd75"}, "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf", "status": "MEDIA_GENERATION_STATUS_PENDING"}]}
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:28:07.930175] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 1985.29ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75"
+          },
+          "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf",
+          "status": "MEDIA_GENERATION_STATUS_ACTIVE"
+        }
+      ]
+    }
+    
+
+[2026-02-15 12:28:10.933085] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Body: {"operations": [{"operation": {"name": "2818f1a882b49911284c6caa1871cd75"}, "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf", "status": "MEDIA_GENERATION_STATUS_PENDING"}]}
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:28:12.769682] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 1836.73ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75"
+          },
+          "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf",
+          "status": "MEDIA_GENERATION_STATUS_ACTIVE"
+        }
+      ]
+    }
+    
+
+[2026-02-15 12:28:15.773793] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Body: {"operations": [{"operation": {"name": "2818f1a882b49911284c6caa1871cd75"}, "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf", "status": "MEDIA_GENERATION_STATUS_PENDING"}]}
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:28:17.592512] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 1819.09ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75"
+          },
+          "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf",
+          "status": "MEDIA_GENERATION_STATUS_ACTIVE"
+        }
+      ]
+    }
+    
+
+[2026-02-15 12:28:20.596192] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Body: {"operations": [{"operation": {"name": "2818f1a882b49911284c6caa1871cd75"}, "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf", "status": "MEDIA_GENERATION_STATUS_PENDING"}]}
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:28:22.572418] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 1973.16ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75"
+          },
+          "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf",
+          "status": "MEDIA_GENERATION_STATUS_ACTIVE"
+        }
+      ]
+    }
+    
+
+[2026-02-15 12:28:25.575629] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Body: {"operations": [{"operation": {"name": "2818f1a882b49911284c6caa1871cd75"}, "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf", "status": "MEDIA_GENERATION_STATUS_PENDING"}]}
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:28:27.612508] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 2037.21ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75"
+          },
+          "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf",
+          "status": "MEDIA_GENERATION_STATUS_ACTIVE"
+        }
+      ]
+    }
+    
+
+[2026-02-15 12:28:30.618143] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Body: {"operations": [{"operation": {"name": "2818f1a882b49911284c6caa1871cd75"}, "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf", "status": "MEDIA_GENERATION_STATUS_PENDING"}]}
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:28:31.851552] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 1233.88ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75"
+          },
+          "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf",
+          "status": "MEDIA_GENERATION_STATUS_ACTIVE"
+        }
+      ]
+    }
+    
+
+[2026-02-15 12:28:34.857753] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Body: {"operations": [{"operation": {"name": "2818f1a882b49911284c6caa1871cd75"}, "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf", "status": "MEDIA_GENERATION_STATUS_PENDING"}]}
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:28:36.300633] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 1443.45ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75"
+          },
+          "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf",
+          "status": "MEDIA_GENERATION_STATUS_ACTIVE"
+        }
+      ]
+    }
+    
+
+[2026-02-15 12:28:39.304743] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Body: {"operations": [{"operation": {"name": "2818f1a882b49911284c6caa1871cd75"}, "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf", "status": "MEDIA_GENERATION_STATUS_PENDING"}]}
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:28:40.742714] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 1438.11ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75"
+          },
+          "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf",
+          "status": "MEDIA_GENERATION_STATUS_ACTIVE"
+        }
+      ]
+    }
+    
+
+[2026-02-15 12:28:43.746746] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Body: {"operations": [{"operation": {"name": "2818f1a882b49911284c6caa1871cd75"}, "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf", "status": "MEDIA_GENERATION_STATUS_PENDING"}]}
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:28:45.040241] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 1293.94ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75"
+          },
+          "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf",
+          "status": "MEDIA_GENERATION_STATUS_ACTIVE"
+        }
+      ]
+    }
+    
+
+[2026-02-15 12:28:48.044446] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Body: {"operations": [{"operation": {"name": "2818f1a882b49911284c6caa1871cd75"}, "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf", "status": "MEDIA_GENERATION_STATUS_PENDING"}]}
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:28:49.276312] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 1232.21ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75"
+          },
+          "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf",
+          "status": "MEDIA_GENERATION_STATUS_ACTIVE"
+        }
+      ]
+    }
+    
+
+[2026-02-15 12:28:52.282234] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Body: {"operations": [{"operation": {"name": "2818f1a882b49911284c6caa1871cd75"}, "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf", "status": "MEDIA_GENERATION_STATUS_PENDING"}]}
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:28:53.616593] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 1334.65ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75"
+          },
+          "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf",
+          "status": "MEDIA_GENERATION_STATUS_ACTIVE"
+        }
+      ]
+    }
+    
+
+[2026-02-15 12:28:56.620345] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchCheckAsyncVideoGenerationStatus
+    Body: {"operations": [{"operation": {"name": "2818f1a882b49911284c6caa1871cd75"}, "sceneId": "775440f1-ec8d-4bac-835e-bdc96c3167bf", "status": "MEDIA_GENERATION_STATUS_PENDING"}]}
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:28:59.683563] [RESPONSE] [API] Response 200
+    Status: 200
+    Duration: 3063.29ms
+    Body: {
+      "operations": [
+        {
+          "operation": {
+            "name": "2818f1a882b49911284c6caa1871cd75",
+            "metadata": {
+              "@type": "type.googleapis.com/google.internal.labs.aisandbox.v1.Media",
+              "name": "CAUSJGY0YTZhMzE3LTQxMGEtNDgyZi05M2RiLTk2NTBiM2JkZjU3ZhokZjdjNDBkMmQtNTZmMC00NTI0LTlkYTctYmIyM2UxMjhkYTJiIgNDQUUqJDkzN2QwMjQ3LTA4YTAtNGM5YS05NzEyLTQ2YzM2NTc2MjAzOQ",
+              "video": {
+                "seed": 83596,
+                "mediaGenerationId": "CAUSJGY0YTZhMzE3LTQxMGEtNDgyZi05M2RiLTk2NTBiM2JkZjU3ZhokZjdjNDBkMmQtNTZmMC00NTI0LTlkYTctYmIyM2UxMjhkYTJiIgNDQUUqJDkzN2QwMjQ3LTA4YTAtNGM5YS05NzEyLTQ2YzM2NTc2MjAzOQ",
+                "prompt": "a woman eating watermelon on clouds, the cloud is moving fast going forward racing with airplane",
+                "fifeUrl": "https://storage.googleapis.com/ai-sandbox-videofx/video/937d0247-08a0-4c9a-9712-46c365762039?GoogleAccessId=labs-ai-sandbox-videoserver-prod@system.gserviceaccount.com&Expires=1771180139&Signature=u%2FcuSbxFqT16Gi0EmYSSnpJdfa5bJIASFdaRH81hGS3sWQ1IQ9vk1mDHIVJbw4kJP3wL4%2BIQC39jtvMLLuGbdp5GKHQ5WpapEL52GNUCmGO8WNKU%2FivqDblvusw0qEs2OBupF0VqGJimWTM0dcmB2LBqkxVXz96vRRAyYosatABflRcYoEn%2F4S94lUM1tbZ2IBmlqzAujb2%2FsLyyA%2FpLchr8zb3N8My0mtQSKPvCNWdqgZcdriELdjiIkhM%2BRvWuM26GkNSVuerbtgtPkrb4J9NBBQuSY2KLwUrqQvGLI9QRqlkFHCtBSAyC8%2FSo4vVQ2cs192%2FCXTEX5wxS4A7j5A%3D%3D",
+                "mediaVisibility": "PRIVATE",
+                "servingBaseUri": "https://storage.googleapis.com/ai-sandbox-videofx/image/937d0247-08a0-4c9a-9712-46c365762039?GoogleAccessId=labs-ai-sandbox-videoserver-prod@system.gserviceaccount.com&Expires=1771180139&Signature=CZQyss596sowsUHVJ0j3eqN4wgccBRlv0Uvebeg9t3vG8OdnGHeJaz8Su2AzNqis5z4hq%2FiO0e4%2FTkpSNKhzD7%2BJqV0eT34zHGImgrF8nxbbJ26SSNA60jPEq1lXd9oECNB88UlXhFTwl7zy3WjQLo8rleYBOlw%2FOJaJ6yzgrN3VxADpxR2clwggVFIjVAJ%2B4P9Boh6f1x3gfoz%2B67hzUWvFslW%2F0npYXADpeDnkDgCxhPi8Fa83OVHUuc8Uui3BQXIsTwCPyEp3OeP49P69R%2F%2BvrvWL68qCam6DFN4c6AkvyGunFQT1MLg8PJFiKsh49c%2BEOwiP27%2FkDV9oTbmc1g%3D%3D",
+               
+
+[2026-02-15 12:28:59.701861] [INFO] [GENERAL] [GENERATION] ✅ 生成成功完成

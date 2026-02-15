@@ -1,0 +1,455 @@
+[2026-02-15 12:14:31.037447] [INFO] [GENERAL] Concurrency manager initialized with 1 tokens
+
+[2026-02-15 12:14:31.058858] [INFO] [GENERAL] [BrowserCaptcha] 浏览器数量配置: 1
+
+[2026-02-15 12:14:31.178973] [INFO] [GENERAL] [BrowserCaptcha] playwright 已安装
+
+[2026-02-15 12:14:31.218863] [INFO] [GENERAL] [BrowserCaptcha] 系统 chromium 已可用: /nix/store/qa9cnw4v5xkxyip6mb9kxqfq1z4x2dx1-chromium-138.0.7204.100/bin/chromium
+
+[2026-02-15 12:14:31.346001] [INFO] [GENERAL] [BrowserCaptcha] 并发上限: 1
+
+[2026-02-15 12:15:04.938649] [INFO] [GENERAL] [GENERATION] 正在选择可用Token...
+
+[2026-02-15 12:15:04.939505] [INFO] [GENERAL] [LOAD_BALANCER] 开始选择Token (图片生成=False, 视频生成=True, 模型=veo_3_1_t2v_fast_landscape)
+
+[2026-02-15 12:15:04.939661] [INFO] [GENERAL] [GENERATION] 开始生成 - 模型: veo_3_1_t2v_fast_landscape, 类型: video, Prompt: a woman eating mango on clouds, the cloud is movin...
+
+[2026-02-15 12:15:05.038640] [INFO] [GENERAL] [LOAD_BALANCER] 获取到 1 个活跃Token
+
+[2026-02-15 12:15:05.142444] [INFO] [GENERAL] [GENERATION] 已选择Token: 1 (ttsfashion4@gmail.com)
+
+[2026-02-15 12:15:05.142782] [INFO] [GENERAL] [GENERATION] 检查Token AT有效性...
+
+[2026-02-15 12:15:05.143029] [INFO] [GENERAL] [LOAD_BALANCER] ✅ 已选择Token 1 (ttsfashion4@gmail.com) - 余额: 24870
+
+[2026-02-15 12:15:05.275423] [INFO] [GENERAL] [GENERATION] 检查/创建Project...
+
+[2026-02-15 12:15:05.618185] [INFO] [GENERAL] [GENERATION] Project ID: d54aae58-13a4-4886-b6cf-0538446da1a9
+
+[2026-02-15 12:15:05.618298] [INFO] [GENERAL] [GENERATION] 开始视频生成流程...
+
+[2026-02-15 12:15:05.618673] [INFO] [GENERAL] [BrowserCaptcha] 创建浏览器实例 0
+
+[2026-02-15 12:15:05.618808] [INFO] [GENERAL] [VIDEO] TIER_TWO 账号，模型自动调整: veo_3_1_t2v_fast -> veo_3_1_t2v_fast_ultra
+
+[2026-02-15 12:15:47.952191] [INFO] [GENERAL] [BrowserCaptcha] Token-0 获取成功 (42597ms)
+
+[2026-02-15 12:15:48.966671] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Body: {"clientContext": {"recaptchaContext": {"token": "0cAFcWeA7HTD8_hTso2A4HW0dKJRYP8gq4vAaM3HgPPlBPp_fRoGIlRJXZDqbNIwCvyWpfctBzWxRDETVyMuSl1Z2GZPry0FqzAQ2N3_0nfkeRF6jWiSCvDV14gDiTrCdVmVTeif5wqH7Y4VCoIsprFCgzOEjc6jiuHfDE1eA1lFaDn07Frfhwx_sBqPvvh1EpU63hW6zDblrqLAbGugzKaPPPu37h-GN8sRybJBApJkea270JxiMawh3ZGG8tyh1uh6Igb1i4IgCCCI50YQgNeiv0ybzohHLEYE2Q0JruwwggGRbUciIApZ3i0YZLnl7lIUDi8WalA9wIk8SwI05gMeCz8FMGnqg0fLZGxWkglSt_y6e-GEfoytl-wvAaucEJqN-A9ppQN5EfLpmBTXi6dbvubr3QoAgsAYYiqRoyHhGTrSnouadtBRxRMCgaUaXzF_woGnN7LnsxhuYzGGXlP70C5rycNVE-v_JOUuI9QRuRNMtFexTzek8Usub4jfYxN-H7pClvGM4SA517t2z0Gq6nrw1pKqK7tiemIvrsqvCineKvP8De-L69CN5XVwSWXS0sQYLGqw0-2R8JSCMYJiauwE2Q32x-chOzDnXv8rtU2p6NRgKC0G2TSF4UEV21LFmA-t2AD00Sgk1mZLN7fjue5N9QyT10cTsliy0e5_X07G2ly-7hCnU34O-YJEkrHmDqb0i4w-ik8IzVoEIN4i9TgD-Ccwz831y63RKDyZOiJ2Q6vp30vtZAFEN9JGmyu2013Mu7wjCtkqOsOvPB9P9Dxkz4vI5jFsR4iEtw-kmDei2heqYr0Y4j6E7HLboTRGhUhRXaWo1WGN7TZSBDKcSwL4tN2LWf42GXgW_iSiKLtzVMLX63-BZUaXyDh8qdQQkcH-A4fGra5HXpV5vs8FE4CvvM40y1UyLXNFJlUvjH_aAZhcehn2oEYmZnExr8mVNPjPFcvk6jHSAkw8SgMetgRLikK5Puyv6OTxZFWAAYfdlmKXsFOaupRt8CKZo-7MRHXmsVn6wDXSHJRsn7Wot2BkFBnIRgoPdGZ9CWxmTyH8vjzCqSUJiP7JVcOiAFsZqto6KPvoyn8QYdK8v-Vc7e21TgSn2R-PVecZK2-ESU8eunwfXg1TOBDZnOuJd0_8yo3nBV_R3JcXxmNKpuKdrNVVkGSBbI9guK8Av-ZOhANxDqU9mphQNRgqDedvzv9ndqYZbvyEKfHA2s_E_YtX9BLpLj03U9XqRGEJeE0P8hfEwwy0ikdrGeKYS8rish-ZYmjLEh7JD3VkdEeQOrOjVlra0SYQvzKwK5s6h08Bmhr7_WFd4uI3naFpvak7zw-WIpGDHseqV6cqPK7PeqSrQwOiY8vm63lk7F03HTjoSQPDEEv5hMsCOJ5N1LoFg6SQPcBreSGDrD_uApCzZtg2xYJCTCasLk4YDvu3LXl2lEUnTDjKHrcIeZQnVXIKYMj7t7VwAygxJYy6uxZkb7LybitLhYarMOixmfnlK2jrFBflMo42n6-5ASEZi0zroQgy1Dbigp4JzSb6-uDjmE5xN0t-YkK7z_yEt185VP9x92M5C-6iyV5ZpGSIk95rfbF_IQxnuclsrpvKj_z43JZJaBWJpAAniZn_U2V9A837LHjvL9M9HeuiZvGK8u6qH9WIYZkyyY_o2guRb5OXKbAwtPe_aL3X8Kz4GAbcGj3359ygz0zuWItC8RYZ0AAIFo6xmiYK-cMrPVlExEQ_zqkoUm_RX6LGMWYLaT7wO6T_7O1w05nsrasrNnty66kpJ5XFfM5LsQOO31RK85oyNqGBVhrqKNRR-0IHlrQDUMacq_9LwgVgZd0snF6Q3H62Dei_rZdaT1eg-LY1nsMjDq6Topb_XWfF23axBe4YndqgtxP4auodIGr99oVdBnt1Vr3R3Tb01xyHJCSeuXszREZGp7JilN
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:15:50.841617] [RESPONSE] [API] Response 403
+    Status: 403
+    Duration: 1878.50ms
+    Body: {
+      "error": {
+        "code": 403,
+        "message": "reCAPTCHA evaluation failed",
+        "status": "PERMISSION_DENIED",
+        "details": [
+          {
+            "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+            "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+          }
+        ]
+      }
+    }
+    
+
+[2026-02-15 12:15:50.841956] [ERROR] [API] [API FAILED] Response: {
+  "error": {
+    "code": 403,
+    "message": "reCAPTCHA evaluation failed",
+    "status": "PERMISSION_DENIED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+      }
+    ]
+  }
+}
+
+    Message: [API FAILED] Response: {
+      "error": {
+        "code": 403,
+        "message": "reCAPTCHA evaluation failed",
+        "status": "PERMISSION_DENIED",
+        "details": [
+          {
+            "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+            "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+          }
+        ]
+      }
+    }
+    
+
+[2026-02-15 12:15:50.842137] [ERROR] [API] [API FAILED] URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Message: [API FAILED] URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+
+[2026-02-15 12:15:50.842294] [ERROR] [API] [API FAILED] Request Body: {'clientContext': {'recaptchaContext': {'token': '0cAFcWeA7HTD8_hTso2A4HW0dKJRYP8gq4vAaM3HgPPlBPp_fRoGIlRJXZDqbNIwCvyWpfctBzWxRDETVyMuSl1Z2GZPry0FqzAQ2N3_0nfkeRF6jWiSCvDV14gDiTrCdVmVTeif5wqH7Y4VCoIsprFCgzOEjc6jiuHfDE1eA1lFaDn07Frfhwx_sBqPvvh1EpU63hW6zDblrqLAbGugzKaPPPu37h-GN8sRybJBApJkea270JxiMawh3ZGG8tyh1uh6Igb1i4IgCCCI50YQgNeiv0ybzohHLEYE2Q0JruwwggGRbUciIApZ3i0YZLnl7lIUDi8WalA9wIk8SwI05gMeCz8FMGnqg0fLZGxWkglSt_y6e-GEfoytl-wvAaucEJqN-A9ppQN5EfLpmBTXi6dbvubr3QoAgsAYYiq
+    Message: [API FAILED] Request Body: {'clientContext': {'recaptchaContext': {'token': '0cAFcWeA7HTD8_hTso2A4HW0dKJRYP8gq4vAaM3HgPPlBPp_fRoGIlRJXZDqbNIwCvyWpfctBzWxRDETVyMuSl1Z2GZPry0FqzAQ2N3_0nfkeRF6jWiSCvDV14gDiTrCdVmVTeif5wqH7Y4VCoIsprFCgzOEjc6jiuHfDE1eA1lFaDn07Frfhwx_sBqPvvh1EpU63hW6zDblrqLAbGugzKaPPPu37h-GN8sRybJBApJkea270JxiMawh3ZGG8tyh1uh6Igb1i4IgCCCI50YQgNeiv0ybzohHLEYE2Q0JruwwggGRbUciIApZ3i0YZLnl7lIUDi8WalA9wIk8SwI05gMeCz8FMGnqg0fLZGxWkglSt_y6e-GEfoytl-wvAaucEJqN-A9ppQN5EfLpmBTXi6dbvubr3QoAgsAYYiqRoyHhGTrSnouadtBRxRMCgaUaXzF_woGnN7LnsxhuYzGGXlP70C5rycNVE-v_JOUuI9QRuRNMtFexTzek8Usub4jfYxN-H7pClvGM4SA517t2z0Gq6nrw1pKqK7tiemIvrsqvCineKvP8De-L69CN5XVwSWXS0sQYLGqw0-2R8JSCMYJiauwE2Q32x-chOzDnXv8rtU2p6NRgKC0G2TSF4UEV21LFmA-t2AD00Sgk1mZLN7fjue5N9QyT10cTsliy0e5_X07G2ly-7hCnU34O-YJEkrHmDqb0i4w-ik8IzVoEIN4i9TgD-Ccwz831y63RKDyZOiJ2Q6vp30vtZAFEN9JGmyu2013Mu7wjCtkqOsOvPB9P9Dxkz4vI5jFsR4iEtw-kmDei2heqYr0Y4j6E7HLboTRGhUhRXaWo1WGN7TZSBDKcSwL4tN2LWf42GXgW_iSiKLtzVMLX63-BZUaXyDh8qdQQkcH-A4fGra5HXpV5vs8FE4CvvM40y1UyLXNFJlUvjH_aAZhcehn2oEYmZnExr8mVNPjPFcvk6jHSAkw8SgMetgRLikK5Puyv6OTxZFWAAYfdlmKXsFOaupRt8CKZo-7MRHXmsVn6wDXSHJRsn7Wot2BkFBnIRgoPdGZ9CWxmTyH8vjzCqSUJiP7JVcOiAFsZqto6KPvoyn8QYdK8v-Vc7e21TgSn2R-PVecZK2-ESU8eunwfXg1TOBDZnOuJd0_8yo3nBV_R3JcXxmNKpuKdrNVVkGSBbI9guK8Av-ZOhANxDqU9mphQNRgqDedvzv9ndqYZbvyEKfHA2s_E_YtX9BLpLj03U9XqRGEJeE0P8hfEwwy0ikdrGeKYS8rish-ZYmjLEh7JD3VkdEeQOrOjVlra0SYQvzKwK5s6h08Bmhr7_WFd4uI3naFpvak7zw-WIpGDHseqV6cqPK7PeqSrQwOiY8vm63lk7F03HTjoSQPDEEv5hMsCOJ5N1LoFg6SQPcBreSGDrD_uApCzZtg2xYJCTCasLk4YDvu3LXl2lEUnTDjKHrcIeZQnVXIKYMj7t7VwAygxJYy6uxZkb7LybitLhYarMOixmfnlK2jrFBflMo42n6-5ASEZi0zroQgy1Dbigp4JzSb6-uDjmE5xN0t-YkK7z_yEt185VP9x92M5C-6iyV5ZpGSIk95rfbF_IQxnuclsrpvKj_z43JZJaBWJpAAniZn_U2V9A837LHjvL9M9HeuiZvGK8u6qH9WIYZkyyY_o2guRb5OXKbAwtPe_aL3X8Kz4GAbcGj3359ygz0zuWItC8RYZ0AAIFo6xmiYK-cMrPVlExEQ_zqkoUm_RX6LGMWYLaT7wO6T_7O1w05nsrasrNnty66kpJ5XFfM5LsQOO31RK85oyNqGBVhrqKNRR-0IHlrQDUMacq_9LwgVgZd0snF6Q3H62Dei_rZdaT1eg-LY1nsMjDq6Topb_XWfF23axBe4YndqgtxP4auodIGr99oVdBnt1Vr3R3Tb01xyHJCSeuXszREZGp7JilNgIJP6El5AxlS-DPFqO78ch05Ug834TDPZMYsEtuaMdafKZwAQITGHIvtFUMGoIIJcVZk9K9InOJDyRr1kO9qICTQ8fwVff2vBDghgJT_y0d7jOcMhkZ3kvBKb2dChHvtzg654g', 'applicationType': 'RECAPTCHA_APPLICATION_TYPE_WEB'}, 'sessionId': ';1771157748794', 'projectId': 'd54aae58-13a4-4886-b6cf-0538446da1a9', 'tool': 'PINHOLE', 'userPaygateTier': 'PAYGATE_TIER_TWO'}, 'requests': [{'aspectRatio': 'VIDEO_ASPECT_RATIO_LANDSCAPE', 'seed': 5370, 'textInput': {'prompt': 'a woman eating mango on clouds, the cloud is moving fast going forward racing with airplane'}, 'videoModelKey': 'veo_3_1_t2v_fast_ultra', 'metadata': {'sceneId': '3f6f4dea-213a-4830-82db-ba9b8b97f202'}}]}
+
+[2026-02-15 12:15:50.844583] [WARNING] [GENERAL] [VIDEO T2V] 生成遇到reCAPTCHA 验证失败，正在重新获取验证码重试 (2/3)...
+
+[2026-02-15 12:15:50.844751] [INFO] [GENERAL] [BrowserCaptcha] 浏览器 0 的 token 验证失败
+
+[2026-02-15 12:15:58.483031] [INFO] [GENERAL] [BrowserCaptcha] Token-0 获取成功 (6627ms)
+
+[2026-02-15 12:15:58.737040] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Body: {"clientContext": {"recaptchaContext": {"token": "0cAFcWeA7gOxUEDyGnizJzdMk6r1ny7i2tBCctVRLbblYtqI0zUZQxht2sVbqF_mdGXXXQ5pYw-1_1XmSmMhzkdHDuiiv1MjSwak67a5E-2gal2FNQju1C885OUJFTqI2UOy8AxW0rPYx4aau91ueJsWWzfx9TH1E3ePmJ6RT7Os2tL6FPgSyyjwvc1_oXltBBz1s_2W7VfF1Xn2PjeOikbmYvcFYREjK1KY5l7AUE7XZh3rZ9jLQ97XM2Xq1Lz9TChJTo166yuEm4eb1D_L-mlWml-EtgSURebmpwkLFbVYF7Q1ILw6Q1BXL9HIO5UJOKl_OXDfeOBM_E6kUk8V7jNg2aksUTl-loq6yXqI6AcuLhZzzmYgnkZ4Apec0AICBryCowsWwi3XttOSM9NTscbfSkFqQ75ysQ1CzZhhfAktqbdX7yVKGWrienI0zUbmYDHTfAszHlKw8FuFQ4buFlx6cQ-X9RhQqFLlRxs6q4dhtua-5vfzrBSUC-6lHoluI-uM8ASNCwXvD1tZYp6Mi2b9hyRPI3aN2xzUqV5Fynx3nBQMLE9ZLjgw2A2N3jM01cI75GW54ajLqB6qdltUNgpSHivw_RSumnKEVrBaPuKC-nxG1uVsTjLSS-gqLS8YZjldEEp3S-uH2kwhOsMJ_lUYAkhhGjoP2Qo4LCR2899y_TJGZEKRpbdZyfvH2izNbjgnP-HCXeexmO8mFulT8K95S-T-eHmxSw6iIHyNDbyu8ILj6_3SEjH44PkADXJIOvZ9MFRHQ_S_MaIZ_ffVDoccgLdi-VPcPSjQFemQEMOn7-wsBaoWvcG8jSWqIGeYI9PjCM8xB2NzbeM4sRCPSpvTlQwIH8XtYTst44ojrT6Tyukfm9WwYbYSGS6MLYicStgRpAeevt1oaO5l0C_GXnXCvCMz9Fkpm5n8cbRUhv0UcwY2CehLrHO8gu6sSWenTCC5WfpzHn-O6Ohx8gCPQV9hKomLT-WSVEJHkU1zLPaN3aP9qKMFaflRo0ZETYO6qTXxB73m1YodKD6_RPAEod5f_b16xCj6K-_nzpfrLISDVySLPNZCm968hpi2ZbLEo8JOuIW9tr4dUo8sBKkloiNJSzxuij_msbf9py_5SRKeSMbCVvewWJ0YbBiIqIMkJa6if4dnwbB_T1gA5s2lrLFZ8IRBPSqCdTPboa7CGbkURsS-0tUSDy11u3bBsmmDEZdPHDF3-M3hzYaVjpx40bn3lLevU3uogNdJMF_BpOGSlZYRQrbugmEe6Xjk9uNL4kLfh9psonyRmlqzKNNRWMDLN68kZBnGDM8kmuLnqx4Teh4WTMAYKNalNiDxpUVXwo5D7gheROW5sAe1XsrLFbdx64l5Yrwr0cLXvPHX0Qn_Bqxu1owzXCqq0jO1oAOrwoC41Lt1fqD6LGDrNCVO3R8nOxykqYE0kL8m6x8GnuPOsg-FnFX-LwQqNKR1UZS1buVl99ZXVXN0j43q14NRcjgVytnySuQ2Im3CBWmg6DmihHs8NgbtKftM5wRiQDmOqfasjTx07Cxl2rzRCk2aye9_Dupmf0QLUCrabQjrTjW0Wx77MI0f9fd7bGBxXpZp9nW960iym9MsmH4SyhWgf81haaqrt0aKDtMGWJ9eI3Tt_GaGnWnqYY56GPmYUoC8VseDhWrw8_x59dbJUDdc_de3TNUQBnJcSQ649CjfFD-9AARITTSeGgrkxg9a9IXOTY6vi4dNLhNJFGiozwo-8691QxmqJsiK4PqEyLiRr_TrMvEWYG2vv4kn6zlTuqiCA0pVe4PhNvt0R-AagMecKQ7N0hHT1eJDjFkpNUXBuagdC9aP8O4KnqNce2fz0YhVBb9mwSZZ8dSMLHCPViF9Y4SHXCRcCjcdSNEHwSrgL8DpzSXkUGdC-8qP8-K3gCPgdfPSJvYtuxhZYPqQAOONKArogR5RRO
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:15:59.408136] [ERROR] [API] [API FAILED] URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Message: [API FAILED] URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+
+[2026-02-15 12:15:59.408378] [ERROR] [API] [API FAILED] Response: {
+  "error": {
+    "code": 403,
+    "message": "reCAPTCHA evaluation failed",
+    "status": "PERMISSION_DENIED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+      }
+    ]
+  }
+}
+
+    Message: [API FAILED] Response: {
+      "error": {
+        "code": 403,
+        "message": "reCAPTCHA evaluation failed",
+        "status": "PERMISSION_DENIED",
+        "details": [
+          {
+            "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+            "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+          }
+        ]
+      }
+    }
+    
+
+[2026-02-15 12:15:59.408528] [ERROR] [API] [API FAILED] Request Body: {'clientContext': {'recaptchaContext': {'token': '0cAFcWeA7gOxUEDyGnizJzdMk6r1ny7i2tBCctVRLbblYtqI0zUZQxht2sVbqF_mdGXXXQ5pYw-1_1XmSmMhzkdHDuiiv1MjSwak67a5E-2gal2FNQju1C885OUJFTqI2UOy8AxW0rPYx4aau91ueJsWWzfx9TH1E3ePmJ6RT7Os2tL6FPgSyyjwvc1_oXltBBz1s_2W7VfF1Xn2PjeOikbmYvcFYREjK1KY5l7AUE7XZh3rZ9jLQ97XM2Xq1Lz9TChJTo166yuEm4eb1D_L-mlWml-EtgSURebmpwkLFbVYF7Q1ILw6Q1BXL9HIO5UJOKl_OXDfeOBM_E6kUk8V7jNg2aksUTl-loq6yXqI6AcuLhZzzmYgnkZ4Apec0AICBryCowsWwi3XttOSM9NTscbfSkFqQ75ysQ1CzZh
+    Message: [API FAILED] Request Body: {'clientContext': {'recaptchaContext': {'token': '0cAFcWeA7gOxUEDyGnizJzdMk6r1ny7i2tBCctVRLbblYtqI0zUZQxht2sVbqF_mdGXXXQ5pYw-1_1XmSmMhzkdHDuiiv1MjSwak67a5E-2gal2FNQju1C885OUJFTqI2UOy8AxW0rPYx4aau91ueJsWWzfx9TH1E3ePmJ6RT7Os2tL6FPgSyyjwvc1_oXltBBz1s_2W7VfF1Xn2PjeOikbmYvcFYREjK1KY5l7AUE7XZh3rZ9jLQ97XM2Xq1Lz9TChJTo166yuEm4eb1D_L-mlWml-EtgSURebmpwkLFbVYF7Q1ILw6Q1BXL9HIO5UJOKl_OXDfeOBM_E6kUk8V7jNg2aksUTl-loq6yXqI6AcuLhZzzmYgnkZ4Apec0AICBryCowsWwi3XttOSM9NTscbfSkFqQ75ysQ1CzZhhfAktqbdX7yVKGWrienI0zUbmYDHTfAszHlKw8FuFQ4buFlx6cQ-X9RhQqFLlRxs6q4dhtua-5vfzrBSUC-6lHoluI-uM8ASNCwXvD1tZYp6Mi2b9hyRPI3aN2xzUqV5Fynx3nBQMLE9ZLjgw2A2N3jM01cI75GW54ajLqB6qdltUNgpSHivw_RSumnKEVrBaPuKC-nxG1uVsTjLSS-gqLS8YZjldEEp3S-uH2kwhOsMJ_lUYAkhhGjoP2Qo4LCR2899y_TJGZEKRpbdZyfvH2izNbjgnP-HCXeexmO8mFulT8K95S-T-eHmxSw6iIHyNDbyu8ILj6_3SEjH44PkADXJIOvZ9MFRHQ_S_MaIZ_ffVDoccgLdi-VPcPSjQFemQEMOn7-wsBaoWvcG8jSWqIGeYI9PjCM8xB2NzbeM4sRCPSpvTlQwIH8XtYTst44ojrT6Tyukfm9WwYbYSGS6MLYicStgRpAeevt1oaO5l0C_GXnXCvCMz9Fkpm5n8cbRUhv0UcwY2CehLrHO8gu6sSWenTCC5WfpzHn-O6Ohx8gCPQV9hKomLT-WSVEJHkU1zLPaN3aP9qKMFaflRo0ZETYO6qTXxB73m1YodKD6_RPAEod5f_b16xCj6K-_nzpfrLISDVySLPNZCm968hpi2ZbLEo8JOuIW9tr4dUo8sBKkloiNJSzxuij_msbf9py_5SRKeSMbCVvewWJ0YbBiIqIMkJa6if4dnwbB_T1gA5s2lrLFZ8IRBPSqCdTPboa7CGbkURsS-0tUSDy11u3bBsmmDEZdPHDF3-M3hzYaVjpx40bn3lLevU3uogNdJMF_BpOGSlZYRQrbugmEe6Xjk9uNL4kLfh9psonyRmlqzKNNRWMDLN68kZBnGDM8kmuLnqx4Teh4WTMAYKNalNiDxpUVXwo5D7gheROW5sAe1XsrLFbdx64l5Yrwr0cLXvPHX0Qn_Bqxu1owzXCqq0jO1oAOrwoC41Lt1fqD6LGDrNCVO3R8nOxykqYE0kL8m6x8GnuPOsg-FnFX-LwQqNKR1UZS1buVl99ZXVXN0j43q14NRcjgVytnySuQ2Im3CBWmg6DmihHs8NgbtKftM5wRiQDmOqfasjTx07Cxl2rzRCk2aye9_Dupmf0QLUCrabQjrTjW0Wx77MI0f9fd7bGBxXpZp9nW960iym9MsmH4SyhWgf81haaqrt0aKDtMGWJ9eI3Tt_GaGnWnqYY56GPmYUoC8VseDhWrw8_x59dbJUDdc_de3TNUQBnJcSQ649CjfFD-9AARITTSeGgrkxg9a9IXOTY6vi4dNLhNJFGiozwo-8691QxmqJsiK4PqEyLiRr_TrMvEWYG2vv4kn6zlTuqiCA0pVe4PhNvt0R-AagMecKQ7N0hHT1eJDjFkpNUXBuagdC9aP8O4KnqNce2fz0YhVBb9mwSZZ8dSMLHCPViF9Y4SHXCRcCjcdSNEHwSrgL8DpzSXkUGdC-8qP8-K3gCPgdfPSJvYtuxhZYPqQAOONKArogR5RROOFu46KPXULso_ZLNlqXDYf-zKFjhSQWx7eWgcvkASMrApV_2MrNXS228Uy17KsvlojupI6YSQgSWxW0Z0n8L6PlQoOa7XSW6wvZpnvVnGDEyXYaS6DajnqbPlB8ky_tge8J2Ww', 'applicationType': 'RECAPTCHA_APPLICATION_TYPE_WEB'}, 'sessionId': ';1771157758572', 'projectId': 'd54aae58-13a4-4886-b6cf-0538446da1a9', 'tool': 'PINHOLE', 'userPaygateTier': 'PAYGATE_TIER_TWO'}, 'requests': [{'aspectRatio': 'VIDEO_ASPECT_RATIO_LANDSCAPE', 'seed': 17547, 'textInput': {'prompt': 'a woman eating mango on clouds, the cloud is moving fast going forward racing with airplane'}, 'videoModelKey': 'veo_3_1_t2v_fast_ultra', 'metadata': {'sceneId': '2e8d812b-f8d0-411b-a17b-fa461391d4c1'}}]}
+
+[2026-02-15 12:15:59.408859] [RESPONSE] [API] Response 403
+    Status: 403
+    Duration: 671.55ms
+    Body: {
+      "error": {
+        "code": 403,
+        "message": "reCAPTCHA evaluation failed",
+        "status": "PERMISSION_DENIED",
+        "details": [
+          {
+            "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+            "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+          }
+        ]
+      }
+    }
+    
+
+[2026-02-15 12:15:59.411235] [INFO] [GENERAL] [BrowserCaptcha] 浏览器 0 的 token 验证失败
+
+[2026-02-15 12:15:59.411297] [WARNING] [GENERAL] [VIDEO T2V] 生成遇到reCAPTCHA 验证失败，正在重新获取验证码重试 (3/3)...
+
+[2026-02-15 12:16:05.883345] [INFO] [GENERAL] [BrowserCaptcha] Token-0 获取成功 (5461ms)
+
+[2026-02-15 12:16:06.170636] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Body: {"clientContext": {"recaptchaContext": {"token": "0cAFcWeA5pNej3AvWrPHsnn1RFwAOuc71KCbIlJPmvSonHOB2Qa9I6iaobO9N_fGzG6UGXEtWLd6khPqt1xx2D8gslqHHUPwOgksNWSgX961nfUuBciBujHrjtiQ90_oGied7TGqv3pvZAflXT49PVFtXFZbw3SUBm_zt_9dc-XW_4qEceZk1nNbXdjHhl62JT803z5BpcTihe9oH4GY71rzmKXYMWaNO1wk_aG1PC60rSL8Tm22HKtGxcxGWzizASA7FZchm-M3vATPu5Soy2GwGuj2o_QSaI0pRoAn4laf2bGqqvmrfD87uQMi1att_8fjCDSkduEH3fNWXSUljzhgi9pJ9Jzb6lZecEi2-p5B7abZMW5WoWCZq7M-OJVOeFcvDUB0SKyYpKRwmjoLxIVu3nLof_2vb10_wju_04vqk1ob3FH2-InyLLmPQoSaU2N8ERX3qrdnNkfN8upFxhiV6j1K6UTSgA3arbj1GxitVzWVOfSFONmwOJPLKrFCqHWqrFIpBpt85BQPK8lpw6drcnPzhgxfTyPvRSCn_lxOt4MuPTphAWhFPizi8Dh4ClJUZRA7IQLbB9pr2BNO8CwNfZpsSQWLWRLSZ5_AHy7h0R-LG7NnJ96bPoikGtcCL3JG68MZvNf0CfU5BL59HkAuao5d3jHyWHvH2j4oJtpW5NYbFMY0f5nX30XnFlQG82hCvsZd-41YGbZWii5d-EzUYlUY5mxBOq1R0JdqopElsFzkgSZHq-XdOfv8ayiNahE1tVtFm-Xdiij6SO6uMTlRWQQ2XBAQv_IJ2eWbcZxt1M0AD1sY_bDLxVnGzjAkUcAzcSe9KupbQt8pKTMgr8RH7nyIrC8vv4-4y5ROQF1_IrXHg7h543FmMbDchWsF7LcIOajj1Sd-dswOd1r0MaYlVTY_XU6ohXI5-EXRFN-d3e1mFyzm4GqdmWgOYMgLDFPeyBg0otGj8IwUr-b5oCgiP_AIJT0B7NsWqvvYdM_HZouW8DuE30_qw2np_MdQXUMV5kJIdSY9Zt0lvXKETLJsP1VF4PRtP5ZFDJv4LeyB-QzHwnmVKVnDf1mChWbGlc3_846eMx-IVjfdnXypqlEB0gQXYw2XcDBbcs843ZPt4uW2Q2m8hcMBZSP90L17B-ALEvni53kjX246cDy_a7cg9uwJYGY_iKObmuo4nrLwA1IKnmIjHDJrdq6wq5KCxl9yo8kV0DmRsn4-Np9azbwSvPGlLRACOZe0YyEr9sGLZn29Zh9RuKUeD_X4RHrtMdm4Ll2wCy3msAR0ZHn0MnCxGQRXbzQ3ksFWFLFkZojeHrpK5V6hewWTLBX-5tOFDXj0bW7HbdZnrBYY-e2Xn0nCrLlzJCykxOVAq3t1bzobpXti6hPKjHKldBu66zDAnD8kQdXc3dT_XR0lOdpMnOap_QHNvwiHudAAEYeERR-WSPJ3r5Oq1vBTBwxyKx79jlim99L1jW0ac0JqbAPNLcHlJ0JKVMXDjhefHFs1d1C9e88ScbCVQKRFux5byWV-kjzkSrC_cqkmfXqf7NaENFQrzFjBtwBMFTOZVD4Uzq9Adt_epccW1OtY53S1iX_0xIe4tNIHeFNJgVGF_h_QmHek5OUQVpcXiR8Ee-jOPBttgf80mawFb8LVjxH2XBjM64PupyDtvwVigDkZFgJzCID4SO-1X01P9BVBxmhZvyQl6sZAXeBKV5NlTe3gKGtzoUgH7xN1NA5mfshaDS7wcDXxKRwO51Gf036abAz3C5-Bd1JykbbIlFeomScKJX45W2M3MgE9FYxmGTuOrlH3Lvz8bmkFTfSN6GMQQ6gUoFXAAGLHURPY9g3p6Ohhc9MvGPMRV7Gm_2YIntEbagBvX5NAuqcaBXusutD4gg2P0u7ggBwv4EU10cR8qxSyzYKc8wRc06Jm2Qt6S1CMz2DfW5Pcus4_kr
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:16:06.874837] [RESPONSE] [API] Response 403
+    Status: 403
+    Duration: 703.82ms
+    Body: {
+      "error": {
+        "code": 403,
+        "message": "reCAPTCHA evaluation failed",
+        "status": "PERMISSION_DENIED",
+        "details": [
+          {
+            "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+            "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+          }
+        ]
+      }
+    }
+    
+
+[2026-02-15 12:16:06.875069] [ERROR] [API] [API FAILED] Response: {
+  "error": {
+    "code": 403,
+    "message": "reCAPTCHA evaluation failed",
+    "status": "PERMISSION_DENIED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+      }
+    ]
+  }
+}
+
+    Message: [API FAILED] Response: {
+      "error": {
+        "code": 403,
+        "message": "reCAPTCHA evaluation failed",
+        "status": "PERMISSION_DENIED",
+        "details": [
+          {
+            "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+            "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+          }
+        ]
+      }
+    }
+    
+
+[2026-02-15 12:16:06.875262] [ERROR] [API] [API FAILED] Request Body: {'clientContext': {'recaptchaContext': {'token': '0cAFcWeA5pNej3AvWrPHsnn1RFwAOuc71KCbIlJPmvSonHOB2Qa9I6iaobO9N_fGzG6UGXEtWLd6khPqt1xx2D8gslqHHUPwOgksNWSgX961nfUuBciBujHrjtiQ90_oGied7TGqv3pvZAflXT49PVFtXFZbw3SUBm_zt_9dc-XW_4qEceZk1nNbXdjHhl62JT803z5BpcTihe9oH4GY71rzmKXYMWaNO1wk_aG1PC60rSL8Tm22HKtGxcxGWzizASA7FZchm-M3vATPu5Soy2GwGuj2o_QSaI0pRoAn4laf2bGqqvmrfD87uQMi1att_8fjCDSkduEH3fNWXSUljzhgi9pJ9Jzb6lZecEi2-p5B7abZMW5WoWCZq7M-OJVOeFcvDUB0SKyYpKRwmjoLxIVu3nLof_2vb10_wju
+    Message: [API FAILED] Request Body: {'clientContext': {'recaptchaContext': {'token': '0cAFcWeA5pNej3AvWrPHsnn1RFwAOuc71KCbIlJPmvSonHOB2Qa9I6iaobO9N_fGzG6UGXEtWLd6khPqt1xx2D8gslqHHUPwOgksNWSgX961nfUuBciBujHrjtiQ90_oGied7TGqv3pvZAflXT49PVFtXFZbw3SUBm_zt_9dc-XW_4qEceZk1nNbXdjHhl62JT803z5BpcTihe9oH4GY71rzmKXYMWaNO1wk_aG1PC60rSL8Tm22HKtGxcxGWzizASA7FZchm-M3vATPu5Soy2GwGuj2o_QSaI0pRoAn4laf2bGqqvmrfD87uQMi1att_8fjCDSkduEH3fNWXSUljzhgi9pJ9Jzb6lZecEi2-p5B7abZMW5WoWCZq7M-OJVOeFcvDUB0SKyYpKRwmjoLxIVu3nLof_2vb10_wju_04vqk1ob3FH2-InyLLmPQoSaU2N8ERX3qrdnNkfN8upFxhiV6j1K6UTSgA3arbj1GxitVzWVOfSFONmwOJPLKrFCqHWqrFIpBpt85BQPK8lpw6drcnPzhgxfTyPvRSCn_lxOt4MuPTphAWhFPizi8Dh4ClJUZRA7IQLbB9pr2BNO8CwNfZpsSQWLWRLSZ5_AHy7h0R-LG7NnJ96bPoikGtcCL3JG68MZvNf0CfU5BL59HkAuao5d3jHyWHvH2j4oJtpW5NYbFMY0f5nX30XnFlQG82hCvsZd-41YGbZWii5d-EzUYlUY5mxBOq1R0JdqopElsFzkgSZHq-XdOfv8ayiNahE1tVtFm-Xdiij6SO6uMTlRWQQ2XBAQv_IJ2eWbcZxt1M0AD1sY_bDLxVnGzjAkUcAzcSe9KupbQt8pKTMgr8RH7nyIrC8vv4-4y5ROQF1_IrXHg7h543FmMbDchWsF7LcIOajj1Sd-dswOd1r0MaYlVTY_XU6ohXI5-EXRFN-d3e1mFyzm4GqdmWgOYMgLDFPeyBg0otGj8IwUr-b5oCgiP_AIJT0B7NsWqvvYdM_HZouW8DuE30_qw2np_MdQXUMV5kJIdSY9Zt0lvXKETLJsP1VF4PRtP5ZFDJv4LeyB-QzHwnmVKVnDf1mChWbGlc3_846eMx-IVjfdnXypqlEB0gQXYw2XcDBbcs843ZPt4uW2Q2m8hcMBZSP90L17B-ALEvni53kjX246cDy_a7cg9uwJYGY_iKObmuo4nrLwA1IKnmIjHDJrdq6wq5KCxl9yo8kV0DmRsn4-Np9azbwSvPGlLRACOZe0YyEr9sGLZn29Zh9RuKUeD_X4RHrtMdm4Ll2wCy3msAR0ZHn0MnCxGQRXbzQ3ksFWFLFkZojeHrpK5V6hewWTLBX-5tOFDXj0bW7HbdZnrBYY-e2Xn0nCrLlzJCykxOVAq3t1bzobpXti6hPKjHKldBu66zDAnD8kQdXc3dT_XR0lOdpMnOap_QHNvwiHudAAEYeERR-WSPJ3r5Oq1vBTBwxyKx79jlim99L1jW0ac0JqbAPNLcHlJ0JKVMXDjhefHFs1d1C9e88ScbCVQKRFux5byWV-kjzkSrC_cqkmfXqf7NaENFQrzFjBtwBMFTOZVD4Uzq9Adt_epccW1OtY53S1iX_0xIe4tNIHeFNJgVGF_h_QmHek5OUQVpcXiR8Ee-jOPBttgf80mawFb8LVjxH2XBjM64PupyDtvwVigDkZFgJzCID4SO-1X01P9BVBxmhZvyQl6sZAXeBKV5NlTe3gKGtzoUgH7xN1NA5mfshaDS7wcDXxKRwO51Gf036abAz3C5-Bd1JykbbIlFeomScKJX45W2M3MgE9FYxmGTuOrlH3Lvz8bmkFTfSN6GMQQ6gUoFXAAGLHURPY9g3p6Ohhc9MvGPMRV7Gm_2YIntEbagBvX5NAuqcaBXusutD4gg2P0u7ggBwv4EU10cR8qxSyzYKc8wRc06Jm2Qt6S1CMz2DfW5Pcus4_krrykDWCXQWBOwrK9Zmp0wTgGlSNTvbdak4Op_JUEtBa-6cij0rV2MuIzhBxOnPcO0hYstqxEL_GSynQw98yXiGzBS1hINiyMu2IiOz0yR3X_Bw9vq', 'applicationType': 'RECAPTCHA_APPLICATION_TYPE_WEB'}, 'sessionId': ';1771157766002', 'projectId': 'd54aae58-13a4-4886-b6cf-0538446da1a9', 'tool': 'PINHOLE', 'userPaygateTier': 'PAYGATE_TIER_TWO'}, 'requests': [{'aspectRatio': 'VIDEO_ASPECT_RATIO_LANDSCAPE', 'seed': 2900, 'textInput': {'prompt': 'a woman eating mango on clouds, the cloud is moving fast going forward racing with airplane'}, 'videoModelKey': 'veo_3_1_t2v_fast_ultra', 'metadata': {'sceneId': 'b79d1eb7-7d8c-4bb4-99d9-f7f73afa391a'}}]}
+
+[2026-02-15 12:16:06.875607] [ERROR] [API] [API FAILED] URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Message: [API FAILED] URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+
+[2026-02-15 12:16:06.878451] [ERROR] [API] [GENERATION] ❌ 生成失败: Flow API request failed: PUBLIC_ERROR_SOMETHING_WENT_WRONG: reCAPTCHA evaluation failed
+    Message: [GENERATION] ❌ 生成失败: Flow API request failed: PUBLIC_ERROR_SOMETHING_WENT_WRONG: reCAPTCHA evaluation failed
+
+[2026-02-15 12:25:11.926767] [INFO] [GENERAL] Concurrency manager initialized with 1 tokens
+
+[2026-02-15 12:25:11.947939] [INFO] [GENERAL] [BrowserCaptcha] 浏览器数量配置: 1
+
+[2026-02-15 12:25:12.069451] [INFO] [GENERAL] [BrowserCaptcha] 系统 chromium 已可用: /nix/store/qa9cnw4v5xkxyip6mb9kxqfq1z4x2dx1-chromium-138.0.7204.100/bin/chromium
+
+[2026-02-15 12:25:12.104361] [INFO] [GENERAL] [BrowserCaptcha] playwright 已安装
+
+[2026-02-15 12:25:12.232468] [INFO] [GENERAL] [BrowserCaptcha] 并发上限: 1
+
+[2026-02-15 12:25:43.969083] [INFO] [GENERAL] [GENERATION] 正在选择可用Token...
+
+[2026-02-15 12:25:43.969270] [INFO] [GENERAL] [GENERATION] 开始生成 - 模型: veo_3_1_t2v_fast_landscape, 类型: video, Prompt: a woman eating mango on clouds, the cloud is movin...
+
+[2026-02-15 12:25:43.969393] [INFO] [GENERAL] [LOAD_BALANCER] 开始选择Token (图片生成=False, 视频生成=True, 模型=veo_3_1_t2v_fast_landscape)
+
+[2026-02-15 12:25:44.064176] [INFO] [GENERAL] [LOAD_BALANCER] 获取到 1 个活跃Token
+
+[2026-02-15 12:25:44.164554] [INFO] [GENERAL] [GENERATION] 已选择Token: 1 (ttsfashion4@gmail.com)
+
+[2026-02-15 12:25:44.164739] [INFO] [GENERAL] [GENERATION] 检查Token AT有效性...
+
+[2026-02-15 12:25:44.164941] [INFO] [GENERAL] [LOAD_BALANCER] ✅ 已选择Token 1 (ttsfashion4@gmail.com) - 余额: 24870
+
+[2026-02-15 12:25:44.291525] [INFO] [GENERAL] [GENERATION] 检查/创建Project...
+
+[2026-02-15 12:25:44.620650] [INFO] [GENERAL] [VIDEO] TIER_TWO 账号，模型自动调整: veo_3_1_t2v_fast -> veo_3_1_t2v_fast_ultra
+
+[2026-02-15 12:25:44.620866] [INFO] [GENERAL] [GENERATION] 开始视频生成流程...
+
+[2026-02-15 12:25:44.620968] [INFO] [GENERAL] [BrowserCaptcha] 创建浏览器实例 0
+
+[2026-02-15 12:25:44.621051] [INFO] [GENERAL] [GENERATION] Project ID: d54aae58-13a4-4886-b6cf-0538446da1a9
+
+[2026-02-15 12:26:29.784401] [INFO] [GENERAL] [BrowserCaptcha] Token-0 获取成功 (45410ms)
+
+[2026-02-15 12:26:30.907544] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Body: {"clientContext": {"recaptchaContext": {"token": "0cAFcWeA69WLk0nq_2DHHQxaVKIUQSy7ZMhYt5O2L0cY9IX5IPVzKw-Yq4wOCV8ZmeZdDCbXXH7IK-TzSTgegprXAC6euLLqH-jlhEad_o_nk0RNIsr2eAwMhouyhPBD_N177z1kWIaoX_uUo1yJ5Wklw-R9NRCSX1Eeiq1l7LTR13SFUGsSZFd_nPjNPUIxKDHS9w1Z8ywTAf6FJdJq3jg2YhJZ6cPqmlt6iy2t6y9SgoHA_5ZG2py-RXhAJIJz1kysc4XFQfLiy0efV8M4jkSpTmOnNVw3x6lLJjQb63039wPLg_U5Hp04JX1QsIVPKzJuU5abXH5jXjo2rbu7fDqwLQpVX1LWceIFqnHCoXvgaMqAPBUCFuCEWLH7ZXtBTVUyiNlUNi0UcZJVfMRZb1OoHekYJY3eWhKVhQsV6mPoqXBwTaBZ2W3NTLuYP7doiUWdm4Wx9yIzrl-p3hXnF1UU45idED6EZaou29JaXD4dZT02YCbXCx8qI_4KUndk8jQ1h88kA5khY7r9bJjMlClpI31QzMF5Ympi3KuJdUFCUTcAP8mBKmy5ReilWkaPpeQEtVYRt_M9A4FN-LdOZlurKeaFhBdPSct1jLwyCvWOL8kbzfShENaZvLGD7ZFrkplGDDBUM2Saj0Rg3WkOV7TjtqeMuMB6h5vKbOsIK2JKepgInRZu5iA9f93zan9s4udZD8SrBqD2ow-ctG9H8YgWD0OFK91_RYME-oS5ZtNjQ9a8zvNE2lulw8MD8gQBu1CEFhs12oB7m6yy7fhuo1BiBOGpByXoM0a9vPnCVMcol38WGnV9cYUk87xRtF7ocEuDdVsJGYNZdhtIOuUw1ckguOLNnutRNg8f_dFImdoRfEotaONqUckdCC7vg460zD-_6Pr61wCGvkAArOeKSSN-Wp1sL1m1jDekvMdS0dgdiAig0KagTQt7mBhv6DXhkRPqqAGtcARINTvKa3p-V9jww5s88paXL09eAQjUqrGkhMEEtSl46rBGFb06Lg97onPwNnXCFw56PtgR3Y7s1RTJWxVy5ShoNs8MZSOexBieC3yO86Yx3a91_sCDK2YjYEZif9RfuFFtYEZPEP3p78GyR71389F2Icw2pJHK2MEeLBAOMsUZ6gViyKmQGyeEvr5rs-vivfRIYwiQA0Z9SUWikqNO7f4gasCdaj1ov2ED3kOpxF0xpDnA6ikWRAFMG-IPt2yTQqmw1nloCflcDFBP4pRYORzdCh01vIn2qAF8cIai-NhR62gU0H2XTYMn5gRN-Sd_DHj7n_ApX7pQESRoYgJd0-srG-u34gm7pAh3v1CQ2qz2v7EP5SqJT_UitnElwDzrvzY9c4mjMbYNXClDscqgqGPfP0hLtjtjbqeqhQJQGWELVQ2n2vaqERAuWRXyYyjCuFZnHk2xgsvIF-TRawttQFQ9kRuGBZjSM-lXj5c7secPMe4TTdxfTQGgFU-6ncTqg5NtbBYs32WHuYZmrVBv7Y7RcnTi2uhaZiGjHz22t2ntkKndwMvVyimAVuFFQgUiUepJXl5IdlBo_1CcdYHb9YoCxqU5vvt9tPZ-yFxQhizEU96LS8yjxjW8hSAH1Tm3SZZNTdSbirSk8HKNMTtakxUArMIAPEwWSBkNzOMsvDWS3rb5m_nU9GVVPPIzRAdIvf3NKfIYoqKxrYKfqyqcZNjgHEKi2lVq3y4fwyOFUiL6RxgI4Z4Htyuh7smYIZJlv3jphdThyQCK7U4Tk3IHXgQnMudkwbpNWRWFh_ZKi93Dh2GNocPxTGNZZRRP-ACrVwHj2gA67K0Xm-Xj3pfZDUDa54Xrk1bFz2Yfu5bpOuyoKsmAGCouXTig0YWFjiu9UPV0hHBD8QGlu-ArWQbzG0X02xiew93jSHGguLvzbkn0jTitpohy0t5ut_CE9py-Rtn6cKcacTZi-CDDYzSOaf
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:26:32.404201] [ERROR] [API] [API FAILED] URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Message: [API FAILED] URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+
+[2026-02-15 12:26:32.404379] [RESPONSE] [API] Response 403
+    Status: 403
+    Duration: 1498.82ms
+    Body: {
+      "error": {
+        "code": 403,
+        "message": "reCAPTCHA evaluation failed",
+        "status": "PERMISSION_DENIED",
+        "details": [
+          {
+            "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+            "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+          }
+        ]
+      }
+    }
+    
+
+[2026-02-15 12:26:32.404701] [ERROR] [API] [API FAILED] Request Body: {'clientContext': {'recaptchaContext': {'token': '0cAFcWeA69WLk0nq_2DHHQxaVKIUQSy7ZMhYt5O2L0cY9IX5IPVzKw-Yq4wOCV8ZmeZdDCbXXH7IK-TzSTgegprXAC6euLLqH-jlhEad_o_nk0RNIsr2eAwMhouyhPBD_N177z1kWIaoX_uUo1yJ5Wklw-R9NRCSX1Eeiq1l7LTR13SFUGsSZFd_nPjNPUIxKDHS9w1Z8ywTAf6FJdJq3jg2YhJZ6cPqmlt6iy2t6y9SgoHA_5ZG2py-RXhAJIJz1kysc4XFQfLiy0efV8M4jkSpTmOnNVw3x6lLJjQb63039wPLg_U5Hp04JX1QsIVPKzJuU5abXH5jXjo2rbu7fDqwLQpVX1LWceIFqnHCoXvgaMqAPBUCFuCEWLH7ZXtBTVUyiNlUNi0UcZJVfMRZb1OoHekYJY3eWhKVhQs
+    Message: [API FAILED] Request Body: {'clientContext': {'recaptchaContext': {'token': '0cAFcWeA69WLk0nq_2DHHQxaVKIUQSy7ZMhYt5O2L0cY9IX5IPVzKw-Yq4wOCV8ZmeZdDCbXXH7IK-TzSTgegprXAC6euLLqH-jlhEad_o_nk0RNIsr2eAwMhouyhPBD_N177z1kWIaoX_uUo1yJ5Wklw-R9NRCSX1Eeiq1l7LTR13SFUGsSZFd_nPjNPUIxKDHS9w1Z8ywTAf6FJdJq3jg2YhJZ6cPqmlt6iy2t6y9SgoHA_5ZG2py-RXhAJIJz1kysc4XFQfLiy0efV8M4jkSpTmOnNVw3x6lLJjQb63039wPLg_U5Hp04JX1QsIVPKzJuU5abXH5jXjo2rbu7fDqwLQpVX1LWceIFqnHCoXvgaMqAPBUCFuCEWLH7ZXtBTVUyiNlUNi0UcZJVfMRZb1OoHekYJY3eWhKVhQsV6mPoqXBwTaBZ2W3NTLuYP7doiUWdm4Wx9yIzrl-p3hXnF1UU45idED6EZaou29JaXD4dZT02YCbXCx8qI_4KUndk8jQ1h88kA5khY7r9bJjMlClpI31QzMF5Ympi3KuJdUFCUTcAP8mBKmy5ReilWkaPpeQEtVYRt_M9A4FN-LdOZlurKeaFhBdPSct1jLwyCvWOL8kbzfShENaZvLGD7ZFrkplGDDBUM2Saj0Rg3WkOV7TjtqeMuMB6h5vKbOsIK2JKepgInRZu5iA9f93zan9s4udZD8SrBqD2ow-ctG9H8YgWD0OFK91_RYME-oS5ZtNjQ9a8zvNE2lulw8MD8gQBu1CEFhs12oB7m6yy7fhuo1BiBOGpByXoM0a9vPnCVMcol38WGnV9cYUk87xRtF7ocEuDdVsJGYNZdhtIOuUw1ckguOLNnutRNg8f_dFImdoRfEotaONqUckdCC7vg460zD-_6Pr61wCGvkAArOeKSSN-Wp1sL1m1jDekvMdS0dgdiAig0KagTQt7mBhv6DXhkRPqqAGtcARINTvKa3p-V9jww5s88paXL09eAQjUqrGkhMEEtSl46rBGFb06Lg97onPwNnXCFw56PtgR3Y7s1RTJWxVy5ShoNs8MZSOexBieC3yO86Yx3a91_sCDK2YjYEZif9RfuFFtYEZPEP3p78GyR71389F2Icw2pJHK2MEeLBAOMsUZ6gViyKmQGyeEvr5rs-vivfRIYwiQA0Z9SUWikqNO7f4gasCdaj1ov2ED3kOpxF0xpDnA6ikWRAFMG-IPt2yTQqmw1nloCflcDFBP4pRYORzdCh01vIn2qAF8cIai-NhR62gU0H2XTYMn5gRN-Sd_DHj7n_ApX7pQESRoYgJd0-srG-u34gm7pAh3v1CQ2qz2v7EP5SqJT_UitnElwDzrvzY9c4mjMbYNXClDscqgqGPfP0hLtjtjbqeqhQJQGWELVQ2n2vaqERAuWRXyYyjCuFZnHk2xgsvIF-TRawttQFQ9kRuGBZjSM-lXj5c7secPMe4TTdxfTQGgFU-6ncTqg5NtbBYs32WHuYZmrVBv7Y7RcnTi2uhaZiGjHz22t2ntkKndwMvVyimAVuFFQgUiUepJXl5IdlBo_1CcdYHb9YoCxqU5vvt9tPZ-yFxQhizEU96LS8yjxjW8hSAH1Tm3SZZNTdSbirSk8HKNMTtakxUArMIAPEwWSBkNzOMsvDWS3rb5m_nU9GVVPPIzRAdIvf3NKfIYoqKxrYKfqyqcZNjgHEKi2lVq3y4fwyOFUiL6RxgI4Z4Htyuh7smYIZJlv3jphdThyQCK7U4Tk3IHXgQnMudkwbpNWRWFh_ZKi93Dh2GNocPxTGNZZRRP-ACrVwHj2gA67K0Xm-Xj3pfZDUDa54Xrk1bFz2Yfu5bpOuyoKsmAGCouXTig0YWFjiu9UPV0hHBD8QGlu-ArWQbzG0X02xiew93jSHGguLvzbkn0jTitpohy0t5ut_CE9py-Rtn6cKcacTZi-CDDYzSOafM3N4KLvRPGwNqamuAmCeuovSZWwEuVxjFqoT_zY4BmiZ-QPYjQ6VDpmIYaHG4uZKukaES_9mlMTF6Zr2n9GrQQ3ksxMcZ2iuSiEXlOPA7wHG0VV2mHeUXRGnVReu4fvKgb1WGw', 'applicationType': 'RECAPTCHA_APPLICATION_TYPE_WEB'}, 'sessionId': ';1771158390786', 'projectId': 'd54aae58-13a4-4886-b6cf-0538446da1a9', 'tool': 'PINHOLE', 'userPaygateTier': 'PAYGATE_TIER_TWO'}, 'requests': [{'aspectRatio': 'VIDEO_ASPECT_RATIO_LANDSCAPE', 'seed': 65869, 'textInput': {'prompt': 'a woman eating mango on clouds, the cloud is moving fast going forward racing with airplane'}, 'videoModelKey': 'veo_3_1_t2v_fast_ultra', 'metadata': {'sceneId': '57efd738-d1f6-411e-917e-33d40ede6ffa'}}]}
+
+[2026-02-15 12:26:32.405015] [ERROR] [API] [API FAILED] Response: {
+  "error": {
+    "code": 403,
+    "message": "reCAPTCHA evaluation failed",
+    "status": "PERMISSION_DENIED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+      }
+    ]
+  }
+}
+
+    Message: [API FAILED] Response: {
+      "error": {
+        "code": 403,
+        "message": "reCAPTCHA evaluation failed",
+        "status": "PERMISSION_DENIED",
+        "details": [
+          {
+            "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+            "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+          }
+        ]
+      }
+    }
+    
+
+[2026-02-15 12:26:32.406637] [WARNING] [GENERAL] [VIDEO T2V] 生成遇到reCAPTCHA 验证失败，正在重新获取验证码重试 (2/3)...
+
+[2026-02-15 12:26:32.406979] [INFO] [GENERAL] [BrowserCaptcha] 浏览器 0 的 token 验证失败
+
+[2026-02-15 12:26:39.736115] [INFO] [GENERAL] [BrowserCaptcha] Token-0 获取成功 (6324ms)
+
+[2026-02-15 12:26:40.005671] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Body: {"clientContext": {"recaptchaContext": {"token": "0cAFcWeA5N0ve2VWfS6BsiAShjL8L-aXOt29DWqOMoDTEvsn_qeWtBfnB82xOBz5x-bFAFWkB8H0JHASGvUAaLWO_TBnb-sqa3LXoCP69ByDrfp1oq2RZCf2pUSbNnR7gwCV1CTMaKTmOQvhg8O91HHBT5eEHeGV1V3MR3VJ0suaqaEd8sSOgPZKKGxV8wF8tLaF5TDECTmLOXbANOanAlM60PI5q5KZjXihG1QmCYMw41ljpjB340-5rpToUcMg2XxI0ILIbHqgIA-ceyvzap-yT_mjIDIa-IlfvZk-AepKglrPuyLcLCvM2sCCrdbtAHa90DaSrGpFMtWvxYsvC4ZoTb50AhENScgVjMSBQL2C9i4U3lcScA2EmCr1CEjfaH6WlSojF0pMBfiwTMlab4fqdmhFdl-ww-RZ3VuDDmWRQ8LuCnw8lk6cIPuy20rmMAKyzelpGFWeZk6gyMwFdhVYZGobpYaLiBExLNtg3S3NQ26G4RBvK5Tw2iF8fvVgjKQf1aCNz-zZqEf3Ik7d4Z8h3aV7AqA4THnoiJs1zKK3du5E9v4SC7hki1q7nM9_KlHfmw9ZQ_8YK3bur5hOUwe6U5HKjw35hl4T16j9UBhP4qcfnNMzOU7ccJO7IBYqsF18ZXS7jLazvEIQkYjafHn-zYh_zwnbgkxQx2nx-LDpGjJe9WH4keBjLqwnJtbQz_gpx_ffXNemKZRW87_vO7r7rheMQDleHcr6z5nuEJ6SY9RKh99LhmThMBUYSRhCZji2Tz4epkjCChWgRgldskbY0zftHi5WMdVXzEYxlPafJO-JwIVkwj2-4x8uCh0T9E9NvH45W_zNR466qwSPpxVV5PYaHE8DE0ANiUVR2I3DZCNs3vOpwNPo86QXzVq4mJypRYuwwbNBILxxztdNvvO51Ipisu4WHrlmxTpbjdaN9STYGWpR9MzQxbfftoFlOQn24wEiMW04VxEK4DxPKWPi4Rtnu-Xp4O1ZfVgf-nqlM1BEUc3qNIpKUt2TONnwBCLaz6zjZE4MC1nX1fNHCF7E92ojsDyMdfTtTbWhqHoGn7tvQaoElckhgw4ZXDh_fY3i15vT_xc3BQ5IG99EZ7qJXNm9qDXxyxq-tNIfxgd_jMsAG54j30rHOZ_DTBPe0Sd_Gwp5LxY9FRTqj1kDaHwHIolesOAM0QMO4gsvZi61lCc_08z_60Om4Z4CGr-wM3dSUkmKLkJREyiMxkAp__x_qjYLN0LfRXVXP0JkDyY8sAmvDExEMwwIEjsPiH0UW4hJSOL7_Z7w7p1a7jKGc5Ry3LZyQOYFV-x71nIxgctxM1udOpqkPPTFq7orobnLZkOEkHvKYA_4NdNVW26gkX7snvMaEWmSdT0aYbwZJdrv2xUGFRE_70aD1vsPD3qab8tZzO401_nyufBt7LjW8XZfMekwsgy_5faYQqq-1jRQAf6WwBCmz2egNc5cVkHjb3Yi1NWTzyHJg5yiBasFzAFP_--ZgIkpfU3-MxUC9i8ZLUFzKdfJX-BWWTkRolBZ1-gV9Fo0xEAs6uepsHgi3LQ2JRG2kbGYaYUrhU8M-Z2Mbn-vhSi8LYz3n0yMVZ5a5HpgiKWXABWb_HUvs0mVmecFq8HbDsip0VOVNDH31QEzrBpeK7dFrHn-WwnJ_CeniVlu1rEK0eUvqO2RCquiyU17mNDz7s__iPn2vQJtcH2TenThbrpTWxxDdfM4cINzj-vMANUhTNCF6rh8_37mt-cJDip4_cb4J7L_JTE-IO8g4_9YqOqdUvuv7fQ1hyWvscFoqlwa3Z3XcviA5NkAuiYNcmnjXS8dgugZSeOBKreY1-skry5Evr3aJ9NR_QYJWW0ScM2cn5JHkO4mIaV3WaK5sHNo0jhEOm2_UJe0ToLy5F1CIC1J4BhGwtn03EgLOX2h8CQ1mK5ww-W8CFM1wkK_3koGkD
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:26:41.679768] [ERROR] [API] [API FAILED] URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Message: [API FAILED] URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+
+[2026-02-15 12:26:41.680230] [RESPONSE] [API] Response 403
+    Status: 403
+    Duration: 1675.87ms
+    Body: {
+      "error": {
+        "code": 403,
+        "message": "reCAPTCHA evaluation failed",
+        "status": "PERMISSION_DENIED",
+        "details": [
+          {
+            "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+            "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+          }
+        ]
+      }
+    }
+    
+
+[2026-02-15 12:26:41.680327] [ERROR] [API] [API FAILED] Response: {
+  "error": {
+    "code": 403,
+    "message": "reCAPTCHA evaluation failed",
+    "status": "PERMISSION_DENIED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+      }
+    ]
+  }
+}
+
+    Message: [API FAILED] Response: {
+      "error": {
+        "code": 403,
+        "message": "reCAPTCHA evaluation failed",
+        "status": "PERMISSION_DENIED",
+        "details": [
+          {
+            "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+            "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+          }
+        ]
+      }
+    }
+    
+
+[2026-02-15 12:26:41.680632] [ERROR] [API] [API FAILED] Request Body: {'clientContext': {'recaptchaContext': {'token': '0cAFcWeA5N0ve2VWfS6BsiAShjL8L-aXOt29DWqOMoDTEvsn_qeWtBfnB82xOBz5x-bFAFWkB8H0JHASGvUAaLWO_TBnb-sqa3LXoCP69ByDrfp1oq2RZCf2pUSbNnR7gwCV1CTMaKTmOQvhg8O91HHBT5eEHeGV1V3MR3VJ0suaqaEd8sSOgPZKKGxV8wF8tLaF5TDECTmLOXbANOanAlM60PI5q5KZjXihG1QmCYMw41ljpjB340-5rpToUcMg2XxI0ILIbHqgIA-ceyvzap-yT_mjIDIa-IlfvZk-AepKglrPuyLcLCvM2sCCrdbtAHa90DaSrGpFMtWvxYsvC4ZoTb50AhENScgVjMSBQL2C9i4U3lcScA2EmCr1CEjfaH6WlSojF0pMBfiwTMlab4fqdmhFdl-ww-RZ3Vu
+    Message: [API FAILED] Request Body: {'clientContext': {'recaptchaContext': {'token': '0cAFcWeA5N0ve2VWfS6BsiAShjL8L-aXOt29DWqOMoDTEvsn_qeWtBfnB82xOBz5x-bFAFWkB8H0JHASGvUAaLWO_TBnb-sqa3LXoCP69ByDrfp1oq2RZCf2pUSbNnR7gwCV1CTMaKTmOQvhg8O91HHBT5eEHeGV1V3MR3VJ0suaqaEd8sSOgPZKKGxV8wF8tLaF5TDECTmLOXbANOanAlM60PI5q5KZjXihG1QmCYMw41ljpjB340-5rpToUcMg2XxI0ILIbHqgIA-ceyvzap-yT_mjIDIa-IlfvZk-AepKglrPuyLcLCvM2sCCrdbtAHa90DaSrGpFMtWvxYsvC4ZoTb50AhENScgVjMSBQL2C9i4U3lcScA2EmCr1CEjfaH6WlSojF0pMBfiwTMlab4fqdmhFdl-ww-RZ3VuDDmWRQ8LuCnw8lk6cIPuy20rmMAKyzelpGFWeZk6gyMwFdhVYZGobpYaLiBExLNtg3S3NQ26G4RBvK5Tw2iF8fvVgjKQf1aCNz-zZqEf3Ik7d4Z8h3aV7AqA4THnoiJs1zKK3du5E9v4SC7hki1q7nM9_KlHfmw9ZQ_8YK3bur5hOUwe6U5HKjw35hl4T16j9UBhP4qcfnNMzOU7ccJO7IBYqsF18ZXS7jLazvEIQkYjafHn-zYh_zwnbgkxQx2nx-LDpGjJe9WH4keBjLqwnJtbQz_gpx_ffXNemKZRW87_vO7r7rheMQDleHcr6z5nuEJ6SY9RKh99LhmThMBUYSRhCZji2Tz4epkjCChWgRgldskbY0zftHi5WMdVXzEYxlPafJO-JwIVkwj2-4x8uCh0T9E9NvH45W_zNR466qwSPpxVV5PYaHE8DE0ANiUVR2I3DZCNs3vOpwNPo86QXzVq4mJypRYuwwbNBILxxztdNvvO51Ipisu4WHrlmxTpbjdaN9STYGWpR9MzQxbfftoFlOQn24wEiMW04VxEK4DxPKWPi4Rtnu-Xp4O1ZfVgf-nqlM1BEUc3qNIpKUt2TONnwBCLaz6zjZE4MC1nX1fNHCF7E92ojsDyMdfTtTbWhqHoGn7tvQaoElckhgw4ZXDh_fY3i15vT_xc3BQ5IG99EZ7qJXNm9qDXxyxq-tNIfxgd_jMsAG54j30rHOZ_DTBPe0Sd_Gwp5LxY9FRTqj1kDaHwHIolesOAM0QMO4gsvZi61lCc_08z_60Om4Z4CGr-wM3dSUkmKLkJREyiMxkAp__x_qjYLN0LfRXVXP0JkDyY8sAmvDExEMwwIEjsPiH0UW4hJSOL7_Z7w7p1a7jKGc5Ry3LZyQOYFV-x71nIxgctxM1udOpqkPPTFq7orobnLZkOEkHvKYA_4NdNVW26gkX7snvMaEWmSdT0aYbwZJdrv2xUGFRE_70aD1vsPD3qab8tZzO401_nyufBt7LjW8XZfMekwsgy_5faYQqq-1jRQAf6WwBCmz2egNc5cVkHjb3Yi1NWTzyHJg5yiBasFzAFP_--ZgIkpfU3-MxUC9i8ZLUFzKdfJX-BWWTkRolBZ1-gV9Fo0xEAs6uepsHgi3LQ2JRG2kbGYaYUrhU8M-Z2Mbn-vhSi8LYz3n0yMVZ5a5HpgiKWXABWb_HUvs0mVmecFq8HbDsip0VOVNDH31QEzrBpeK7dFrHn-WwnJ_CeniVlu1rEK0eUvqO2RCquiyU17mNDz7s__iPn2vQJtcH2TenThbrpTWxxDdfM4cINzj-vMANUhTNCF6rh8_37mt-cJDip4_cb4J7L_JTE-IO8g4_9YqOqdUvuv7fQ1hyWvscFoqlwa3Z3XcviA5NkAuiYNcmnjXS8dgugZSeOBKreY1-skry5Evr3aJ9NR_QYJWW0ScM2cn5JHkO4mIaV3WaK5sHNo0jhEOm2_UJe0ToLy5F1CIC1J4BhGwtn03EgLOX2h8CQ1mK5ww-W8CFM1wkK_3koGkDrqj5et99IKmkBpaVYZyvD2ANiWO4u7PQ7LYibUKWzTQqNlY-TybT07B1t6SyGF6hC7ho0y6ide-s_Qpm4tVg7IGaHew', 'applicationType': 'RECAPTCHA_APPLICATION_TYPE_WEB'}, 'sessionId': ';1771158399885', 'projectId': 'd54aae58-13a4-4886-b6cf-0538446da1a9', 'tool': 'PINHOLE', 'userPaygateTier': 'PAYGATE_TIER_TWO'}, 'requests': [{'aspectRatio': 'VIDEO_ASPECT_RATIO_LANDSCAPE', 'seed': 85059, 'textInput': {'prompt': 'a woman eating mango on clouds, the cloud is moving fast going forward racing with airplane'}, 'videoModelKey': 'veo_3_1_t2v_fast_ultra', 'metadata': {'sceneId': 'ee016bca-fd45-4b0a-9a4f-45dfae108785'}}]}
+
+[2026-02-15 12:26:41.683990] [WARNING] [GENERAL] [VIDEO T2V] 生成遇到reCAPTCHA 验证失败，正在重新获取验证码重试 (3/3)...
+
+[2026-02-15 12:26:41.684320] [INFO] [GENERAL] [BrowserCaptcha] 浏览器 0 的 token 验证失败
+
+[2026-02-15 12:26:48.067029] [INFO] [GENERAL] [BrowserCaptcha] Token-0 获取成功 (5372ms)
+
+[2026-02-15 12:26:48.305761] [REQUEST] [API] POST https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Method: POST
+    URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Body: {"clientContext": {"recaptchaContext": {"token": "0cAFcWeA7ba5sClgTRIMIB_Cmqq3J8rKJ5QFpVhvHMdHWohy-XqysamGN2qWGkGXB-mVlJI7iryM1NzjDHIwnDy0Maa7oIdDV27UErGiDAbcp3C5RIrml3Tttwwz0MJQWRBgp52DEjqgYJ4B89FgtY6D_1Lb9bEtkoNo-OmzBqQ6SnZmHDSU-oNsaO9jRVOkelFMhvo8E_o4cxKNmLy3ghSkytwFN6mYfdDXxthSP2uapAuDN9YBP1-NVGKoG45HjQdxjnRkJ8v3HWEJxB-mdNYgTP12kL6qYEXSIq9Rxf0cgU4AY-BgZVV2Jns-Pu7KaQmiHjw3TNvzU3SnT9aozh7-HrUc8ANyC0-yHATR1Dlq5yCPJNcp0P6R-osy4QZtEZ_9khTU73q9FGo-L2oajnaR8uMSes1oneZ3So1sLCsk4Dw5QXQVWd9B1rJCK72vfBk-1r_baqyU-b0ABrDt1GwtXaiYrC9HY_pUJlpKlW2T5ngudgNLv9dKY3ow73T5fmcCnq3OSBqqQvFEpbMELUMA2BMRg9GMRPdu2kdBDcLVNnICX_rsqKrvRF7CHwcOwITtruOoBFovrP8nOlXKWrJMdlHLHEMTqXTrWwhnBNFsmz5soOJMKJxYAXt0nbx4MUlMXSd31XFlEz8EdUpG9lUzd8_tlEtMQ_j7xEDoS9TUJLCUYw_wZpJKcGo83PzmLsPIypbDDcywdJ-fCLV9cgdMcUM8QB8hx_pcMvK8Np9vCQJjA6gJ58qoKb8uMyY5fsRHVIUlGb5RfrJ59PW7xcK5UTP-Zy-wOyXXGT4C2uJsmGXCxMlGPEu-vq2DqdzX58r4uWYxYgb343hGj7PWb4ofXlg-XeddvhS9UA2CJ6DUS8YIjDSa3YOpRQKrlSQMgIchVaatLBdtxoKscfdZtSiD8YbjlvBrsJH1ndXefnAJV_vDu8kKHvRbxVFiAfvTQAo5HQbltJwg1QnhnIn-k3Kgru3D-KhWou5dr_3nXx1sKxxwTVbEuFUNvYHk9Vb47W0OLSmRTgVVkR1-8ffdKukRg1dw9Ic7ut-Lt0vBdeowRzLHW-weglM7Yt6xfID4BptMOJKX_rxn5q8jRF-HTgRg2sATq_JtrdTVv2F5UfG5Zw3uYw1Vy2_Ku1aUZcBSLl7eXrilGIQqTjnlqj9yV6rBpsL0L6NlNvkTE84KhfM08GWV2M_fp1-3uJfnXncRMagYMoWA9JFtXW5xmsd9T_HbpgOVn-4mk9MvYOcyehIJFifF546LIWKL_IPIxXHTUro9Q5HZYvgWIJ2xNwtG_aM3EitsalHdaHSXAlefeStxM_q8gKI4gI9U3F7N5sgbFrGxIZAscTbxTdH8UsTF7_2l3rgD78MPPcAuo9H7jqwLvxb_BNGMh9OJiO5Ad3kiIOvqKJk_bnXobgKxUi_foufZefzwE7SW3PkDIcNyDhAQfyV7D41e3OUfstmt-PvP34IJ9REudEdY2TU-0tW73tjg-lWp21U11z0OG2nqoqLryLgG1LyFxFu7DYe1fn2nZpnhbrPBISq5EhPMF8W04IyDjKoVrzU7a9ce2PM476FOdoSq66FCfJAkVfvwwhbUWQqV6aVPmbLEG5_H9jwVXD5dgPLQDKPHUsbE1a7BHbrHKJK8Wu915Pq4UEV92ad49EcyZVj8rb0kq9CMu-UP2BUJtzSS0UQG643HL9j71_RZVGg73QJSBWf95qhEYyiAlhirwC907Fet6NbPNWrdROEVmEDsDAGF9f_seGNKlPqMsXYCTJ_N7jjilPty8DjNg4swoGj2XYnwiHTAovlMjrPgvh7FzkdnvP1CWrZaKNiwW9XRmXiiNKnma-dz7ZPU1PpC-LYx2xV2zl59BGSPyW-o35hkxw7PZcubczTKnrzv3-cdv9uWSzRdcLvpfrRdqhuGey7GRovqvPoL2lz_B371ylxtsg
+    Proxy: http://sshf1119149-region-US:dnhk8oke@us2.cliproxy.io:3010
+
+[2026-02-15 12:26:49.641406] [ERROR] [API] [API FAILED] URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+    Message: [API FAILED] URL: https://aisandbox-pa.googleapis.com/v1/video:batchAsyncGenerateVideoText
+
+[2026-02-15 12:26:49.641701] [ERROR] [API] [API FAILED] Response: {
+  "error": {
+    "code": 403,
+    "message": "reCAPTCHA evaluation failed",
+    "status": "PERMISSION_DENIED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+      }
+    ]
+  }
+}
+
+    Message: [API FAILED] Response: {
+      "error": {
+        "code": 403,
+        "message": "reCAPTCHA evaluation failed",
+        "status": "PERMISSION_DENIED",
+        "details": [
+          {
+            "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+            "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+          }
+        ]
+      }
+    }
+    
+
+[2026-02-15 12:26:49.641931] [RESPONSE] [API] Response 403
+    Status: 403
+    Duration: 1336.38ms
+    Body: {
+      "error": {
+        "code": 403,
+        "message": "reCAPTCHA evaluation failed",
+        "status": "PERMISSION_DENIED",
+        "details": [
+          {
+            "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+            "reason": "PUBLIC_ERROR_SOMETHING_WENT_WRONG"
+          }
+        ]
+      }
+    }
+    
+
+[2026-02-15 12:26:49.642062] [ERROR] [API] [API FAILED] Request Body: {'clientContext': {'recaptchaContext': {'token': '0cAFcWeA7ba5sClgTRIMIB_Cmqq3J8rKJ5QFpVhvHMdHWohy-XqysamGN2qWGkGXB-mVlJI7iryM1NzjDHIwnDy0Maa7oIdDV27UErGiDAbcp3C5RIrml3Tttwwz0MJQWRBgp52DEjqgYJ4B89FgtY6D_1Lb9bEtkoNo-OmzBqQ6SnZmHDSU-oNsaO9jRVOkelFMhvo8E_o4cxKNmLy3ghSkytwFN6mYfdDXxthSP2uapAuDN9YBP1-NVGKoG45HjQdxjnRkJ8v3HWEJxB-mdNYgTP12kL6qYEXSIq9Rxf0cgU4AY-BgZVV2Jns-Pu7KaQmiHjw3TNvzU3SnT9aozh7-HrUc8ANyC0-yHATR1Dlq5yCPJNcp0P6R-osy4QZtEZ_9khTU73q9FGo-L2oajnaR8uMSes1oneZ3So1
+    Message: [API FAILED] Request Body: {'clientContext': {'recaptchaContext': {'token': '0cAFcWeA7ba5sClgTRIMIB_Cmqq3J8rKJ5QFpVhvHMdHWohy-XqysamGN2qWGkGXB-mVlJI7iryM1NzjDHIwnDy0Maa7oIdDV27UErGiDAbcp3C5RIrml3Tttwwz0MJQWRBgp52DEjqgYJ4B89FgtY6D_1Lb9bEtkoNo-OmzBqQ6SnZmHDSU-oNsaO9jRVOkelFMhvo8E_o4cxKNmLy3ghSkytwFN6mYfdDXxthSP2uapAuDN9YBP1-NVGKoG45HjQdxjnRkJ8v3HWEJxB-mdNYgTP12kL6qYEXSIq9Rxf0cgU4AY-BgZVV2Jns-Pu7KaQmiHjw3TNvzU3SnT9aozh7-HrUc8ANyC0-yHATR1Dlq5yCPJNcp0P6R-osy4QZtEZ_9khTU73q9FGo-L2oajnaR8uMSes1oneZ3So1sLCsk4Dw5QXQVWd9B1rJCK72vfBk-1r_baqyU-b0ABrDt1GwtXaiYrC9HY_pUJlpKlW2T5ngudgNLv9dKY3ow73T5fmcCnq3OSBqqQvFEpbMELUMA2BMRg9GMRPdu2kdBDcLVNnICX_rsqKrvRF7CHwcOwITtruOoBFovrP8nOlXKWrJMdlHLHEMTqXTrWwhnBNFsmz5soOJMKJxYAXt0nbx4MUlMXSd31XFlEz8EdUpG9lUzd8_tlEtMQ_j7xEDoS9TUJLCUYw_wZpJKcGo83PzmLsPIypbDDcywdJ-fCLV9cgdMcUM8QB8hx_pcMvK8Np9vCQJjA6gJ58qoKb8uMyY5fsRHVIUlGb5RfrJ59PW7xcK5UTP-Zy-wOyXXGT4C2uJsmGXCxMlGPEu-vq2DqdzX58r4uWYxYgb343hGj7PWb4ofXlg-XeddvhS9UA2CJ6DUS8YIjDSa3YOpRQKrlSQMgIchVaatLBdtxoKscfdZtSiD8YbjlvBrsJH1ndXefnAJV_vDu8kKHvRbxVFiAfvTQAo5HQbltJwg1QnhnIn-k3Kgru3D-KhWou5dr_3nXx1sKxxwTVbEuFUNvYHk9Vb47W0OLSmRTgVVkR1-8ffdKukRg1dw9Ic7ut-Lt0vBdeowRzLHW-weglM7Yt6xfID4BptMOJKX_rxn5q8jRF-HTgRg2sATq_JtrdTVv2F5UfG5Zw3uYw1Vy2_Ku1aUZcBSLl7eXrilGIQqTjnlqj9yV6rBpsL0L6NlNvkTE84KhfM08GWV2M_fp1-3uJfnXncRMagYMoWA9JFtXW5xmsd9T_HbpgOVn-4mk9MvYOcyehIJFifF546LIWKL_IPIxXHTUro9Q5HZYvgWIJ2xNwtG_aM3EitsalHdaHSXAlefeStxM_q8gKI4gI9U3F7N5sgbFrGxIZAscTbxTdH8UsTF7_2l3rgD78MPPcAuo9H7jqwLvxb_BNGMh9OJiO5Ad3kiIOvqKJk_bnXobgKxUi_foufZefzwE7SW3PkDIcNyDhAQfyV7D41e3OUfstmt-PvP34IJ9REudEdY2TU-0tW73tjg-lWp21U11z0OG2nqoqLryLgG1LyFxFu7DYe1fn2nZpnhbrPBISq5EhPMF8W04IyDjKoVrzU7a9ce2PM476FOdoSq66FCfJAkVfvwwhbUWQqV6aVPmbLEG5_H9jwVXD5dgPLQDKPHUsbE1a7BHbrHKJK8Wu915Pq4UEV92ad49EcyZVj8rb0kq9CMu-UP2BUJtzSS0UQG643HL9j71_RZVGg73QJSBWf95qhEYyiAlhirwC907Fet6NbPNWrdROEVmEDsDAGF9f_seGNKlPqMsXYCTJ_N7jjilPty8DjNg4swoGj2XYnwiHTAovlMjrPgvh7FzkdnvP1CWrZaKNiwW9XRmXiiNKnma-dz7ZPU1PpC-LYx2xV2zl59BGSPyW-o35hkxw7PZcubczTKnrzv3-cdv9uWSzRdcLvpfrRdqhuGey7GRovqvPoL2lz_B371ylxtsgmiXMIu8G4HQHXw1WVfeJjZWZfq-OoxpKEODxNVrGOXSv4Ylr99_yRGnOkMl8vy4-komDzIRMgua1hVNBxi24T6Q1AQvWGe0EW3Dapud4twmQdxOEu34-BNDlRjTRquRZu9-Yiw', 'applicationType': 'RECAPTCHA_APPLICATION_TYPE_WEB'}, 'sessionId': ';1771158408217', 'projectId': 'd54aae58-13a4-4886-b6cf-0538446da1a9', 'tool': 'PINHOLE', 'userPaygateTier': 'PAYGATE_TIER_TWO'}, 'requests': [{'aspectRatio': 'VIDEO_ASPECT_RATIO_LANDSCAPE', 'seed': 41681, 'textInput': {'prompt': 'a woman eating mango on clouds, the cloud is moving fast going forward racing with airplane'}, 'videoModelKey': 'veo_3_1_t2v_fast_ultra', 'metadata': {'sceneId': '163ca70e-4781-49db-aca4-2f3aadd4ab57'}}]}
+
+[2026-02-15 12:26:49.645134] [ERROR] [API] [GENERATION] ❌ 生成失败: Flow API request failed: PUBLIC_ERROR_SOMETHING_WENT_WRONG: reCAPTCHA evaluation failed
+    Message: [GENERATION] ❌ 生成失败: Flow API request failed: PUBLIC_ERROR_SOMETHING_WENT_WRONG: reCAPTCHA evaluation failed

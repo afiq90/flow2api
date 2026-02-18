@@ -651,9 +651,14 @@ class GenerationHandler:
         images: Optional[List[bytes]] = None,
         stream: bool = False
     ) -> AsyncGenerator:
-        """统一生成入口"""
-        # Log patchright usage for the request
-        debug_logger.log_info(f"[Generation] Starting new request with model: {model} (Engine: patchright)")
+        """统一生成入口
+
+        Args:
+            model: 模型名称
+            prompt: 提示词
+            images: 图片列表 (bytes格式)
+            stream: 是否流式输出
+        """
         start_time = time.time()
         token = None
 

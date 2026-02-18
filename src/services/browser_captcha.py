@@ -166,7 +166,8 @@ else:
     try:
         from patchright.async_api import async_playwright, Route, BrowserContext
         PLAYWRIGHT_AVAILABLE = True
-        debug_logger.log_info("[BrowserCaptcha] patchright 已加载")
+        debug_logger.log_info("[BrowserCaptcha] patchright 已加载 - 确认正在使用 patchright 引擎")
+        print("[BrowserCaptcha] ✅ patchright 引擎加载成功")
     except ImportError:
         debug_logger.log_info("[BrowserCaptcha] patchright 未安装，开始自动安装...")
         if _run_pip_install('patchright'):

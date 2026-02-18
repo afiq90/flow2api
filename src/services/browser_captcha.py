@@ -152,7 +152,7 @@ def _ensure_browser_installed() -> bool:
     return False
 
 
-# 尝试导入 playwright
+# 尝试导入 patchright
 async_playwright = None
 Route = None
 BrowserContext = None
@@ -163,15 +163,20 @@ if IS_DOCKER:
     print("[BrowserCaptcha] ⚠️ 检测到 Docker 环境，有头浏览器打码不可用")
     print("[BrowserCaptcha] 请使用第三方打码服务: yescaptcha, capmonster, ezcaptcha, capsolver")
 else:
-    if _ensure_playwright_installed():
-        try:
-            from playwright.async_api import async_playwright, Route, BrowserContext
-            PLAYWRIGHT_AVAILABLE = True
-            # 检查并安装浏览器
-            _ensure_browser_installed()
-        except ImportError as e:
-            debug_logger.log_error(f"[BrowserCaptcha] playwright 导入失败: {e}")
-            print(f"[BrowserCaptcha] ❌ playwright 导入失败: {e}")
+    try:
+        from patchright.async_api import async_playwright, Route, BrowserContext
+        PLAYWRIGHT_AVAILABLE = True
+        debug_logger.log_info("[BrowserCaptcha] patchright 已加载")
+    except ImportError:
+        debug_logger.log_info("[BrowserCaptcha] patchright 未安装，开始自动安装...")
+        if _run_pip_install('patchright'):
+            try:
+                from patchright.async_api import async_playwright, Route, BrowserContext
+                PLAYWRIGHT_AVAILABLE = True
+                # 安装浏览器
+                subprocess.run([sys.executable, '-m', 'patchright', 'install', 'chromium'], capture_output=True)
+            except ImportError:
+                debug_logger.log_error("[BrowserCaptcha] patchright 自动安装后导入失败")
 
 
 # 配置

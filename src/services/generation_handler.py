@@ -653,8 +653,9 @@ class GenerationHandler:
     ) -> AsyncGenerator:
         """统一生成入口"""
         from ..core.logger import _save_to_db
-        _save_to_db("INFO", "GENERAL", f"[Generation] New request | Model: {model} | Captcha Engine: patchright")
-        debug_logger.log_info(f"[Generation] New request | Model: {model} | Captcha Engine: patchright")
+        from ..services.browser_captcha import BROWSER_ENGINE
+        _save_to_db("INFO", "GENERAL", f"[Generation] New request | Model: {model} | Captcha Engine: {BROWSER_ENGINE}")
+        debug_logger.log_info(f"[Generation] New request | Model: {model} | Captcha Engine: {BROWSER_ENGINE}")
         start_time = time.time()
         token = None
 

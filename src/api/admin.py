@@ -727,7 +727,8 @@ async def get_debug_logs_plain(limit: int = 200, level: Optional[str] = None):
                 lines.append(f"    {detail_line}")
         lines.append("")
 
-    engine_info = "=== Captcha Engine: patchright ===\n\n"
+    from ..services.browser_captcha import BROWSER_ENGINE
+    engine_info = f"=== Captcha Engine: {BROWSER_ENGINE} ===\n\n"
 
     if not lines:
         content = engine_info + "No debug logs yet. Make a request with debug mode enabled to see logs here.\n"

@@ -1,4 +1,5 @@
 patchright>=1.58.0
+playwright>=1.40.0
 nodriver>=0.48.0
 aiosqlite==0.20.0
 bcrypt==4.2.1
@@ -11,4 +12,3 @@ tomli==2.2.1
 uvicorn[standard]==0.32.1
 asyncpg
 httpx
-patchright

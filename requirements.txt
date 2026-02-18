@@ -19,3 +19,4 @@ python-multipart==0.0.20
 tomli==2.2.1
 uvicorn[standard]==0.32.1
 asyncpg
+httpx

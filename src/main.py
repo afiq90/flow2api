@@ -1,12 +1,13 @@
 """FastAPI application initialization"""
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, FileResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 import os
+import httpx
 from .core.config import config
 from .core.database import Database
 from .services.flow_client import FlowClient
@@ -227,6 +228,36 @@ app.add_middleware(
 # Include routers
 app.include_router(routes.router)
 app.include_router(admin.router)
+
+@app.get("/ip.txt")
+async def get_ip_details(request: Request):
+    # Get client IP from headers or request
+    client_ip = request.headers.get("x-forwarded-for")
+    if client_ip:
+        client_ip = client_ip.split(",")[0].strip()
+    else:
+        client_ip = request.client.host if request.client else "unknown"
+
+    try:
+        async with httpx.AsyncClient() as client:
+            # We fetch info about the Replit server's own IP to get details like Country/State
+            response = await client.get("https://ipapi.co/json/", timeout=5.0)
+            if response.status_code == 200:
+                data = response.json()
+                details = [
+                    f"IP: {data.get('ip')}",
+                    f"Country: {data.get('country_name')}",
+                    f"Region/State: {data.get('region')}",
+                    f"City: {data.get('city')}",
+                    f"Org: {data.get('org')}",
+                    f"ASN: {data.get('asn')}"
+                ]
+                return PlainTextResponse("\n".join(details))
+    except Exception as e:
+        return PlainTextResponse(f"Error: {str(e)}")
+    
+    return PlainTextResponse(f"IP: {client_ip}\nDetails: Information unavailable")
+
 
 # Static files - serve tmp directory for cached files
 tmp_dir = Path(__file__).parent.parent / "tmp"

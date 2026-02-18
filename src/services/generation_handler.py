@@ -651,14 +651,10 @@ class GenerationHandler:
         images: Optional[List[bytes]] = None,
         stream: bool = False
     ) -> AsyncGenerator:
-        """统一生成入口
-
-        Args:
-            model: 模型名称
-            prompt: 提示词
-            images: 图片列表 (bytes格式)
-            stream: 是否流式输出
-        """
+        """统一生成入口"""
+        from ..core.logger import _save_to_db
+        _save_to_db("INFO", "GENERAL", f"[Generation] New request | Model: {model} | Captcha Engine: patchright")
+        debug_logger.log_info(f"[Generation] New request | Model: {model} | Captcha Engine: patchright")
         start_time = time.time()
         token = None
 

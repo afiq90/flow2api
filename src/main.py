@@ -230,17 +230,13 @@ app.include_router(routes.router)
 app.include_router(admin.router)
 
 @app.get("/ip.txt")
-async def get_ip_details(request: Request):
-    # Get client IP from headers or request
-    client_ip = request.headers.get("x-forwarded-for")
-    if client_ip:
-        client_ip = client_ip.split(",")[0].strip()
-    else:
-        client_ip = request.client.host if request.client else "unknown"
-
+async def get_ip_details():
+    from fastapi.responses import PlainTextResponse
+    import httpx
+    
     try:
         async with httpx.AsyncClient() as client:
-            # We fetch info about the Replit server's own IP to get details like Country/State
+            # This fetches the public IP of the Replit container/server itself
             response = await client.get("https://ipapi.co/json/", timeout=5.0)
             if response.status_code == 200:
                 data = response.json()
@@ -256,7 +252,7 @@ async def get_ip_details(request: Request):
     except Exception as e:
         return PlainTextResponse(f"Error: {str(e)}")
     
-    return PlainTextResponse(f"IP: {client_ip}\nDetails: Information unavailable")
+    return PlainTextResponse("Details: Information unavailable")
 
 
 # Static files - serve tmp directory for cached files

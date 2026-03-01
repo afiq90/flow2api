@@ -1,4 +1,5 @@
 """FastAPI application initialization"""
+import os
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -156,8 +157,14 @@ async def lifespan(app: FastAPI):
     print("✓ 429 auto-unban task stopped")
 
 
-# Initialize components
-db = Database()
+# Initialize components - auto-detect PostgreSQL or SQLite
+if os.environ.get("DATABASE_URL"):
+    from .core.database_pg import PostgresDatabase
+    db = PostgresDatabase()
+    print("📦 Using PostgreSQL database")
+else:
+    db = Database()
+    print("📦 Using SQLite database")
 proxy_manager = ProxyManager(db)
 flow_client = FlowClient(proxy_manager, db)
 token_manager = TokenManager(db, flow_client)

@@ -65,16 +65,23 @@ class PostgresDatabase:
         if count == 0:
             proxy_enabled = False
             proxy_url = None
+            media_proxy_enabled = False
+            media_proxy_url = None
 
             if config_dict:
                 proxy_config = config_dict.get("proxy", {})
                 proxy_enabled = proxy_config.get("proxy_enabled", False)
                 proxy_url = proxy_config.get("proxy_url", "")
                 proxy_url = proxy_url if proxy_url else None
+                media_proxy_enabled = proxy_config.get(
+                    "media_proxy_enabled", False
+                )
+                media_proxy_url = proxy_config.get("media_proxy_url", "")
+                media_proxy_url = media_proxy_url if media_proxy_url else None
 
             await conn.execute(
-                "INSERT INTO proxy_config (id, enabled, proxy_url) VALUES (1, $1, $2)",
-                proxy_enabled, proxy_url
+                "INSERT INTO proxy_config (id, enabled, proxy_url, media_proxy_enabled, media_proxy_url) VALUES (1, $1, $2, $3, $4)",
+                proxy_enabled, proxy_url, media_proxy_enabled, media_proxy_url
             )
 
         count = await conn.fetchval("SELECT COUNT(*) FROM generation_config")
@@ -294,6 +301,19 @@ class PostgresDatabase:
                     except Exception as e:
                         print(f"  ✗ Failed to add column 'auto_enable_on_update': {e}")
 
+            if await self._table_exists(conn, "proxy_config"):
+                proxy_columns_to_add = [
+                    ("media_proxy_enabled", "BOOLEAN DEFAULT false"),
+                    ("media_proxy_url", "TEXT"),
+                ]
+                for col_name, col_type in proxy_columns_to_add:
+                    if not await self._column_exists(conn, "proxy_config", col_name):
+                        try:
+                            await conn.execute(f"ALTER TABLE proxy_config ADD COLUMN {col_name} {col_type}")
+                            print(f"  ✓ Added column '{col_name}' to proxy_config table")
+                        except Exception as e:
+                            print(f"  ✗ Failed to add column '{col_name}': {e}")
+
             await self._ensure_config_rows(conn, config_dict=config_dict)
             print("Database migration check completed.")
 
@@ -417,6 +437,8 @@ class PostgresDatabase:
                     id INTEGER PRIMARY KEY DEFAULT 1,
                     enabled BOOLEAN DEFAULT false,
                     proxy_url TEXT,
+                    media_proxy_enabled BOOLEAN DEFAULT false,
+                    media_proxy_url TEXT,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """)
@@ -801,14 +823,44 @@ class PostgresDatabase:
                 return ProxyConfig(**dict(row))
             return None
 
-    async def update_proxy_config(self, enabled: bool, proxy_url: Optional[str] = None):
+    async def update_proxy_config(
+        self,
+        enabled: bool,
+        proxy_url: Optional[str] = None,
+        media_proxy_enabled: Optional[bool] = None,
+        media_proxy_url: Optional[str] = None
+    ):
         pool = await self._get_pool()
         async with pool.acquire() as conn:
-            await conn.execute("""
-                UPDATE proxy_config
-                SET enabled = $1, proxy_url = $2, updated_at = CURRENT_TIMESTAMP
-                WHERE id = 1
-            """, enabled, proxy_url)
+            row = await conn.fetchrow("SELECT * FROM proxy_config WHERE id = 1")
+
+            if row:
+                current = dict(row)
+                new_media_proxy_enabled = (
+                    media_proxy_enabled
+                    if media_proxy_enabled is not None
+                    else current.get("media_proxy_enabled", False)
+                )
+                new_media_proxy_url = (
+                    media_proxy_url
+                    if media_proxy_url is not None
+                    else current.get("media_proxy_url")
+                )
+
+                await conn.execute("""
+                    UPDATE proxy_config
+                    SET enabled = $1, proxy_url = $2,
+                        media_proxy_enabled = $3, media_proxy_url = $4,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = 1
+                """, enabled, proxy_url, new_media_proxy_enabled, new_media_proxy_url)
+            else:
+                new_media_proxy_enabled = media_proxy_enabled if media_proxy_enabled is not None else False
+                new_media_proxy_url = media_proxy_url
+                await conn.execute("""
+                    INSERT INTO proxy_config (id, enabled, proxy_url, media_proxy_enabled, media_proxy_url)
+                    VALUES (1, $1, $2, $3, $4)
+                """, enabled, proxy_url, new_media_proxy_enabled, new_media_proxy_url)
 
     async def get_generation_config(self) -> Optional[GenerationConfig]:
         pool = await self._get_pool()

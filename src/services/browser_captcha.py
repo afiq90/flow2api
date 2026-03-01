@@ -152,26 +152,36 @@ def _ensure_browser_installed() -> bool:
     return False
 
 
-# 尝试导入 playwright
+# 尝试导入 patchright，fallback 到 playwright
 async_playwright = None
 Route = None
 BrowserContext = None
 PLAYWRIGHT_AVAILABLE = False
+BROWSER_ENGINE = "none"
 
 if IS_DOCKER:
     debug_logger.log_warning("[BrowserCaptcha] 检测到 Docker 环境，有头浏览器打码不可用，请使用第三方打码服务")
     print("[BrowserCaptcha] ⚠️ 检测到 Docker 环境，有头浏览器打码不可用")
     print("[BrowserCaptcha] 请使用第三方打码服务: yescaptcha, capmonster, ezcaptcha, capsolver")
 else:
-    if _ensure_playwright_installed():
+    try:
+        from patchright.async_api import async_playwright, Route, BrowserContext
+        PLAYWRIGHT_AVAILABLE = True
+        BROWSER_ENGINE = "patchright"
+        debug_logger.log_info(f"[BrowserCaptcha] 引擎加载成功: {BROWSER_ENGINE}")
+        print(f"[BrowserCaptcha] ✅ 引擎加载成功: {BROWSER_ENGINE}")
+    except ImportError:
+        debug_logger.log_info("[BrowserCaptcha] patchright 未找到，尝试 playwright...")
         try:
             from playwright.async_api import async_playwright, Route, BrowserContext
             PLAYWRIGHT_AVAILABLE = True
-            # 检查并安装浏览器
+            BROWSER_ENGINE = "playwright"
+            debug_logger.log_info(f"[BrowserCaptcha] 引擎加载成功: {BROWSER_ENGINE}")
+            print(f"[BrowserCaptcha] ✅ 引擎加载成功: {BROWSER_ENGINE}")
             _ensure_browser_installed()
-        except ImportError as e:
-            debug_logger.log_error(f"[BrowserCaptcha] playwright 导入失败: {e}")
-            print(f"[BrowserCaptcha] ❌ playwright 导入失败: {e}")
+        except ImportError:
+            debug_logger.log_error("[BrowserCaptcha] patchright 和 playwright 均未安装")
+            print("[BrowserCaptcha] ❌ patchright 和 playwright 均未安装")
 
 
 # 配置

@@ -1,30 +1,47 @@
 """Debug logger module for detailed API request/response logging"""
 import json
-import sys
-import asyncio
+import logging
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, Any, Optional
 from .config import config
 
-_db_instance = None
-
-def set_db_instance(db):
-    global _db_instance
-    _db_instance = db
-
-def _save_to_db(level: str, category: str, message: str, details: str = None):
-    """Fire-and-forget save to database"""
-    if _db_instance is None:
-        return
-    try:
-        loop = asyncio.get_running_loop()
-        loop.create_task(_db_instance.add_debug_log(level, category, message, details))
-    except RuntimeError:
-        pass
-
-
 class DebugLogger:
-    """Debug logger for API requests and responses - outputs to stdout for production visibility"""
+    """Debug logger for API requests and responses"""
+
+    def __init__(self):
+        self.log_file = Path("logs.txt")
+        self._setup_logger()
+
+    def _setup_logger(self):
+        """Setup file logger"""
+        # Create logger
+        self.logger = logging.getLogger("debug_logger")
+        self.logger.setLevel(logging.DEBUG)
+
+        # Remove existing handlers
+        self.logger.handlers.clear()
+
+        # Create file handler
+        file_handler = logging.FileHandler(
+            self.log_file,
+            mode='a',
+            encoding='utf-8'
+        )
+        file_handler.setLevel(logging.DEBUG)
+
+        # Create formatter
+        formatter = logging.Formatter(
+            '%(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+        file_handler.setFormatter(formatter)
+
+        # Add handler
+        self.logger.addHandler(file_handler)
+
+        # Prevent propagation to root logger
+        self.logger.propagate = False
 
     def _mask_token(self, token: str) -> str:
         """Mask token for logging (show first 6 and last 6 characters)"""
@@ -36,14 +53,24 @@ class DebugLogger:
         """Format current timestamp"""
         return datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
-    def _write_separator(self, char: str = "=", length: int = 80):
+    def _write_separator(self, char: str = "=", length: int = 100):
         """Write separator line"""
-        print(char * length, flush=True)
+        self.logger.info(char * length)
 
     def _truncate_large_fields(self, data: Any, max_length: int = 200) -> Any:
+        """对大字段进行截断处理，特别是 base64 编码的图片数据
+        
+        Args:
+            data: 要处理的数据
+            max_length: 字符串字段的最大长度
+        
+        Returns:
+            截断后的数据副本
+        """
         if isinstance(data, dict):
             result = {}
             for key, value in data.items():
+                # 对特定的大字段进行截断
                 if key in ("encodedImage", "base64", "imageData", "data") and isinstance(value, str) and len(value) > max_length:
                     result[key] = f"{value[:100]}... (truncated, total {len(value)} chars)"
                 else:
@@ -52,6 +79,7 @@ class DebugLogger:
         elif isinstance(data, list):
             return [self._truncate_large_fields(item, max_length) for item in data]
         elif isinstance(data, str) and len(data) > 10000:
+            # 对超长字符串进行截断（可能是未知的 base64 字段）
             return f"{data[:100]}... (truncated, total {len(data)} chars)"
         return data
 
@@ -64,24 +92,22 @@ class DebugLogger:
         files: Optional[Dict] = None,
         proxy: Optional[str] = None
     ):
-        """Log API request details to stdout"""
-        print(f"🔵 [REQUEST] {method} {url}", flush=True)
+        """Log API request details to log.txt"""
 
-        if not config.debug_enabled:
-            return
-
-        if not config.debug_log_requests:
+        if not config.debug_enabled or not config.debug_log_requests:
             return
 
         try:
             self._write_separator()
-            print(f"🔵 [REQUEST] {self._format_timestamp()}", flush=True)
-            print(f"  Captcha Method: {config.captcha_method}", flush=True)
+            self.logger.info(f"🔵 [REQUEST] {self._format_timestamp()}")
             self._write_separator("-")
 
-            print(f"  Method: {method}", flush=True)
-            print(f"  URL: {url}", flush=True)
+            # Basic info
+            self.logger.info(f"Method: {method}")
+            self.logger.info(f"URL: {url}")
 
+            # Headers
+            self.logger.info("\n📋 Headers:")
             masked_headers = dict(headers)
             if "Authorization" in masked_headers or "authorization" in masked_headers:
                 auth_key = "Authorization" if "Authorization" in masked_headers else "authorization"
@@ -90,6 +116,7 @@ class DebugLogger:
                     token = auth_value[7:]
                     masked_headers[auth_key] = f"Bearer {self._mask_token(token)}"
 
+            # Mask Cookie header (ST token)
             if "Cookie" in masked_headers:
                 cookie_value = masked_headers["Cookie"]
                 if "__Secure-next-auth.session-token=" in cookie_value:
@@ -98,39 +125,39 @@ class DebugLogger:
                         st_token = parts[1].split(";")[0]
                         masked_headers["Cookie"] = f"__Secure-next-auth.session-token={self._mask_token(st_token)}"
 
-            print("  📋 Headers:", flush=True)
             for key, value in masked_headers.items():
-                print(f"    {key}: {value}", flush=True)
+                self.logger.info(f"  {key}: {value}")
 
+            # Body
             if body is not None:
-                print("  📦 Request Body:", flush=True)
+                self.logger.info("\n📦 Request Body:")
                 if isinstance(body, (dict, list)):
-                    truncated_body = self._truncate_large_fields(body)
-                    body_str = json.dumps(truncated_body, indent=2, ensure_ascii=False)
-                    print(f"    {body_str}", flush=True)
+                    body_str = json.dumps(body, indent=2, ensure_ascii=False)
+                    self.logger.info(body_str)
                 else:
-                    print(f"    {str(body)[:2000]}", flush=True)
+                    self.logger.info(str(body))
 
+            # Files
             if files:
-                print("  📎 Files: <file data>", flush=True)
+                self.logger.info("\n📎 Files:")
+                try:
+                    if hasattr(files, 'keys') and callable(getattr(files, 'keys', None)):
+                        for key in files.keys():
+                            self.logger.info(f"  {key}: <file data>")
+                    else:
+                        self.logger.info("  <multipart form data>")
+                except (AttributeError, TypeError):
+                    self.logger.info("  <binary file data>")
 
+            # Proxy
             if proxy:
-                print(f"  🌐 Proxy: {proxy}", flush=True)
+                self.logger.info(f"\n🌐 Proxy: {proxy}")
 
             self._write_separator()
-            sys.stdout.flush()
-
-            details_parts = [f"Method: {method}", f"URL: {url}"]
-            if body is not None:
-                if isinstance(body, (dict, list)):
-                    truncated_body = self._truncate_large_fields(body)
-                    details_parts.append(f"Body: {json.dumps(truncated_body, ensure_ascii=False)[:2000]}")
-            if proxy:
-                details_parts.append(f"Proxy: {proxy}")
-            _save_to_db("REQUEST", "API", f"{method} {url}", "\n".join(details_parts))
+            self.logger.info("")  # Empty line
 
         except Exception as e:
-            print(f"❌ Error logging request: {e}", flush=True)
+            self.logger.error(f"Error logging request: {e}")
 
     def log_response(
         self,
@@ -139,64 +166,58 @@ class DebugLogger:
         body: Any,
         duration_ms: Optional[float] = None
     ):
-        """Log API response details to stdout"""
-        print(f"🟢 [RESPONSE] {status_code}", flush=True)
+        """Log API response details to log.txt"""
 
-        if not config.debug_enabled:
-            return
-
-        if not config.debug_log_responses:
+        if not config.debug_enabled or not config.debug_log_responses:
             return
 
         try:
             self._write_separator()
-            print(f"🟢 [RESPONSE] {self._format_timestamp()}", flush=True)
+            self.logger.info(f"🟢 [RESPONSE] {self._format_timestamp()}")
             self._write_separator("-")
 
+            # Status
             status_emoji = "✅" if 200 <= status_code < 300 else "❌"
-            print(f"  Status: {status_code} {status_emoji}", flush=True)
+            self.logger.info(f"Status: {status_code} {status_emoji}")
 
+            # Duration
             if duration_ms is not None:
-                print(f"  Duration: {duration_ms:.2f}ms", flush=True)
+                self.logger.info(f"Duration: {duration_ms:.2f}ms")
 
-            print("  📋 Response Headers:", flush=True)
+            # Headers
+            self.logger.info("\n📋 Response Headers:")
             for key, value in headers.items():
-                print(f"    {key}: {value}", flush=True)
+                self.logger.info(f"  {key}: {value}")
 
-            print("  📦 Response Body:", flush=True)
+            # Body
+            self.logger.info("\n📦 Response Body:")
             if isinstance(body, (dict, list)):
+                # 对大字段进行截断处理
                 body_to_log = self._truncate_large_fields(body)
                 body_str = json.dumps(body_to_log, indent=2, ensure_ascii=False)
-                print(f"    {body_str}", flush=True)
+                self.logger.info(body_str)
             elif isinstance(body, str):
+                # Try to parse as JSON
                 try:
                     parsed = json.loads(body)
+                    # 对大字段进行截断处理
                     parsed = self._truncate_large_fields(parsed)
                     body_str = json.dumps(parsed, indent=2, ensure_ascii=False)
-                    print(f"    {body_str}", flush=True)
+                    self.logger.info(body_str)
                 except:
+                    # Not JSON, log as text (limit length)
                     if len(body) > 2000:
-                        print(f"    {body[:2000]}... (truncated)", flush=True)
+                        self.logger.info(f"{body[:2000]}... (truncated)")
                     else:
-                        print(f"    {body}", flush=True)
+                        self.logger.info(body)
             else:
-                print(f"    {str(body)}", flush=True)
+                self.logger.info(str(body))
 
             self._write_separator()
-            sys.stdout.flush()
-
-            details_parts = [f"Status: {status_code}"]
-            if duration_ms is not None:
-                details_parts.append(f"Duration: {duration_ms:.2f}ms")
-            if isinstance(body, (dict, list)):
-                body_to_log = self._truncate_large_fields(body)
-                details_parts.append(f"Body: {json.dumps(body_to_log, ensure_ascii=False)[:2000]}")
-            elif isinstance(body, str):
-                details_parts.append(f"Body: {body[:2000]}")
-            _save_to_db("RESPONSE", "API", f"Response {status_code}", "\n".join(details_parts))
+            self.logger.info("")  # Empty line
 
         except Exception as e:
-            print(f"❌ Error logging response: {e}", flush=True)
+            self.logger.error(f"Error logging response: {e}")
 
     def log_error(
         self,
@@ -204,60 +225,58 @@ class DebugLogger:
         status_code: Optional[int] = None,
         response_text: Optional[str] = None
     ):
-        """Log API error details to stdout"""
-        print(f"🔴 [ERROR] {error_message}", flush=True)
+        """Log API error details to log.txt"""
+
         if not config.debug_enabled:
             return
 
         try:
             self._write_separator()
-            print(f"🔴 [ERROR] {self._format_timestamp()}", flush=True)
+            self.logger.info(f"🔴 [ERROR] {self._format_timestamp()}")
             self._write_separator("-")
 
             if status_code:
-                print(f"  Status Code: {status_code}", flush=True)
+                self.logger.info(f"Status Code: {status_code}")
 
-            print(f"  Error Message: {error_message}", flush=True)
+            self.logger.info(f"Error Message: {error_message}")
 
             if response_text:
-                print("  📦 Error Response:", flush=True)
+                self.logger.info("\n📦 Error Response:")
+                # Try to parse as JSON
                 try:
                     parsed = json.loads(response_text)
                     body_str = json.dumps(parsed, indent=2, ensure_ascii=False)
-                    print(f"    {body_str}", flush=True)
+                    self.logger.info(body_str)
                 except:
+                    # Not JSON, log as text
                     if len(response_text) > 2000:
-                        print(f"    {response_text[:2000]}... (truncated)", flush=True)
+                        self.logger.info(f"{response_text[:2000]}... (truncated)")
                     else:
-                        print(f"    {response_text}", flush=True)
+                        self.logger.info(response_text)
 
             self._write_separator()
-            sys.stdout.flush()
-
-            details_parts = []
-            if status_code:
-                details_parts.append(f"Status: {status_code}")
-            details_parts.append(f"Message: {error_message}")
-            if response_text:
-                details_parts.append(f"Response: {response_text[:2000]}")
-            _save_to_db("ERROR", "API", error_message[:500], "\n".join(details_parts))
+            self.logger.info("")  # Empty line
 
         except Exception as e:
-            print(f"❌ Error logging error detail: {e}", flush=True)
+            self.logger.error(f"Error logging error: {e}")
 
     def log_info(self, message: str):
-        """Log general info message to stdout"""
+        """Log general info message to log.txt"""
         if not config.debug_enabled:
             return
-        print(f"ℹ️  [{self._format_timestamp()}] {message}", flush=True)
-        _save_to_db("INFO", "GENERAL", message[:500])
+        try:
+            self.logger.info(f"ℹ️  [{self._format_timestamp()}] {message}")
+        except Exception as e:
+            self.logger.error(f"Error logging info: {e}")
 
     def log_warning(self, message: str):
-        """Log warning message to stdout"""
+        """Log warning message to log.txt"""
         if not config.debug_enabled:
             return
-        print(f"⚠️  [{self._format_timestamp()}] {message}", flush=True)
-        _save_to_db("WARNING", "GENERAL", message[:500])
+        try:
+            self.logger.warning(f"⚠️  [{self._format_timestamp()}] {message}")
+        except Exception as e:
+            self.logger.error(f"Error logging warning: {e}")
 
 # Global debug logger instance
 debug_logger = DebugLogger()

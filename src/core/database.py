@@ -77,17 +77,28 @@ class Database:
         if count[0] == 0:
             proxy_enabled = False
             proxy_url = None
+            media_proxy_enabled = False
+            media_proxy_url = None
 
             if config_dict:
                 proxy_config = config_dict.get("proxy", {})
                 proxy_enabled = proxy_config.get("proxy_enabled", False)
                 proxy_url = proxy_config.get("proxy_url", "")
                 proxy_url = proxy_url if proxy_url else None
+                media_proxy_enabled = proxy_config.get(
+                    "media_proxy_enabled",
+                    proxy_config.get("image_io_proxy_enabled", False)
+                )
+                media_proxy_url = proxy_config.get(
+                    "media_proxy_url",
+                    proxy_config.get("image_io_proxy_url", "")
+                )
+                media_proxy_url = media_proxy_url if media_proxy_url else None
 
             await db.execute("""
-                INSERT INTO proxy_config (id, enabled, proxy_url)
-                VALUES (1, ?, ?)
-            """, (proxy_enabled, proxy_url))
+                INSERT INTO proxy_config (id, enabled, proxy_url, media_proxy_enabled, media_proxy_url)
+                VALUES (1, ?, ?, ?, ?)
+            """, (proxy_enabled, proxy_url, media_proxy_enabled, media_proxy_url))
 
         # Ensure generation_config has a row
         cursor = await db.execute("SELECT COUNT(*) FROM generation_config")
@@ -207,6 +218,20 @@ class Database:
                     )
                 """)
 
+            # Check and create proxy_config table if missing
+            if not await self._table_exists(db, "proxy_config"):
+                print("  ✓ Creating missing table: proxy_config")
+                await db.execute("""
+                    CREATE TABLE proxy_config (
+                        id INTEGER PRIMARY KEY DEFAULT 1,
+                        enabled BOOLEAN DEFAULT 0,
+                        proxy_url TEXT,
+                        media_proxy_enabled BOOLEAN DEFAULT 0,
+                        media_proxy_url TEXT,
+                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )
+                """)
+
             # Check and create captcha_config table if missing
             if not await self._table_exists(db, "captcha_config"):
                 print("  ✓ Creating missing table: captcha_config")
@@ -228,20 +253,6 @@ class Database:
                         browser_proxy_url TEXT,
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                    )
-                """)
-
-            # Check and create debug_logs table if missing
-            if not await self._table_exists(db, "debug_logs"):
-                print("  ✓ Creating missing table: debug_logs")
-                await db.execute("""
-                    CREATE TABLE debug_logs (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        level TEXT NOT NULL DEFAULT 'INFO',
-                        category TEXT,
-                        message TEXT NOT NULL,
-                        details TEXT,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     )
                 """)
 
@@ -292,6 +303,21 @@ class Database:
                         print("  ✓ Added column 'error_ban_threshold' to admin_config table")
                     except Exception as e:
                         print(f"  ✗ Failed to add column 'error_ban_threshold': {e}")
+
+            # Check and add missing columns to proxy_config table
+            if await self._table_exists(db, "proxy_config"):
+                proxy_columns_to_add = [
+                    ("media_proxy_enabled", "BOOLEAN DEFAULT 0"),
+                    ("media_proxy_url", "TEXT"),
+                ]
+
+                for col_name, col_type in proxy_columns_to_add:
+                    if not await self._column_exists(db, "proxy_config", col_name):
+                        try:
+                            await db.execute(f"ALTER TABLE proxy_config ADD COLUMN {col_name} {col_type}")
+                            print(f"  ✓ Added column '{col_name}' to proxy_config table")
+                        except Exception as e:
+                            print(f"  ✗ Failed to add column '{col_name}': {e}")
 
             # Check and add missing columns to captcha_config table
             if await self._table_exists(db, "captcha_config"):
@@ -453,18 +479,6 @@ class Database:
                 )
             """)
 
-            # Debug logs table
-            await db.execute("""
-                CREATE TABLE IF NOT EXISTS debug_logs (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    level TEXT NOT NULL DEFAULT 'INFO',
-                    category TEXT,
-                    message TEXT NOT NULL,
-                    details TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            """)
-
             # Admin config table
             await db.execute("""
                 CREATE TABLE IF NOT EXISTS admin_config (
@@ -483,6 +497,8 @@ class Database:
                     id INTEGER PRIMARY KEY DEFAULT 1,
                     enabled BOOLEAN DEFAULT 0,
                     proxy_url TEXT,
+                    media_proxy_enabled BOOLEAN DEFAULT 0,
+                    media_proxy_url TEXT,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """)
@@ -972,14 +988,47 @@ class Database:
                 return ProxyConfig(**dict(row))
             return None
 
-    async def update_proxy_config(self, enabled: bool, proxy_url: Optional[str] = None):
+    async def update_proxy_config(
+        self,
+        enabled: bool,
+        proxy_url: Optional[str] = None,
+        media_proxy_enabled: Optional[bool] = None,
+        media_proxy_url: Optional[str] = None
+    ):
         """Update proxy configuration"""
         async with aiosqlite.connect(self.db_path) as db:
-            await db.execute("""
-                UPDATE proxy_config
-                SET enabled = ?, proxy_url = ?, updated_at = CURRENT_TIMESTAMP
-                WHERE id = 1
-            """, (enabled, proxy_url))
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute("SELECT * FROM proxy_config WHERE id = 1")
+            row = await cursor.fetchone()
+
+            if row:
+                current = dict(row)
+                new_media_proxy_enabled = (
+                    media_proxy_enabled
+                    if media_proxy_enabled is not None
+                    else current.get("media_proxy_enabled", False)
+                )
+                new_media_proxy_url = (
+                    media_proxy_url
+                    if media_proxy_url is not None
+                    else current.get("media_proxy_url")
+                )
+
+                await db.execute("""
+                    UPDATE proxy_config
+                    SET enabled = ?, proxy_url = ?,
+                        media_proxy_enabled = ?, media_proxy_url = ?,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = 1
+                """, (enabled, proxy_url, new_media_proxy_enabled, new_media_proxy_url))
+            else:
+                new_media_proxy_enabled = media_proxy_enabled if media_proxy_enabled is not None else False
+                new_media_proxy_url = media_proxy_url
+                await db.execute("""
+                    INSERT INTO proxy_config (id, enabled, proxy_url, media_proxy_enabled, media_proxy_url)
+                    VALUES (1, ?, ?, ?, ?)
+                """, (enabled, proxy_url, new_media_proxy_enabled, new_media_proxy_url))
+
             await db.commit()
 
     async def get_generation_config(self) -> Optional[GenerationConfig]:
@@ -1063,45 +1112,6 @@ class Database:
         """Clear all request logs"""
         async with aiosqlite.connect(self.db_path) as db:
             await db.execute("DELETE FROM request_logs")
-            await db.commit()
-
-    async def add_debug_log(self, level: str, category: str, message: str, details: str = None):
-        async with aiosqlite.connect(self.db_path) as db:
-            await db.execute("""
-                INSERT INTO debug_logs (level, category, message, details)
-                VALUES (?, ?, ?, ?)
-            """, (level, category, message, details))
-            await db.execute("""
-                DELETE FROM debug_logs WHERE id NOT IN (
-                    SELECT id FROM debug_logs ORDER BY created_at DESC LIMIT 500
-                )
-            """)
-            await db.commit()
-
-    async def get_debug_logs(self, limit: int = 100, level: str = None):
-        async with aiosqlite.connect(self.db_path) as db:
-            db.row_factory = aiosqlite.Row
-            if level:
-                cursor = await db.execute("""
-                    SELECT id, level, category, message, details, created_at
-                    FROM debug_logs
-                    WHERE level = ?
-                    ORDER BY created_at DESC
-                    LIMIT ?
-                """, (level, limit))
-            else:
-                cursor = await db.execute("""
-                    SELECT id, level, category, message, details, created_at
-                    FROM debug_logs
-                    ORDER BY created_at DESC
-                    LIMIT ?
-                """, (limit,))
-            rows = await cursor.fetchall()
-            return [dict(row) for row in rows]
-
-    async def clear_debug_logs(self):
-        async with aiosqlite.connect(self.db_path) as db:
-            await db.execute("DELETE FROM debug_logs")
             await db.commit()
 
     async def init_config_from_toml(self, config_dict: dict, is_first_startup: bool = True):

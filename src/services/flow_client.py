@@ -1,5 +1,6 @@
 """Flow API Client for VideoFX (Veo)"""
 import asyncio
+import contextvars
 import time
 import uuid
 import random
@@ -21,6 +22,11 @@ class FlowClient:
         self.timeout = config.flow_timeout
         # 缓存每个账号的 User-Agent
         self._user_agent_cache = {}
+        # 当前请求链路绑定的浏览器指纹（基于 contextvar，避免并发串扰）
+        self._request_fingerprint_ctx: contextvars.ContextVar[Optional[Dict[str, Any]]] = contextvars.ContextVar(
+            "flow_request_fingerprint",
+            default=None
+        )
 
         # Default "real browser" headers (Android Chrome style) to reduce upstream 4xx/5xx instability.
         # These will be applied as defaults (won't override caller-provided headers).
@@ -109,6 +115,14 @@ class FlowClient:
         
         return user_agent
 
+    def _set_request_fingerprint(self, fingerprint: Optional[Dict[str, Any]]):
+        """设置当前请求链路的浏览器指纹上下文。"""
+        self._request_fingerprint_ctx.set(dict(fingerprint) if fingerprint else None)
+
+    def clear_request_fingerprint(self):
+        """清理请求链路绑定的浏览器指纹。"""
+        self._set_request_fingerprint(None)
+
     async def _make_request(
         self,
         method: str,
@@ -119,7 +133,8 @@ class FlowClient:
         st_token: Optional[str] = None,
         use_at: bool = False,
         at_token: Optional[str] = None,
-        timeout: Optional[int] = None
+        timeout: Optional[int] = None,
+        use_media_proxy: bool = False
     ) -> Dict[str, Any]:
         """统一HTTP请求处理
 
@@ -133,12 +148,29 @@ class FlowClient:
             use_at: 是否使用AT认证 (Bearer方式)
             at_token: Access Token
             timeout: 自定义超时时间(秒)，不传则使用默认值
+            use_media_proxy: 是否使用图片上传/下载代理
         """
-        proxy_url = await self.proxy_manager.get_proxy_url()
+        fingerprint = self._request_fingerprint_ctx.get()
+
+        proxy_url = None
+        if self.proxy_manager:
+            if use_media_proxy and hasattr(self.proxy_manager, "get_media_proxy_url"):
+                proxy_url = await self.proxy_manager.get_media_proxy_url()
+            elif hasattr(self.proxy_manager, "get_request_proxy_url"):
+                proxy_url = await self.proxy_manager.get_request_proxy_url()
+            else:
+                proxy_url = await self.proxy_manager.get_proxy_url()
+
+        if isinstance(fingerprint, dict) and "proxy_url" in fingerprint:
+            proxy_url = fingerprint.get("proxy_url")
+            if proxy_url == "":
+                proxy_url = None
         request_timeout = timeout or self.timeout
 
         if headers is None:
             headers = {}
+        else:
+            headers = dict(headers)
 
         # ST认证 - 使用Cookie
         if use_st and st_token:
@@ -155,11 +187,26 @@ class FlowClient:
         elif at_token:
             account_id = at_token[:16]  # 使用 AT 的前16个字符
 
-        # 通用请求头 - 基于账号生成固定的 User-Agent
+        # 通用请求头 - 优先使用打码浏览器指纹中的 UA
+        fingerprint_user_agent = None
+        if isinstance(fingerprint, dict):
+            fingerprint_user_agent = fingerprint.get("user_agent")
+
         headers.update({
             "Content-Type": "application/json",
-            "User-Agent": self._generate_user_agent(account_id)
+            "User-Agent": fingerprint_user_agent or self._generate_user_agent(account_id)
         })
+
+        # 若存在打码浏览器指纹，覆盖关键客户端提示头，保证提交请求与打码时一致。
+        if isinstance(fingerprint, dict):
+            if fingerprint.get("accept_language"):
+                headers.setdefault("Accept-Language", fingerprint["accept_language"])
+            if fingerprint.get("sec_ch_ua"):
+                headers["sec-ch-ua"] = fingerprint["sec_ch_ua"]
+            if fingerprint.get("sec_ch_ua_mobile"):
+                headers["sec-ch-ua-mobile"] = fingerprint["sec_ch_ua_mobile"]
+            if fingerprint.get("sec_ch_ua_platform"):
+                headers["sec-ch-ua-platform"] = fingerprint["sec_ch_ua_platform"]
 
         # Add default Chromium/Android client headers (do not override explicitly provided values).
         for key, value in self._default_client_headers.items():
@@ -167,6 +214,11 @@ class FlowClient:
 
         # Log request
         if config.debug_enabled:
+            if isinstance(fingerprint, dict):
+                proxy_for_log = proxy_url if proxy_url else "direct"
+                debug_logger.log_info(
+                    f"[FINGERPRINT] 使用打码浏览器指纹提交请求: UA={headers.get('User-Agent', '')[:120]}, proxy={proxy_for_log}"
+                )
             debug_logger.log_request(
                 method=method,
                 url=url,
@@ -411,17 +463,19 @@ class FlowClient:
         self,
         at: str,
         image_bytes: bytes,
-        aspect_ratio: str = "IMAGE_ASPECT_RATIO_LANDSCAPE"
+        aspect_ratio: str = "IMAGE_ASPECT_RATIO_LANDSCAPE",
+        project_id: Optional[str] = None
     ) -> str:
-        """上传图片,返回mediaGenerationId
+        """上传图片,返回mediaId
 
         Args:
             at: Access Token
             image_bytes: 图片字节数据
             aspect_ratio: 图片或视频宽高比（会自动转换为图片格式）
+            project_id: 项目ID（新上传接口可使用）
 
         Returns:
-            mediaGenerationId (CAM...)
+            mediaId
         """
         # 转换视频aspect_ratio为图片aspect_ratio
         # VIDEO_ASPECT_RATIO_LANDSCAPE -> IMAGE_ASPECT_RATIO_LANDSCAPE
@@ -435,8 +489,48 @@ class FlowClient:
         # 编码为base64 (去掉前缀)
         image_base64 = base64.b64encode(image_bytes).decode('utf-8')
 
-        url = f"{self.api_base_url}:uploadUserImage"
-        json_data = {
+        # 优先尝试新版上传接口: /v1/flow/uploadImage
+        # 若失败则自动回退到旧接口,保证兼容
+        ext = "png" if "png" in mime_type else "jpg"
+        upload_file_name = f"flow2api_upload_{int(time.time() * 1000)}.{ext}"
+        new_url = f"{self.api_base_url}/flow/uploadImage"
+        new_client_context = {
+            "tool": "PINHOLE"
+        }
+        if project_id:
+            new_client_context["projectId"] = project_id
+
+        new_json_data = {
+            "clientContext": new_client_context,
+            "fileName": upload_file_name,
+            "imageBytes": image_base64,
+            "isHidden": False,
+            "isUserUploaded": True,
+            "mimeType": mime_type
+        }
+
+        try:
+            new_result = await self._make_request(
+                method="POST",
+                url=new_url,
+                json_data=new_json_data,
+                use_at=True,
+                at_token=at,
+                use_media_proxy=True
+            )
+            media_id = (
+                new_result.get("media", {}).get("name")
+                or new_result.get("mediaGenerationId", {}).get("mediaGenerationId")
+            )
+            if media_id:
+                return media_id
+            raise Exception(f"Invalid upload response: missing media id, keys={list(new_result.keys())}")
+        except Exception as new_upload_error:
+            debug_logger.log_warning(f"[UPLOAD] New upload API failed, fallback to legacy endpoint: {new_upload_error}")
+
+        # 兼容回退：旧接口 :uploadUserImage
+        legacy_url = f"{self.api_base_url}:uploadUserImage"
+        legacy_json_data = {
             "imageInput": {
                 "rawImageBytes": image_base64,
                 "mimeType": mime_type,
@@ -449,16 +543,21 @@ class FlowClient:
             }
         }
 
-        result = await self._make_request(
+        legacy_result = await self._make_request(
             method="POST",
-            url=url,
-            json_data=json_data,
+            url=legacy_url,
+            json_data=legacy_json_data,
             use_at=True,
-            at_token=at
+            at_token=at,
+            use_media_proxy=True
         )
 
-        # 返回mediaGenerationId
-        media_id = result["mediaGenerationId"]["mediaGenerationId"]
+        media_id = (
+            legacy_result.get("mediaGenerationId", {}).get("mediaGenerationId")
+            or legacy_result.get("media", {}).get("name")
+        )
+        if not media_id:
+            raise Exception(f"Legacy upload response missing media id: keys={list(legacy_result.keys())}")
         return media_id
 
     # ========== 图片生成 (使用AT) - 同步返回 ==========
@@ -471,28 +570,21 @@ class FlowClient:
         model_name: str,
         aspect_ratio: str,
         image_inputs: Optional[List[Dict]] = None
-    ) -> dict:
+    ) -> tuple[dict, str]:
         """生成图片(同步返回)
 
         Args:
             at: Access Token
             project_id: 项目ID
             prompt: 提示词
-            model_name: GEM_PIX, GEM_PIX_2 或 IMAGEN_3_5
+            model_name: NARWHAL / GEM_PIX / GEM_PIX_2 / IMAGEN_3_5
             aspect_ratio: 图片宽高比
             image_inputs: 参考图片列表(图生图时使用)
 
         Returns:
-            {
-                "media": [{
-                    "image": {
-                        "generatedImage": {
-                            "fifeUrl": "图片URL",
-                            ...
-                        }
-                    }
-                }]
-            }
+            (result, session_id)
+            result: 上游返回的生成结果
+            session_id: 本次成功图片生成请求使用的 sessionId
         """
         url = f"{self.api_base_url}/projects/{project_id}/flowMedia:batchGenerateImages"
 
@@ -507,7 +599,7 @@ class FlowClient:
                 raise Exception("Failed to obtain reCAPTCHA token")
             session_id = self._generate_session_id()
 
-            # 构建请求 - clientContext 只在外层，requests 内不重复
+            # 构建请求 - 新版接口在外层和 requests 内都带 clientContext
             client_context = {
                 "recaptchaContext": {
                     "token": recaptcha_token,
@@ -518,16 +610,26 @@ class FlowClient:
                 "tool": "PINHOLE"
             }
 
+            # 新版图片接口使用结构化提示词 + new media 开关
             request_data = {
-                "seed": random.randint(1, 99999),
+                "clientContext": client_context,
+                "seed": random.randint(1, 999999),
                 "imageModelName": model_name,
                 "imageAspectRatio": aspect_ratio,
-                "prompt": prompt,
+                "structuredPrompt": {
+                    "parts": [{
+                        "text": prompt
+                    }]
+                },
                 "imageInputs": image_inputs or []
             }
 
             json_data = {
                 "clientContext": client_context,
+                "mediaGenerationContext": {
+                    "batchId": str(uuid.uuid4())
+                },
+                "useNewMedia": True,
                 "requests": [request_data]
             }
 
@@ -539,7 +641,7 @@ class FlowClient:
                     use_at=True,
                     at_token=at
                 )
-                return result
+                return result, session_id
             except Exception as e:
                 error_str = str(e)
                 last_error = e
@@ -551,6 +653,8 @@ class FlowClient:
                     continue
                 else:
                     raise e
+            finally:
+                await self._notify_browser_captcha_request_finished(browser_id)
         
         # 所有重试都失败
         raise last_error
@@ -560,7 +664,9 @@ class FlowClient:
         at: str,
         project_id: str,
         media_id: str,
-        target_resolution: str = "UPSAMPLE_IMAGE_RESOLUTION_4K"
+        target_resolution: str = "UPSAMPLE_IMAGE_RESOLUTION_4K",
+        user_paygate_tier: str = "PAYGATE_TIER_NOT_PAID",
+        session_id: Optional[str] = None
     ) -> str:
         """放大图片到 2K/4K
 
@@ -569,6 +675,8 @@ class FlowClient:
             project_id: 项目ID
             media_id: 图片的 mediaId (从 batchGenerateImages 返回的 media[0]["name"])
             target_resolution: UPSAMPLE_IMAGE_RESOLUTION_2K 或 UPSAMPLE_IMAGE_RESOLUTION_4K
+            user_paygate_tier: 用户等级 (如 PAYGATE_TIER_NOT_PAID / PAYGATE_TIER_ONE)
+            session_id: 可选，复用图片生成请求的 sessionId
 
         Returns:
             base64 编码的图片数据
@@ -576,10 +684,10 @@ class FlowClient:
         url = f"{self.api_base_url}/flow/upsampleImage"
 
         # 获取 reCAPTCHA token - 使用 IMAGE_GENERATION action
-        recaptcha_token, _ = await self._get_recaptcha_token(project_id, action="IMAGE_GENERATION")
+        recaptcha_token, browser_id = await self._get_recaptcha_token(project_id, action="IMAGE_GENERATION")
         if not recaptcha_token:
             raise Exception("Failed to obtain reCAPTCHA token")
-        session_id = self._generate_session_id()
+        upsample_session_id = session_id or self._generate_session_id()
 
         json_data = {
             "mediaId": media_id,
@@ -589,24 +697,28 @@ class FlowClient:
                     "token": recaptcha_token,
                     "applicationType": "RECAPTCHA_APPLICATION_TYPE_WEB"
                 },
-                "sessionId": session_id,
+                "sessionId": upsample_session_id,
                 "projectId": project_id,
-                "tool": "PINHOLE"
+                "tool": "PINHOLE",
+                "userPaygateTier": user_paygate_tier
             }
         }
 
         # 4K/2K 放大使用专用超时，因为返回的 base64 数据量很大
-        result = await self._make_request(
-            method="POST",
-            url=url,
-            json_data=json_data,
-            use_at=True,
-            at_token=at,
-            timeout=config.upsample_timeout
-        )
+        try:
+            result = await self._make_request(
+                method="POST",
+                url=url,
+                json_data=json_data,
+                use_at=True,
+                at_token=at,
+                timeout=config.upsample_timeout
+            )
 
-        # 返回 base64 编码的图片
-        return result.get("encodedImage", "")
+            # 返回 base64 编码的图片
+            return result.get("encodedImage", "")
+        finally:
+            await self._notify_browser_captcha_request_finished(browser_id)
 
     # ========== 视频生成 (使用AT) - 异步返回 ==========
 
@@ -697,6 +809,8 @@ class FlowClient:
                     continue
                 else:
                     raise e
+            finally:
+                await self._notify_browser_captcha_request_finished(browser_id)
         
         # 所有重试都失败
         raise last_error
@@ -784,6 +898,8 @@ class FlowClient:
                     continue
                 else:
                     raise e
+            finally:
+                await self._notify_browser_captcha_request_finished(browser_id)
         
         # 所有重试都失败
         raise last_error
@@ -878,6 +994,8 @@ class FlowClient:
                     continue
                 else:
                     raise e
+            finally:
+                await self._notify_browser_captcha_request_finished(browser_id)
         
         # 所有重试都失败
         raise last_error
@@ -968,6 +1086,8 @@ class FlowClient:
                     continue
                 else:
                     raise e
+            finally:
+                await self._notify_browser_captcha_request_finished(browser_id)
         
         # 所有重试都失败
         raise last_error
@@ -1051,6 +1171,8 @@ class FlowClient:
                     continue
                 else:
                     raise e
+            finally:
+                await self._notify_browser_captcha_request_finished(browser_id)
         
         raise last_error
 
@@ -1141,6 +1263,16 @@ class FlowClient:
             except Exception:
                 pass
 
+    async def _notify_browser_captcha_request_finished(self, browser_id: int = None):
+        """通知有头浏览器：上游图片/视频请求已结束，可关闭对应打码浏览器。"""
+        if config.captcha_method == "browser":
+            try:
+                from .browser_captcha import BrowserCaptchaService
+                service = await BrowserCaptchaService.get_instance(self.db)
+                await service.report_request_finished(browser_id)
+            except Exception:
+                pass
+
     def _generate_session_id(self) -> str:
         """生成sessionId: ;timestamp"""
         return f";{int(time.time() * 1000)}"
@@ -1163,52 +1295,65 @@ class FlowClient:
             对于非 browser 打码方式，browser_id 为 None
         """
         captcha_method = config.captcha_method
-        print(f"🔑 [CAPTCHA] Active captcha_method: '{captcha_method}' | Action: {action} | Project: {project_id[:8]}...", flush=True)
 
         # 内置浏览器打码 (nodriver)
         if captcha_method == "personal":
             try:
                 from .browser_captcha_personal import BrowserCaptchaService
                 service = await BrowserCaptchaService.get_instance(self.db)
-                return await service.get_token(project_id, action), None
+                token = await service.get_token(project_id, action)
+                fingerprint = service.get_last_fingerprint() if token else None
+                self._set_request_fingerprint(fingerprint if token else None)
+                return token, None
             except RuntimeError as e:
                 # 捕获 Docker 环境或依赖缺失的明确错误
                 error_msg = str(e)
                 debug_logger.log_error(f"[reCAPTCHA Personal] {error_msg}")
                 print(f"[reCAPTCHA] ❌ 内置浏览器打码失败: {error_msg}")
+                self._set_request_fingerprint(None)
                 return None, None
             except ImportError as e:
                 debug_logger.log_error(f"[reCAPTCHA Personal] 导入失败: {str(e)}")
                 print(f"[reCAPTCHA] ❌ nodriver 未安装，请运行: pip install nodriver")
+                self._set_request_fingerprint(None)
                 return None, None
             except Exception as e:
                 debug_logger.log_error(f"[reCAPTCHA Personal] 错误: {str(e)}")
+                self._set_request_fingerprint(None)
                 return None, None
         # 有头浏览器打码 (playwright)
         elif captcha_method == "browser":
             try:
                 from .browser_captcha import BrowserCaptchaService
                 service = await BrowserCaptchaService.get_instance(self.db)
-                return await service.get_token(project_id, action)
+                token, browser_id = await service.get_token(project_id, action)
+                fingerprint = await service.get_fingerprint(browser_id) if token else None
+                self._set_request_fingerprint(fingerprint if token else None)
+                return token, browser_id
             except RuntimeError as e:
                 # 捕获 Docker 环境或依赖缺失的明确错误
                 error_msg = str(e)
                 debug_logger.log_error(f"[reCAPTCHA Browser] {error_msg}")
                 print(f"[reCAPTCHA] ❌ 有头浏览器打码失败: {error_msg}")
+                self._set_request_fingerprint(None)
                 return None, None
             except ImportError as e:
                 debug_logger.log_error(f"[reCAPTCHA Browser] 导入失败: {str(e)}")
                 print(f"[reCAPTCHA] ❌ playwright 未安装，请运行: pip install playwright && python -m playwright install chromium")
+                self._set_request_fingerprint(None)
                 return None, None
             except Exception as e:
                 debug_logger.log_error(f"[reCAPTCHA Browser] 错误: {str(e)}")
+                self._set_request_fingerprint(None)
                 return None, None
         # API打码服务
         elif captcha_method in ["yescaptcha", "capmonster", "ezcaptcha", "capsolver"]:
+            self._set_request_fingerprint(None)
             token = await self._get_api_captcha_token(captcha_method, project_id, action)
             return token, None
         else:
             debug_logger.log_info(f"[reCAPTCHA] 未知的打码方式: {captcha_method}")
+            self._set_request_fingerprint(None)
             return None, None
 
     async def _get_api_captcha_token(self, method: str, project_id: str, action: str = "IMAGE_GENERATION") -> Optional[str]:

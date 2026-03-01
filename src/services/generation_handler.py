@@ -127,6 +127,93 @@ MODEL_CONFIG = {
         "aspect_ratio": "IMAGE_ASPECT_RATIO_PORTRAIT"
     },
 
+    # 图片生成 - NARWHAL (新版)
+    "gemini-3.1-flash-image-landscape": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_LANDSCAPE"
+    },
+    "gemini-3.1-flash-image-portrait": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_PORTRAIT"
+    },
+    "gemini-3.1-flash-image-square": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_SQUARE"
+    },
+    "gemini-3.1-flash-image-four-three": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_LANDSCAPE_FOUR_THREE"
+    },
+    "gemini-3.1-flash-image-three-four": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_PORTRAIT_THREE_FOUR"
+    },
+    "gemini-3.1-flash-image-landscape-2k": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_LANDSCAPE",
+        "upsample": "UPSAMPLE_IMAGE_RESOLUTION_2K"
+    },
+    "gemini-3.1-flash-image-portrait-2k": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_PORTRAIT",
+        "upsample": "UPSAMPLE_IMAGE_RESOLUTION_2K"
+    },
+    "gemini-3.1-flash-image-square-2k": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_SQUARE",
+        "upsample": "UPSAMPLE_IMAGE_RESOLUTION_2K"
+    },
+    "gemini-3.1-flash-image-four-three-2k": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_LANDSCAPE_FOUR_THREE",
+        "upsample": "UPSAMPLE_IMAGE_RESOLUTION_2K"
+    },
+    "gemini-3.1-flash-image-three-four-2k": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_PORTRAIT_THREE_FOUR",
+        "upsample": "UPSAMPLE_IMAGE_RESOLUTION_2K"
+    },
+    "gemini-3.1-flash-image-landscape-4k": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_LANDSCAPE",
+        "upsample": "UPSAMPLE_IMAGE_RESOLUTION_4K"
+    },
+    "gemini-3.1-flash-image-portrait-4k": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_PORTRAIT",
+        "upsample": "UPSAMPLE_IMAGE_RESOLUTION_4K"
+    },
+    "gemini-3.1-flash-image-square-4k": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_SQUARE",
+        "upsample": "UPSAMPLE_IMAGE_RESOLUTION_4K"
+    },
+    "gemini-3.1-flash-image-four-three-4k": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_LANDSCAPE_FOUR_THREE",
+        "upsample": "UPSAMPLE_IMAGE_RESOLUTION_4K"
+    },
+    "gemini-3.1-flash-image-three-four-4k": {
+        "type": "image",
+        "model_name": "NARWHAL",
+        "aspect_ratio": "IMAGE_ASPECT_RATIO_PORTRAIT_THREE_FOUR",
+        "upsample": "UPSAMPLE_IMAGE_RESOLUTION_4K"
+    },
+
     # ========== 文生视频 (T2V - Text to Video) ==========
     # 不支持上传图片，只使用文本提示词生成
 
@@ -196,14 +283,6 @@ MODEL_CONFIG = {
         "aspect_ratio": "VIDEO_ASPECT_RATIO_LANDSCAPE",
         "supports_images": False
     },
-    # Added by Afiq; not working need to open issue or debug
-    "veo_3_1_t2v_fast_landscape_ultra_relaxed": {
-        "type": "video",
-        "video_type": "t2v",
-        "model_key": "veo_3_1_t2v_fast_ultra_relaxed",  #veo_3_1_t2v_fast
-        "aspect_ratio": "VIDEO_ASPECT_RATIO_LANDSCAPE",
-        "supports_images": False
-    },
 
     # veo_3_1_t2v_fast_ultra_relaxed (横竖屏)
     "veo_3_1_t2v_fast_portrait_ultra_relaxed": {
@@ -211,15 +290,6 @@ MODEL_CONFIG = {
         "video_type": "t2v",
         "model_key": "veo_3_1_t2v_fast_portrait_ultra_relaxed",
         "aspect_ratio": "VIDEO_ASPECT_RATIO_PORTRAIT",
-        "supports_images": False
-    },
-
-    # Added by Afiq; not working need to open issue or debug
-    "veo_3_1_t2v_fast_landscape_ultra_relaxed": {
-        "type": "video", 
-        "video_type": "t2v",
-        "model_key": "veo_3_1_t2v_fast_ultra_relaxed",  #veo_3_1_t2v_fast
-        "aspect_ratio": "VIDEO_ASPECT_RATIO_LANDSCAPE",
         "supports_images": False
     },
     "veo_3_1_t2v_fast_ultra_relaxed": {
@@ -263,26 +333,6 @@ MODEL_CONFIG = {
         "type": "video",
         "video_type": "i2v",
         "model_key": "veo_3_1_i2v_s_fast_fl",
-        "aspect_ratio": "VIDEO_ASPECT_RATIO_LANDSCAPE",
-        "supports_images": True,
-        "min_images": 1,
-        "max_images": 2
-    },
-
-    # veo_3_1_i2v_s_fast_fl (original naming convention from previous version)
-    "veo_3_1_i2v_s_fast_fl_portrait": {
-        "type": "video",
-        "video_type": "i2v",
-        "model_key": "veo_3_1_i2v_s_fast_portrait_fl_ultra_relaxed",
-        "aspect_ratio": "VIDEO_ASPECT_RATIO_PORTRAIT",
-        "supports_images": True,
-        "min_images": 1,
-        "max_images": 2
-    },
-    "veo_3_1_i2v_s_fast_fl_landscape": {
-        "type": "video",
-        "video_type": "i2v",
-        "model_key": "veo_3_1_i2v_s_fast_fl_ultra_relaxed",
         "aspect_ratio": "VIDEO_ASPECT_RATIO_LANDSCAPE",
         "supports_images": True,
         "min_images": 1,
@@ -627,6 +677,8 @@ class GenerationHandler:
             default_timeout=config.cache_timeout,
             proxy_manager=proxy_manager
         )
+        self._last_generated_url = None
+        self._last_generation_assets = None
 
     async def check_token_availability(self, is_image: bool, is_video: bool) -> bool:
         """检查Token可用性
@@ -658,6 +710,12 @@ class GenerationHandler:
         debug_logger.log_info(f"[Generation] New request | Model: {model} | Captcha Engine: {BROWSER_ENGINE}")
         start_time = time.time()
         token = None
+        self._last_generated_url = None
+        self._last_generation_assets = None
+
+        # 防止并发链路复用到上一次请求的指纹上下文
+        if hasattr(self.flow_client, "clear_request_fingerprint"):
+            self.flow_client.clear_request_fingerprint()
 
         # 1. 验证模型
         if model not in MODEL_CONFIG:
@@ -763,24 +821,30 @@ class GenerationHandler:
 
             # 7. 记录成功日志
             duration = time.time() - start_time
+            # 日志中保留更完整的 prompt，避免管理页只看到过短内容
+            prompt_for_log = prompt if len(prompt) <= 2000 else f"{prompt[:2000]}...(truncated)"
 
             # 构建响应数据，包含生成的URL
             response_data = {
                 "status": "success",
                 "model": model,
-                "prompt": prompt[:100]
+                "prompt": prompt_for_log
             }
 
             # 添加生成的URL（如果有）
             if hasattr(self, '_last_generated_url') and self._last_generated_url:
                 response_data["url"] = self._last_generated_url
-                # 清除临时存储
-                self._last_generated_url = None
+            if hasattr(self, "_last_generation_assets") and self._last_generation_assets:
+                response_data["generated_assets"] = self._last_generation_assets
+
+            # 清除临时存储，避免污染后续请求
+            self._last_generated_url = None
+            self._last_generation_assets = None
 
             await self._log_request(
                 token.id,
                 f"generate_{generation_type}",
-                {"model": model, "prompt": prompt[:100], "has_images": images is not None and len(images) > 0},
+                {"model": model, "prompt": prompt_for_log, "has_images": images is not None and len(images) > 0},
                 response_data,
                 200,
                 duration
@@ -798,10 +862,11 @@ class GenerationHandler:
 
             # 记录失败日志
             duration = time.time() - start_time
+            prompt_for_log = prompt if len(prompt) <= 2000 else f"{prompt[:2000]}...(truncated)"
             await self._log_request(
                 token.id if token else None,
                 f"generate_{generation_type if model_config else 'unknown'}",
-                {"model": model, "prompt": prompt[:100], "has_images": images is not None and len(images) > 0},
+                {"model": model, "prompt": prompt_for_log, "has_images": images is not None and len(images) > 0},
                 {"error": error_msg},
                 500,
                 duration
@@ -843,7 +908,8 @@ class GenerationHandler:
                     media_id = await self.flow_client.upload_image(
                         token.at,
                         image_bytes,
-                        model_config["aspect_ratio"]
+                        model_config["aspect_ratio"],
+                        project_id=project_id
                     )
                     image_inputs.append({
                         "name": media_id,
@@ -856,7 +922,7 @@ class GenerationHandler:
             if stream:
                 yield self._create_stream_chunk("正在生成图片...\n")
 
-            result = await self.flow_client.generate_image(
+            result, generation_session_id = await self.flow_client.generate_image(
                 at=token.at,
                 project_id=project_id,
                 prompt=prompt,
@@ -873,6 +939,10 @@ class GenerationHandler:
 
             image_url = media[0]["image"]["generatedImage"]["fifeUrl"]
             media_id = media[0].get("name")  # 用于 upsample
+            self._last_generation_assets = {
+                "type": "image",
+                "origin_image_url": image_url
+            }
 
             # 检查是否需要 upsample
             upsample_resolution = model_config.get("upsample")
@@ -890,7 +960,9 @@ class GenerationHandler:
                             at=token.at,
                             project_id=project_id,
                             media_id=media_id,
-                            target_resolution=upsample_resolution
+                            target_resolution=upsample_resolution,
+                            user_paygate_tier=token.user_paygate_tier or "PAYGATE_TIER_NOT_PAID",
+                            session_id=generation_session_id
                         )
 
                         if encoded_image:
@@ -900,8 +972,16 @@ class GenerationHandler:
                                 yield self._create_stream_chunk(f"✅ 图片已放大到 {resolution_name}\n")
 
                             # 缓存放大后的图片 (如果启用)
-                            # 日志统一记录原图URL (放大后的base64数据太大，不适合存储)
+                            # 日志统一记录原图URL + 2K/4K 信息
                             self._last_generated_url = image_url
+                            self._last_generation_assets = {
+                                "type": "image",
+                                "origin_image_url": image_url,
+                                "upscaled_image": {
+                                    "resolution": resolution_name,
+                                    "base64": encoded_image
+                                }
+                            }
 
                             if config.cache_enabled:
                                 try:
@@ -909,6 +989,8 @@ class GenerationHandler:
                                         yield self._create_stream_chunk(f"缓存 {resolution_name} 图片中...\n")
                                     cached_filename = await self.file_cache.cache_base64_image(encoded_image, resolution_name)
                                     local_url = f"{self._get_base_url()}/tmp/{cached_filename}"
+                                    self._last_generation_assets["upscaled_image"]["local_url"] = local_url
+                                    self._last_generation_assets["upscaled_image"]["url"] = local_url
                                     if stream:
                                         yield self._create_stream_chunk(f"✅ {resolution_name} 图片缓存成功\n")
                                         yield self._create_stream_chunk(
@@ -928,6 +1010,8 @@ class GenerationHandler:
 
                             # 缓存未启用或缓存失败，返回 base64 格式
                             base64_url = f"data:image/jpeg;base64,{encoded_image}"
+                            self._last_generation_assets["upscaled_image"]["local_url"] = None
+                            self._last_generation_assets["upscaled_image"]["url"] = base64_url
                             if stream:
                                 yield self._create_stream_chunk(
                                     f"![Generated Image]({base64_url})",
@@ -985,6 +1069,11 @@ class GenerationHandler:
             # 返回结果
             # 存储URL用于日志记录
             self._last_generated_url = local_url
+            self._last_generation_assets = {
+                "type": "image",
+                "origin_image_url": image_url,
+                "final_image_url": local_url
+            }
 
             if stream:
                 yield self._create_stream_chunk(
@@ -1105,7 +1194,7 @@ class GenerationHandler:
                     if stream:
                         yield self._create_stream_chunk("上传首帧图片...\n")
                     start_media_id = await self.flow_client.upload_image(
-                        token.at, images[0], model_config["aspect_ratio"]
+                        token.at, images[0], model_config["aspect_ratio"], project_id=project_id
                     )
                     debug_logger.log_info(f"[I2V] 仅上传首帧: {start_media_id}")
 
@@ -1114,10 +1203,10 @@ class GenerationHandler:
                     if stream:
                         yield self._create_stream_chunk("上传首帧和尾帧图片...\n")
                     start_media_id = await self.flow_client.upload_image(
-                        token.at, images[0], model_config["aspect_ratio"]
+                        token.at, images[0], model_config["aspect_ratio"], project_id=project_id
                     )
                     end_media_id = await self.flow_client.upload_image(
-                        token.at, images[1], model_config["aspect_ratio"]
+                        token.at, images[1], model_config["aspect_ratio"], project_id=project_id
                     )
                     debug_logger.log_info(f"[I2V] 上传首尾帧: {start_media_id}, {end_media_id}")
 
@@ -1128,7 +1217,7 @@ class GenerationHandler:
 
                 for idx, img in enumerate(images):  # 上传所有图片,不限制数量
                     media_id = await self.flow_client.upload_image(
-                        token.at, img, model_config["aspect_ratio"]
+                        token.at, img, model_config["aspect_ratio"], project_id=project_id
                     )
                     reference_images.append({
                         "imageUsageType": "IMAGE_USAGE_TYPE_ASSET",
@@ -1352,6 +1441,10 @@ class GenerationHandler:
 
                     # 存储URL用于日志记录
                     self._last_generated_url = local_url
+                    self._last_generation_assets = {
+                        "type": "video",
+                        "final_video_url": local_url
+                    }
 
                     # 返回结果
                     if stream:

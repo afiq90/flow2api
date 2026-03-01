@@ -17,6 +17,9 @@ from ..core.config import config
 # ==================== Docker 环境检测 ====================
 def _is_running_in_docker() -> bool:
     """检测是否在 Docker 容器中运行"""
+    # Replit 环境有 /.dockerenv 但不是真正的 Docker，支持浏览器运行
+    if os.environ.get('REPL_ID') or os.environ.get('REPL_SLUG'):
+        return False
     # 方法1: 检查 /.dockerenv 文件
     if os.path.exists('/.dockerenv'):
         return True

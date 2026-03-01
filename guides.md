@@ -1,186 +1,218 @@
-# Guide: Running Playwright / Patchright on Replit (Dev & Production)
+# Guide: Running Flow2API on Replit (Dev & Production)
 
-This guide covers how we got browser automation (Playwright and Patchright) working successfully on Replit, both in the development environment and in production deployments. This is based on real experience from this project (Flow2API).
+This guide covers the full setup for running Flow2API on Replit, including browser automation (Playwright/Patchright), PostgreSQL database, and upstream sync. Based on real fixes applied to this project.
 
 ---
 
 ## 1. System-Level Chromium Installation
 
-Replit runs on NixOS. You **cannot** use `apt-get` or `brew`. Instead, Chromium must be installed as a Nix package.
+Replit runs on NixOS. You **cannot** use `apt-get` or `brew`. Chromium must be installed as a Nix package.
 
-In your `.replit` file, make sure `chromium` and `playwright-driver` are listed under `[nix] packages`:
+In your `.replit` file, ensure `chromium` and `playwright-driver` are listed:
 
 ```toml
 [nix]
 packages = ["chromium", "playwright-driver"]
 ```
 
-This installs a system-wide Chromium binary at a path like:
-```
-/nix/store/...-chromium-xxx/bin/chromium
-```
-
-You can verify it works by running in the Shell:
+Verify it works:
 ```bash
 which chromium
+# e.g. /nix/store/...-chromium-xxx/bin/chromium
 ```
 
 ---
 
 ## 2. Python Dependencies
 
-Add both libraries to your `requirements.txt` (keep both so you have a fallback):
+Both libraries in `requirements.txt` (patchright preferred, playwright as fallback):
 
 ```
 patchright>=1.58.0
 playwright>=1.40.0
 ```
 
-Install them:
-```bash
-pip install patchright playwright
-```
-
 ---
 
 ## 3. Browser Binary Installation (Build Step)
 
-Even with Chromium installed via Nix, Playwright/Patchright need their own browser binaries registered. Add a **build command** in your `.replit` file:
+Add a **build command** in `.replit`:
 
 ```toml
 [deployment]
 build = ["bash", "-c", "python -m playwright install chromium"]
 ```
 
-This ensures the browser binary is set up before the app starts in production.
-
-For Patchright, you can also run:
-```bash
-python -m patchright install chromium
-```
-
 ---
 
-## 4. Headless Mode Detection
+## 4. Replit Docker Detection Fix (CRITICAL)
 
-On Replit, there is **no display server** (no X11/Wayland). You must run the browser in **headless mode**. The project detects the Replit environment automatically using environment variables:
+**Problem**: Replit containers have `/.dockerenv` which makes the app think it's in Docker and **disables browser captcha entirely**.
+
+**Fix**: Check for Replit environment FIRST in `_is_running_in_docker()`:
 
 ```python
-import os
-
-# Replit sets REPL_ID in its environment
-is_replit = bool(os.environ.get('REPL_ID'))
-headless = True if is_replit else False
+def _is_running_in_docker():
+    # Replit has /.dockerenv but is NOT Docker — browsers work fine
+    if os.environ.get('REPL_ID') or os.environ.get('REPL_SLUG'):
+        return False
+    if os.path.exists('/.dockerenv'):
+        return True
+    try:
+        with open('/proc/1/cgroup', 'r') as f:
+            content = f.read()
+            if 'docker' in content or 'kubepods' in content or 'containerd' in content:
+                return True
+    except:
+        pass
+    if os.environ.get('DOCKER_CONTAINER') or os.environ.get('KUBERNETES_SERVICE_HOST'):
+        return True
+    return False
 ```
 
-This way, the browser runs headless on Replit but can run with a visible window on your local machine for debugging.
+**File**: `src/services/browser_captcha.py`
 
 ---
 
-## 5. Required Browser Launch Flags
+## 5. Browser Launch Config for Replit
 
-Replit containers have limited resources and no sandbox support. These flags are essential:
+**Problem**: Default launch uses `headless=False` (no display on Replit) and Playwright's bundled browser (not installed on Replit).
 
-```python
-launch_args = [
-    '--no-sandbox',
-    '--disable-dev-shm-usage',
-    '--disable-setuid-sandbox',
-    '--disable-gpu',
-    '--disable-blink-features=AutomationControlled',
-]
-```
-
-- `--no-sandbox`: Required because Replit doesn't support the Linux sandbox.
-- `--disable-dev-shm-usage`: Prevents crashes due to limited shared memory in containers.
-- `--disable-gpu`: No GPU available in Replit containers.
-- `--disable-blink-features=AutomationControlled`: Helps avoid bot detection.
-
----
-
-## 6. Using System Chromium Path
-
-Instead of relying on Playwright/Patchright's bundled browser, use the system Chromium installed via Nix. This is more reliable on Replit:
+**Fix**: Detect Replit, force headless, use system Nix chromium:
 
 ```python
 import shutil
 
-chrome_path = (
-    shutil.which('chromium')
-    or shutil.which('chromium-browser')
-    or shutil.which('google-chrome')
-)
+is_replit = bool(os.environ.get('REPL_ID') or os.environ.get('REPL_SLUG'))
+headless_mode = True if is_replit else False
+chrome_path = shutil.which('chromium') if is_replit else None
 
-# For Playwright:
-browser = await playwright.chromium.launch(
-    headless=True,
-    executable_path=chrome_path,  # Use system Chromium
-    args=['--no-sandbox', '--disable-dev-shm-usage']
-)
+launch_kwargs = {
+    'headless': headless_mode,
+    'proxy': proxy_option,
+    'args': [
+        '--no-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-setuid-sandbox',
+        '--disable-gpu',
+        '--disable-blink-features=AutomationControlled',
+        '--no-first-run',
+        '--no-zygote',
+    ]
+}
+if chrome_path:
+    launch_kwargs['executable_path'] = chrome_path
 
-# For Patchright (same API):
-browser = await playwright.chromium.launch(
-    headless=True,
-    executable_path=chrome_path,
-    args=['--no-sandbox', '--disable-dev-shm-usage']
-)
+browser = await playwright.chromium.launch(**launch_kwargs)
 ```
+
+**File**: `src/services/browser_captcha.py` — `_create_browser()` method
 
 ---
 
-## 7. Import Strategy (Patchright with Playwright Fallback)
+## 6. Import Strategy (Patchright → Playwright Fallback)
 
-This project uses Patchright as the primary engine with an automatic fallback to Playwright. Patchright is a drop-in replacement with the exact same API, but better anti-detection:
+Patchright is preferred for anti-detection. Fallback to Playwright if not installed:
 
 ```python
 BROWSER_ENGINE = "none"
 
 try:
-    from patchright.async_api import async_playwright
+    from patchright.async_api import async_playwright, Route, BrowserContext
     BROWSER_ENGINE = "patchright"
 except ImportError:
     try:
-        from playwright.async_api import async_playwright
+        from playwright.async_api import async_playwright, Route, BrowserContext
         BROWSER_ENGINE = "playwright"
     except ImportError:
-        print("Neither patchright nor playwright is installed!")
+        print("[BrowserCaptcha] ❌ patchright and playwright both not installed")
 ```
 
-You can then use `BROWSER_ENGINE` to log which engine is active.
+**File**: `src/services/browser_captcha.py`
 
 ---
 
-## 8. Docker vs Replit Detection
+## 7. PostgreSQL Database (Replit)
 
-If you also deploy via Docker, you need to detect the environment properly. Replit is NOT Docker, so check for Replit first:
+### Auto-Detection
+
+Replit provides PostgreSQL via `DATABASE_URL` env var. The app auto-detects:
 
 ```python
-def _is_running_in_docker():
-    # Replit has its own env vars - it's not Docker
-    if os.environ.get('REPL_ID') or os.environ.get('REPL_SLUG'):
-        return False
-    if os.path.exists('/.dockerenv'):
-        return True
-    return False
+# In src/main.py
+import os
+if os.environ.get("DATABASE_URL"):
+    from .core.database_pg import PostgresDatabase
+    db = PostgresDatabase()
+    print("📦 Using PostgreSQL database")
+else:
+    db = Database()
+    print("📦 Using SQLite database")
+```
+
+### Syncing database_pg.py with Upstream
+
+When merging upstream changes, `database_pg.py` must be manually synced:
+
+1. **Check for new columns**: Compare `database.py` table schemas with `database_pg.py`
+2. **Check method signatures**: Compare method params (e.g., `update_proxy_config`)
+3. **Add migrations**: Add missing columns in `check_and_migrate_db()`
+
+**Example — media_proxy columns added to proxy_config:**
+
+```sql
+-- Run directly via psql if migration hasn't run on restart:
+ALTER TABLE proxy_config ADD COLUMN IF NOT EXISTS media_proxy_enabled BOOLEAN DEFAULT false;
+ALTER TABLE proxy_config ADD COLUMN IF NOT EXISTS media_proxy_url TEXT;
+```
+
+Or via shell:
+```bash
+psql "$DATABASE_URL" -c "ALTER TABLE proxy_config ADD COLUMN IF NOT EXISTS media_proxy_enabled BOOLEAN DEFAULT false; ALTER TABLE proxy_config ADD COLUMN IF NOT EXISTS media_proxy_url TEXT;"
 ```
 
 ---
 
-## 9. Production Deployment Checklist
+## 8. Upstream Sync Procedure
 
-When deploying (publishing) on Replit:
+When syncing with `TheSmallHanCat/flow2api:main`:
 
-1. **Nix packages**: Ensure `chromium` and `playwright-driver` are in `.replit` packages.
-2. **Build step**: Set `build = ["bash", "-c", "python -m playwright install chromium"]` in `.replit` deployment config.
-3. **Headless**: The app must detect `REPL_ID` and run headless.
-4. **No sandbox flags**: Always include `--no-sandbox` and `--disable-dev-shm-usage`.
-5. **System Chromium**: Use `shutil.which('chromium')` to find the Nix-installed binary.
-6. **Timeouts**: Browser operations should have generous timeouts (30-60s) because Replit containers can be slow on cold starts.
-7. **Memory**: Browser automation is memory-heavy. Avoid running too many browser instances simultaneously. Use a semaphore to limit concurrency.
+### Steps
+```bash
+git fetch upstream
+git merge upstream/main --allow-unrelated-histories --no-commit
+# Accept upstream for all conflicts:
+git checkout --theirs <conflicting files>
+git add <all files>
+# Then re-apply our Replit-specific changes (see below)
+git commit -m "Merge upstream/main with Replit customizations"
+git push origin main
+```
+
+### Files We Customize (re-apply after merge)
+
+| File | Our Changes |
+|---|---|
+| `src/services/browser_captcha.py` | Replit Docker detection bypass, patchright import, headless + system chromium |
+| `src/main.py` | PostgreSQL auto-detect (`DATABASE_URL` → `PostgresDatabase`) |
+| `src/core/database_pg.py` | Must sync new columns/methods with upstream `database.py` |
+| `requirements.txt` | `patchright>=1.58.0` added |
+| `src/services/generation_handler.py` | `BROWSER_ENGINE` logging |
+
+### Post-Merge Checklist
+
+- [ ] Check `database_pg.py` method signatures match `database.py`
+- [ ] Check for new DB columns in `database.py` — add to `database_pg.py` schema + migration
+- [ ] Run DB migration (`psql` or restart app)
+- [ ] Verify Docker detection bypass still present
+- [ ] Verify headless + system chromium launch still present
+- [ ] Verify `main.py` still has PostgreSQL auto-detect
+- [ ] Test: proxy config save
+- [ ] Test: image generation request
 
 ---
 
-## 10. Patchright vs Playwright - Key Differences
+## 9. Patchright vs Playwright
 
 | Feature | Playwright | Patchright |
 |---|---|---|
@@ -192,24 +224,36 @@ When deploying (publishing) on Replit:
 
 ---
 
-## 11. Troubleshooting
+## 10. Troubleshooting
+
+**"Docker 环境" / browser captcha disabled:**
+- Replit has `/.dockerenv` — check that `_is_running_in_docker()` has the Replit bypass
+
+**"Captcha Engine: none":**
+- Docker detection is blocking imports. Fix the Docker detection first.
+
+**"TargetClosedError: BrowserType.launch":**
+- Missing chromium binary. Use `shutil.which('chromium')` as `executable_path`
+- Or: running headed (`headless=False`) on Replit. Force `headless=True`
 
 **"Browser not found" error:**
-- Run `which chromium` in Shell to verify Nix installed it.
-- Make sure `chromium` is in `.replit` `[nix] packages`.
+- Run `which chromium` to verify Nix installed it
+- Ensure `chromium` is in `.replit` `[nix] packages`
 
-**"No usable sandbox" crash:**
-- Add `--no-sandbox` to launch args.
+**"column X does not exist" (PostgreSQL):**
+- Upstream added new columns. Run migration manually:
+  ```bash
+  psql "$DATABASE_URL" -c "ALTER TABLE <table> ADD COLUMN IF NOT EXISTS <col> <type>;"
+  ```
 
-**Browser crashes on startup:**
-- Add `--disable-dev-shm-usage` flag.
-- Check memory usage - you may be running too many instances.
+**"got an unexpected keyword argument" (PostgreSQL):**
+- `database_pg.py` method signature is out of sync with upstream. Compare and update.
 
-**Works in dev but not in production:**
-- Make sure the build step installs the browser binary.
-- Check deployment logs for errors.
-- Ensure headless mode is enabled (no display in production).
+**"cannot import name '_save_to_db'":**
+- Upstream `logger.py` changed. Remove references to internal functions that no longer exist.
 
 **Timeout errors:**
-- Increase timeouts for page loads and browser operations.
-- Replit cold starts can be slow; allow 30-60 seconds for first browser launch.
+- Increase timeouts for browser operations (30-60s for Replit cold starts)
+
+**Memory issues:**
+- Limit browser instances via semaphore. Browser automation is memory-heavy.

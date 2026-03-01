@@ -395,10 +395,16 @@ class TokenBrowser:
         }
         
         try:
-            browser = await playwright.chromium.launch(
-                headless=False,
-                proxy=proxy_option,
-                args=[
+            # Replit: 使用 headless 模式和系统 chromium
+            import shutil
+            is_replit = bool(os.environ.get('REPL_ID') or os.environ.get('REPL_SLUG'))
+            headless_mode = True if is_replit else False
+            chrome_path = shutil.which('chromium') if is_replit else None
+
+            launch_kwargs = {
+                'headless': headless_mode,
+                'proxy': proxy_option,
+                'args': [
                     '--disable-blink-features=AutomationControlled',
                     '--disable-quic',
                     '--disable-features=UseDnsHttpsSvcb',
@@ -411,7 +417,12 @@ class TokenBrowser:
                     '--disable-infobars',
                     '--hide-scrollbars',
                 ]
-            )
+            }
+            if chrome_path:
+                launch_kwargs['executable_path'] = chrome_path
+                debug_logger.log_info(f"[BrowserCaptcha] Token-{self.token_id} 使用系统 Chromium: {chrome_path}, headless={headless_mode}")
+
+            browser = await playwright.chromium.launch(**launch_kwargs)
             context = await browser.new_context(
                 user_agent=random_ua,
                 viewport=viewport,
